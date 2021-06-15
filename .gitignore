@@ -24,3 +24,6 @@ MakefileCustom
 # Apollo test output
 */apollo/Testing/*
 Testing
+
+.cache
+.devcontainer

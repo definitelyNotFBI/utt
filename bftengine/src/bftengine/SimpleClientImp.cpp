@@ -58,7 +58,14 @@ class SimpleClientImp : public SimpleClient, public IReceiver {
   OperationResult sendBatch(const deque<ClientRequest>& clientRequests,
                             deque<ClientReply>& clientReplies,
                             const std::string& batchCid) override;
-
+  void SendRequest(uint8_t flags,
+                    const char* request,
+                    uint32_t lenOfRequest,
+                    uint64_t reqSeqNum,
+                    uint64_t reqTimeoutMilli,
+                    const std::string& cid,
+                    const std::string& spanContext) override;
+                  
   // IReceiver methods
   void onNewMessage(NodeNum sourceNode, const char* const message, size_t messageLength) override;
   void onConnectionStatusChanged(NodeNum node, ConnectionStatus newStatus) override;
@@ -386,6 +393,56 @@ OperationResult SimpleClientImp::sendRequest(uint8_t flags,
   }
   ConcordAssert(false);
 }
+
+/* This method sends requests asynchronously to all the nodes */
+void SimpleClientImp::SendRequest(uint8_t flags,
+                    const char* request,
+                    uint32_t lenOfRequest,
+                    uint64_t reqSeqNum,
+                    uint64_t reqTimeoutMilli,
+                    const std::string& cid = "",
+                    const std::string& spanContext = "") {
+    bool isReadOnly = flags & READ_ONLY_REQ;
+    bool isPreProcessRequired = flags & PRE_PROCESS_REQ;
+    const std::string msgCid = cid.empty() ? std::to_string(reqSeqNum) + "-" + std::to_string(clientId_) : cid;
+    const auto& maxRetransmissionTimeout = limitOfExpectedOperationTime_.upperLimit();
+    LOG_DEBUG(logger_,
+              KVLOG(clientId_,
+                    reqSeqNum,
+                    msgCid,
+                    isReadOnly,
+                    isPreProcessRequired,
+                    lenOfRequest,
+                    reqTimeoutMilli,
+                    maxRetransmissionTimeout,
+                    spanContext.empty()));
+    ConcordAssert(!(isReadOnly && isPreProcessRequired));
+
+    if (!communication_->isRunning()) communication_->Start();
+    if (!isReadOnly && !isSystemReady()) {
+      LOG_WARN(logger_,
+              "The system is not ready yet to handle requests => reject"
+                  << KVLOG(reqSeqNum, clientId_, cid, reqTimeoutMilli));
+      reset();
+      return;
+    }
+    verifySendRequestPrerequisites();
+    // const Time beginTime = getMonotonicTime();
+    ClientRequestMsg* reqMsg;
+    concordUtils::SpanContext ctx{spanContext};
+    if (isPreProcessRequired)
+      reqMsg = new ClientPreProcessRequestMsg(clientId_, reqSeqNum, lenOfRequest, request, reqTimeoutMilli, msgCid, ctx);
+    else
+      reqMsg = new ClientRequestMsg(clientId_, flags, reqSeqNum, lenOfRequest, request, reqTimeoutMilli, msgCid, ctx);
+    {
+      std::unique_lock<std::mutex> mlock(lock_);
+      pendingRequests_.push_back(reqMsg);
+    }
+    sendPendingRequest(false, cid);
+
+    client_metrics_.retransmissionTimer.Get().Set(maxRetransmissionTimeout);
+    metrics_.UpdateAggregator();
+    }
 
 OperationResult SimpleClientImp::isBatchRequestValid(const ClientRequest& req) {
   OperationResult res = SUCCESS;

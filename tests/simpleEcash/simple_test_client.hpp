@@ -13,15 +13,18 @@
 
 #pragma once
 
+#include <cstdint>
 #include "test_comm_config.hpp"
 #include "test_parameters.hpp"
-#include "commonDefs.h"
+#include "state.hpp"
 #include "communication/CommFactory.hpp"
 #include "communication/CommDefs.hpp"
 #include "SimpleClient.hpp"
 #include "histogram.hpp"
 #include "misc.hpp"
 #include "assertUtils.hpp"
+#include "msg_receiver.h"
+
 using namespace bftEngine;
 using namespace bft::communication;
 using namespace std;
@@ -46,9 +49,6 @@ class SimpleTestClient {
     // This client's index number. Must be larger than the largest replica index
     // number.
     const uint16_t id = cp.clientId;
-
-    // How often to read the latest value of the register (every `readMod` ops).
-    const int readMod = 7;
 
     // Concord clients must tag each request with a unique sequence number. This
     // generator handles that for us.
@@ -75,6 +75,14 @@ class SimpleTestClient {
     SimpleClient* client = SimpleClient::createSimpleClient(comm, id, cp.numOfFaulty, cp.numOfSlow);
     auto aggregator = std::make_shared<concordMetrics::Aggregator>();
     client->setAggregator(aggregator);
+
+    bft::client::MsgReceiver receiver;
+    receiver.activate(10000000);
+    // Breaking change
+    // comm->setReceiver(id, &receiver);
+    // End breaking change
+    // Comment the above for a safe version
+
     comm->Start();
 
     // hack that copies the behaviour of the protected function of SimpleClient
@@ -85,20 +93,6 @@ class SimpleTestClient {
         readyReplicas += (comm->getCurrentConnectionStatus(i) == ConnectionStatus::Connected);
       if (readyReplicas >= cp.numOfReplicas - cp.numOfFaulty) break;
     }
-
-    // The state number that the latest write operation returned.
-    uint64_t expectedStateNum = 0;
-
-    // The expectedStateNum is not valid until we have issued at least one write
-    // operation.
-    bool hasExpectedStateNum = false;
-
-    // The value that the latest write operation sent.
-    uint64_t expectedLastValue = 0;
-
-    // The expectedLastValue is not valid until we have issued at least one write
-    // operation.
-    bool hasExpectedLastValue = false;
 
     concordUtils::Histogram hist;
     hist.Clear();
@@ -124,88 +118,37 @@ class SimpleTestClient {
       }
 
       uint64_t start = get_monotonic_time();
-      if (i % readMod == 0) {
-        // Read the latest value every readMod-th operation.
+      // Read the latest value every readMod-th operation.
 
-        // Prepare request parameters.
-        const uint32_t kRequestLength = 1;
-        const uint64_t requestBuffer[kRequestLength] = {READ_VAL_REQ};
-        const char* rawRequestBuffer = reinterpret_cast<const char*>(requestBuffer);
-        const uint32_t rawRequestLength = sizeof(uint64_t) * kRequestLength;
+      // Prepare request parameters.
+      const uint32_t kRequestLength = 1;
+      const OpType requestBuffer[kRequestLength] = {OpType::Mint};
+      const char* rawRequestBuffer = reinterpret_cast<const char*>(requestBuffer);
+      const uint32_t rawRequestLength = sizeof(OpType) * kRequestLength;
 
-        const uint64_t requestSequenceNumber = pSeqGen->generateUniqueSequenceNumberForRequest();
+      const uint64_t requestSequenceNumber = pSeqGen->generateUniqueSequenceNumberForRequest();
 
-        const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
+      const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
 
-        const uint32_t kReplyBufferLength = sizeof(uint64_t);
-        char replyBuffer[kReplyBufferLength];
-        uint32_t actualReplyLength = 0;
+      const uint32_t kReplyBufferLength = 1;
+      OpType replyBuffer[kReplyBufferLength];
+      uint32_t lengthOfReplyBuffer = sizeof(OpType) * kReplyBufferLength;
+      uint32_t actualReplyLength = 0;
 
-        client->sendRequest(READ_ONLY_REQ,
-                            rawRequestBuffer,
-                            rawRequestLength,
-                            requestSequenceNumber,
-                            timeout,
-                            kReplyBufferLength,
-                            replyBuffer,
-                            actualReplyLength);
+      client->sendRequest(EMPTY_FLAGS_REQ,
+                          rawRequestBuffer,
+                          rawRequestLength,
+                          requestSequenceNumber,
+                          timeout,
+                          lengthOfReplyBuffer,
+                          reinterpret_cast<char*>(replyBuffer),
+                          actualReplyLength);
+                          
+      // printf("Successfully sent data over to the replicas\n");
 
-        // Read should respond with eight bytes of data.
-        test_assert(actualReplyLength == sizeof(uint64_t), "actualReplyLength != " << sizeof(uint64_t));
-
-        // Only assert the last expected value if we have previous set a value.
-        if (hasExpectedLastValue)
-          test_assert(*reinterpret_cast<uint64_t*>(replyBuffer) == expectedLastValue,
-                      "*reinterpret_cast<uint64_t*>(replyBuffer)!=" << expectedLastValue);
-      } else {
-        // Send a write, if we're not doing a read.
-
-        // Generate a value to store.
-        expectedLastValue = (i + 1) * (i + 7) * (i + 18);
-
-        // Prepare request parameters.
-        const uint32_t kRequestLength = 2;
-        const uint64_t requestBuffer[kRequestLength] = {SET_VAL_REQ, expectedLastValue};
-        const char* rawRequestBuffer = reinterpret_cast<const char*>(requestBuffer);
-        const uint32_t rawRequestLength = sizeof(uint64_t) * kRequestLength;
-
-        const uint64_t requestSequenceNumber = pSeqGen->generateUniqueSequenceNumberForRequest();
-
-        const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
-
-        const uint32_t kReplyBufferLength = sizeof(uint64_t);
-        char replyBuffer[kReplyBufferLength];
-        uint32_t actualReplyLength = 0;
-
-        client->sendRequest(EMPTY_FLAGS_REQ,
-                            rawRequestBuffer,
-                            rawRequestLength,
-                            requestSequenceNumber,
-                            timeout,
-                            kReplyBufferLength,
-                            replyBuffer,
-                            actualReplyLength);
-
-        // We can now check the expected value on the next read.
-        hasExpectedLastValue = true;
-
-        // Write should respond with eight bytes of data.
-        test_assert(actualReplyLength == sizeof(uint64_t), "actualReplyLength != " << sizeof(uint64_t));
-
-        uint64_t retVal = *reinterpret_cast<uint64_t*>(replyBuffer);
-
-        // We don't know what state number to expect from the first request. The
-        // replicas might still be up from a previous run of this test.
-        if (hasExpectedStateNum) {
-          // If we had done a previous write, then this write should return the
-          // state number right after the state number that that write returned.
-          expectedStateNum++;
-          test_assert(retVal == expectedStateNum, "retVal != " << expectedLastValue);
-        } else {
-          hasExpectedStateNum = true;
-          expectedStateNum = retVal;
-        }
-      }
+      // Mint should respond with sizeof(OpType) of data.
+      test_assert(actualReplyLength == lengthOfReplyBuffer, "actualReplyLength != " << actualReplyLength);
+      test_assert(replyBuffer[0] == OpType::MintAck, "Mint was not acknowledged");
 
       uint64_t end = get_monotonic_time();
       uint64_t elapsedMicro = end - start;
@@ -239,4 +182,5 @@ class SimpleTestClient {
     LOG_INFO(clientLogger, "test done, iterations: " << cp.numOfOperations);
     return true;
   }
+
 };

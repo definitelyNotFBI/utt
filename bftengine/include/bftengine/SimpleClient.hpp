@@ -119,6 +119,14 @@ class SimpleClient {
     if (aggregator) metrics_.SetAggregator(aggregator);
   }
 
+  virtual void SendRequest(uint8_t flags,
+                    const char* request,
+                    uint32_t lenOfRequest,
+                    uint64_t reqSeqNum,
+                    uint64_t reqTimeoutMilli,
+                    const std::string& cid = "",
+                    const std::string& spanContext = "") = 0;
+
  protected:
   /* Client Metrics */
   concordMetrics::Component metrics_;
