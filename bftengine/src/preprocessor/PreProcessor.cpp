@@ -13,6 +13,7 @@
 #include <optional>
 #include "InternalReplicaApi.hpp"
 #include "Logger.hpp"
+#include "Logging4cplus.hpp"
 #include "MsgHandlersRegistrator.hpp"
 #include "OpenTracing.hpp"
 #include "SigManager.hpp"
@@ -1038,8 +1039,8 @@ void PreProcessor::msgProcessingLoop() {
 }
 
 void PreProcessor::registerMsgHandlers() {
-  msgHandlersRegistrator_->registerMsgHandler(
-      MsgCode::ClientPreProcessRequest, bind(&PreProcessor::messageHandler<ClientPreProcessRequestMsg>, this, _1));
+  msgHandlersRegistrator_->registerMsgHandler(MsgCode::ClientPreProcessRequest, 
+                                              bind(&PreProcessor::messageHandler<ClientPreProcessRequestMsg>, this, _1));
   msgHandlersRegistrator_->registerMsgHandler(MsgCode::ClientBatchRequest,
                                               bind(&PreProcessor::messageHandler<ClientBatchRequestMsg>, this, _1));
   msgHandlersRegistrator_->registerMsgHandler(MsgCode::PreProcessRequest,

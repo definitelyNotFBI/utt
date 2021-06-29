@@ -3,7 +3,9 @@ set(simpleEcash_client_source_files
     client.cpp
     ${concord_bft_tools_SOURCE_DIR}/KeyfileIOUtils.cpp
     simple_test_client.hpp
-    msg_receiver.cpp
+    ecash_client.cpp
+    adapter_config.hpp
+    adapter_config.cpp
 )
 find_package(GTest REQUIRED)
 
@@ -18,7 +20,7 @@ target_include_directories(simpleEcash_client
                            ${CMAKE_SOURCE_DIR}/bftclient/include
 )
 
-target_link_libraries(simpleEcash_client PUBLIC corebft test_config_lib)
+target_link_libraries(simpleEcash_client PUBLIC corebft test_config_lib bftclient_new)
 set_target_properties(simpleEcash_client PROPERTIES OUTPUT_NAME client)
 
 # simple server

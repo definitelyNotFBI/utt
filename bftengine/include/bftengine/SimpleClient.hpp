@@ -119,7 +119,7 @@ class SimpleClient {
     if (aggregator) metrics_.SetAggregator(aggregator);
   }
 
-  virtual void SendRequest(uint8_t flags,
+  virtual void send_only_request(uint8_t flags,
                     const char* request,
                     uint32_t lenOfRequest,
                     uint64_t reqSeqNum,

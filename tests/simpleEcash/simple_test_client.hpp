@@ -13,7 +13,12 @@
 
 #pragma once
 
+#include <log4cplus/loglevel.h>
+#include <chrono>
 #include <cstdint>
+#include <memory>
+#include <vector>
+
 #include "test_comm_config.hpp"
 #include "test_parameters.hpp"
 #include "state.hpp"
@@ -24,6 +29,9 @@
 #include "misc.hpp"
 #include "assertUtils.hpp"
 #include "msg_receiver.h"
+#include "ecash_client.hpp"
+#include "adapter_config.hpp"
+#include "bftclient/bft_client.h"
 
 using namespace bftEngine;
 using namespace bft::communication;
@@ -46,6 +54,7 @@ class SimpleTestClient {
   SimpleTestClient(ClientParams& clientParams, logging::Logger& logger) : cp{clientParams}, clientLogger{logger} {}
 
   bool run() {
+    clientLogger.setLogLevel(log4cplus::ALL_LOG_LEVEL);
     // This client's index number. Must be larger than the largest replica index
     // number.
     const uint16_t id = cp.clientId;
@@ -72,34 +81,25 @@ class SimpleTestClient {
 
     ICommunication* comm = bft::communication::CommFactory::create(conf);
 
-    SimpleClient* client = SimpleClient::createSimpleClient(comm, id, cp.numOfFaulty, cp.numOfSlow);
-    auto aggregator = std::make_shared<concordMetrics::Aggregator>();
-    client->setAggregator(aggregator);
+    bft::client::ClientConfig adapter_config = make_adapter_config(cp);
+    EcashClient client(comm, adapter_config);
 
-    bft::client::MsgReceiver receiver;
-    receiver.activate(10000000);
-    // Breaking change
-    // comm->setReceiver(id, &receiver);
-    // End breaking change
-    // Comment the above for a safe version
+    // MsgReceiver receiver;
+    // receiver.activate(10000000);
+    // // Breaking change
+    // // comm->setReceiver(id, &receiver);
+    // // End breaking change
+    // // Comment the above for a safe version
 
-    comm->Start();
-
-    // hack that copies the behaviour of the protected function of SimpleClient
-    while (true) {
-      auto readyReplicas = 0;
-      this_thread::sleep_for(1s);
-      for (int i = 0; i < cp.numOfReplicas; ++i)
-        readyReplicas += (comm->getCurrentConnectionStatus(i) == ConnectionStatus::Connected);
-      if (readyReplicas >= cp.numOfReplicas - cp.numOfFaulty) break;
-    }
+    client.wait_for_connections();
+    printf("Connected to all the replicas\n");
 
     concordUtils::Histogram hist;
     hist.Clear();
 
     LOG_INFO(clientLogger, "Starting " << cp.numOfOperations);
 
-    // Perform this check once all parameters configured.
+    // // Perform this check once all parameters configured.
     if (3 * cp.numOfFaulty + 2 * cp.numOfSlow + 1 != cp.numOfReplicas) {
       LOG_FATAL(clientLogger,
                 "Number of replicas is not equal to 3f + 2c + 1 :"
@@ -109,6 +109,11 @@ class SimpleTestClient {
     }
 
     for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
+      bft::client::RequestConfig req_config;
+      req_config.timeout = 100s;
+      bft::client::WriteConfig write_config{req_config, ByzantineSafeQuorum{}};
+      write_config.request.pre_execute = true;
+
       // the python script that runs the client needs to know how many
       // iterations has been done - that's the reason we use printf and not
       // logging module - to keep the output exactly as we expect.
@@ -117,69 +122,39 @@ class SimpleTestClient {
         printf("Total iterations count: %i\n", i);
       }
 
-      uint64_t start = get_monotonic_time();
-      // Read the latest value every readMod-th operation.
-
       // Prepare request parameters.
-      const uint32_t kRequestLength = 1;
-      const OpType requestBuffer[kRequestLength] = {OpType::Mint};
-      const char* rawRequestBuffer = reinterpret_cast<const char*>(requestBuffer);
-      const uint32_t rawRequestLength = sizeof(OpType) * kRequestLength;
+      bft::client::Msg test_message{static_cast<unsigned char>(OpType::Mint)};
 
-      const uint64_t requestSequenceNumber = pSeqGen->generateUniqueSequenceNumberForRequest();
+      write_config.request.sequence_number = pSeqGen->generateUniqueSequenceNumberForRequest();
 
-      const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
-
-      const uint32_t kReplyBufferLength = 1;
-      OpType replyBuffer[kReplyBufferLength];
-      uint32_t lengthOfReplyBuffer = sizeof(OpType) * kReplyBufferLength;
-      uint32_t actualReplyLength = 0;
-
-      client->sendRequest(EMPTY_FLAGS_REQ,
-                          rawRequestBuffer,
-                          rawRequestLength,
-                          requestSequenceNumber,
-                          timeout,
-                          lengthOfReplyBuffer,
-                          reinterpret_cast<char*>(replyBuffer),
-                          actualReplyLength);
-                          
-      // printf("Successfully sent data over to the replicas\n");
-
-      // Mint should respond with sizeof(OpType) of data.
-      test_assert(actualReplyLength == lengthOfReplyBuffer, "actualReplyLength != " << actualReplyLength);
-      test_assert(replyBuffer[0] == OpType::MintAck, "Mint was not acknowledged");
-
-      uint64_t end = get_monotonic_time();
-      uint64_t elapsedMicro = end - start;
-
-      if (cp.measurePerformance) {
-        hist.Add(elapsedMicro);
-        LOG_INFO(clientLogger, "RAWLatencyMicro " << elapsedMicro << " Time " << (uint64_t)(end / 1e3));
-      }
+      // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
+      auto x = client.send(write_config,std::move(test_message));
+      printf("Got %lu matched data", x.matched_data.size());
+      printf("Got %lu rsi\n", x.rsi.size());
     }
 
-    // After all requests have been issued, stop communication and clean up.
-    comm->Stop();
-    std::string metric_comp_name = "clientMetrics_" + std::to_string(id);
-    LOG_INFO(clientLogger,
-             "clientMetrics::retransmissions " << aggregator->GetCounter(metric_comp_name, "retransmissions").Get());
-    LOG_INFO(
-        clientLogger,
-        "clientMetrics::retransmissionTimer " << aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get());
-    test_assert(aggregator->GetCounter(metric_comp_name, "retransmissions").Get() >= 0, "retransmissions <" << 0);
-    test_assert(aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get() >= 0, "retransmissionTimer <" << 0);
-    delete client;
-    delete comm;
+    // // After all requests have been issued, stop communication and clean up.
+    client.stop();
+    // std::string metric_comp_name = "clientMetrics_" + std::to_string(id);
+    // LOG_INFO(clientLogger,
+    //          "clientMetrics::retransmissions " << aggregator->GetCounter(metric_comp_name, "retransmissions").Get());
+    // LOG_INFO(
+    //     clientLogger,
+    //     "clientMetrics::retransmissionTimer " << aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get());
+    // test_assert(aggregator->GetCounter(metric_comp_name, "retransmissions").Get() >= 0, "retransmissions <" << 0);
+    // test_assert(aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get() >= 0, "retransmissionTimer <" << 0);
+    // delete client;
+    // delete comm;
 
-    if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
-                   << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
-    }
+    // cp.measurePerformance = true;
+    // if (cp.measurePerformance) {
+    //   LOG_INFO(clientLogger,
+    //            std::endl
+    //                << "Performance info from client " << cp.clientId << std::endl
+    //                << hist.ToString());
+    // }
 
-    LOG_INFO(clientLogger, "test done, iterations: " << cp.numOfOperations);
+    // LOG_INFO(clientLogger, "test done, iterations: " << cp.numOfOperations);
     return true;
   }
 

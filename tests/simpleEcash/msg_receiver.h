@@ -19,7 +19,7 @@
 #include "Logger.hpp"
 #include "bftclient/config.h"
 
-namespace bft::client {
+using namespace bft::client;
 
 // Metadata stripped from a ClientReplyMsgHeader
 //
@@ -109,5 +109,3 @@ class MsgReceiver : public bft::communication::IReceiver {
   UnmatchedReplyQueue queue_;
   logging::Logger logger_ = logging::getLogger("bftclient.msgreceiver");
 };
-
-}  // namespace bft::client

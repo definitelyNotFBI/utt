@@ -58,7 +58,7 @@ class SimpleClientImp : public SimpleClient, public IReceiver {
   OperationResult sendBatch(const deque<ClientRequest>& clientRequests,
                             deque<ClientReply>& clientReplies,
                             const std::string& batchCid) override;
-  void SendRequest(uint8_t flags,
+  void send_only_request(uint8_t flags,
                     const char* request,
                     uint32_t lenOfRequest,
                     uint64_t reqSeqNum,
@@ -267,6 +267,7 @@ void SimpleClientImp::verifySendRequestPrerequisites() {
   ConcordAssert(pendingRequests_.empty());
   ConcordAssert(timeOfLastTransmission_ == MinTime);
   ConcordAssert(numberOfTransmissions_ == 0);
+  timeOfLastTransmission_ = MinTime;
 }
 
 tuple<bool, bool> SimpleClientImp::pendingRequestProcessing(bool isBatch,
@@ -395,7 +396,7 @@ OperationResult SimpleClientImp::sendRequest(uint8_t flags,
 }
 
 /* This method sends requests asynchronously to all the nodes */
-void SimpleClientImp::SendRequest(uint8_t flags,
+void SimpleClientImp::send_only_request(uint8_t flags,
                     const char* request,
                     uint32_t lenOfRequest,
                     uint64_t reqSeqNum,

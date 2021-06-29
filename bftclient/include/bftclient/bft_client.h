@@ -57,7 +57,7 @@ class Client {
   std::optional<ReplicaId> primary() { return primary_; }
   std::string signMessage(std::vector<uint8_t>&);
 
- private:
+ protected:
   // Generic function for sending a read or write message.
   Reply send(const MatchConfig& match_config, const RequestConfig& request_config, Msg&& request, bool read_only);
 

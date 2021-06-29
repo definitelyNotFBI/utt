@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Logging4cplus.hpp"
 #include "assertUtils.hpp"
 #include "OpenTracing.hpp"
 #include "communication/CommFactory.hpp"
@@ -21,8 +22,11 @@
 #include "ControlStateManager.hpp"
 #include "SimpleStateTransfer.hpp"
 #include "FileStorage.hpp"
+#include <cstdint>
 #include <cstdio>
 #include <thread>
+#include <unordered_map>
+#include <unordered_set>
 #include "commonDefs.h"
 #include "simple_test_replica_behavior.hpp"
 #include "threshsign/IThresholdSigner.h"
@@ -44,87 +48,83 @@ logging::Logger replicaLogger = logging::getLogger("simpletest.replica");
     }                                                                                                             \
   }
 
+
 // The replica state machine.
 class SimpleAppState : public IRequestsHandler {
  private:
-  uint64_t client_to_index(NodeNum clientId) { return clientId - numOfReplicas; }
-
-  uint64_t get_last_state_value(NodeNum clientId) {
-    auto index = client_to_index(clientId);
-    return statePtr[index].lastValue;
-  }
-
-  uint64_t get_last_state_num(NodeNum clientId) {
-    auto index = client_to_index(clientId);
-    return statePtr[index].stateNum;
-  }
-
-  void set_last_state_value(NodeNum clientId, uint64_t value) {
-    auto index = client_to_index(clientId);
-    statePtr[index].lastValue = value;
-  }
-
-  void set_last_state_num(NodeNum clientId, uint64_t value) {
-    auto index = client_to_index(clientId);
-    statePtr[index].stateNum = value;
-  }
-
  public:
   SimpleAppState(uint16_t numCl, uint16_t numRep)
       : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {}
   ~SimpleAppState() { delete[] statePtr; }
+  bool verifyMintTx(ExecutionRequest &req) {
+    // Our read-write request includes one eight-byte argument, in addition to
+    // the request type.
+    if (req.requestSize != sizeof(OpType)) {
+      LOG_WARN(replicaLogger, "Invalid size: Got " << req.requestSize << ", Expected: " << sizeof(OpType));
+      req.outExecutionStatus = -1;
+      return false;
+    } 
 
+    // We only support the WRITE operation in read-write mode.
+    const OpType *pReqId = reinterpret_cast<const OpType *>(req.request);
+    if (*pReqId == OpType::Mint) {
+      printf("Got a mint transaction\n");
+    } else {
+      printf("Got something else\n");
+    }
+    return true;
+  }
+
+  // This call will execute a Mint and return the changed state
+  bool executeMintTx(ExecutionRequest &req, std::unordered_set<uint8_t> &partial_state) {
+    // Reply with the number of times we've modified the register.
+    test_assert_replica(req.maxReplySize >= sizeof(OpType), "maxReplySize < " << sizeof(OpType));
+    OpType *pRet = const_cast<OpType *>(reinterpret_cast<const OpType *>(req.outReply));
+    *pRet = OpType::MintAck;
+    req.outActualReplySize = sizeof(OpType);
+
+    req.outExecutionStatus = 0;
+    return true;
+  }
+  
   // Handler for the upcall from Concord-BFT.
+  // This function will be called twice
+  // The first time is during pre-execution.
+  // The second time is after consensus.
   void execute(ExecutionRequestsQueue &requests,
                const std::string &batchCid,
                concordUtils::SpanWrapper &parent_span) override {
+    printf("Test tag\n");
+    std::unordered_set<uint8_t> updates;
     for (auto &req : requests) {
-      printf("Handling request");
+      // These are invalid transactions, Ignore.
+      if (req.outExecutionStatus != 1) {
+        LOG_INFO(replicaLogger, "Executing an invalid transaction");
+        continue;
+      };
+
       // Not currently used
       req.outReplicaSpecificInfoSize = 0;
 
-      bool readOnly = req.flags & READ_ONLY_FLAG;
-      // TODO (Fix): Currently read reqs just echo back what was sent
-      if (readOnly) {
-        // Our read-only request includes only a type, no argument.
-        test_assert_replica(req.requestSize == sizeof(OpType), "requestSize =! " << sizeof(uint64_t));
-
-        // Copy the latest register value to the reply buffer.
-        test_assert_replica(req.maxReplySize >= sizeof(OpType), "maxReplySize < " << sizeof(OpType));
-        uint64_t *pRet = const_cast<uint64_t *>(reinterpret_cast<const uint64_t *>(req.outReply));
-        *pRet = *req.request;
-        req.outActualReplySize = sizeof(OpType);
-      } else {
-        // Our read-write request includes one eight-byte argument, in addition to
-        // the request type.
-        test_assert_replica(req.requestSize == sizeof(OpType), "requestSize != " << sizeof(OpType));
-
-        // We only support the WRITE operation in read-write mode.
-        const OpType *pReqId = reinterpret_cast<const OpType *>(req.request);
-        if (*pReqId == OpType::Mint) {
-          printf("Got a mint transaction\n");
-        } else {
-          printf("Got something else\n");
+      bool pre_executed = req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG;
+      if (!pre_executed) {
+        if (!verifyMintTx(req)) {
+          continue;
         }
-
-        // Reply with the number of times we've modified the register.
-        test_assert_replica(req.maxReplySize >= sizeof(OpType), "maxReplySize < " << sizeof(OpType));
-        OpType *pRet = const_cast<OpType *>(reinterpret_cast<const OpType *>(req.outReply));
-        *pRet = OpType::MintAck;
-        req.outActualReplySize = sizeof(OpType);
-
-        // st->markUpdate(statePtr, sizeof(State) * numOfClients);
       }
-      req.outExecutionStatus = 0;
+      // By now, either via pre-execution or not, we would have finished verifying the command
+      // Check for conflicts and update the system
+      bool has_conflict = false;
+      has_conflict = executeMintTx(req, updates);
+      statePtr->spent_coins.merge(updates);
+      updates.clear();
     }
   }
 
   struct State {
-    // Number of modifications made.
-    uint64_t stateNum = 0;
-    // Register value.
-    uint64_t lastValue = 0;
+    std::unordered_set<uint8_t> spent_coins;
   };
+
   State *statePtr;
 
   uint16_t numOfClients;
@@ -178,6 +178,9 @@ class SimpleTestReplica {
   uint16_t get_replica_id() { return replicaConfig.replicaId; }
 
   void start() {
+    for (auto &logger: logging::Logger::getCurrentLoggers()) {
+      logger.setLogLevel(log4cplus::TRACE_LOG_LEVEL);
+    }
     replica->start();
     ControlStateManager::instance(inMemoryST_).disable();
   }

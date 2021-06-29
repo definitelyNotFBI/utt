@@ -165,6 +165,8 @@ void signalHandler(int signum) {
 }
 
 int main(int argc, char **argv) {
+  ReplicaConfig::instance().setpreExecutionFeatureEnabled(true);
+
   ReplicaParams rp;
   parse_params(argc, argv, rp);
 
@@ -193,7 +195,7 @@ int main(int argc, char **argv) {
                                         << ", statusReportTimerMillisec: " << rp.statusReportTimerMillisec
                                         << ", behavior: " << (uint16_t)rp.replicaBehavior
                                         << ", persistencyMode: " << (uint16_t)rp.persistencyMode);
-
+  
   replica = SimpleTestReplica::create_replica(replicaBehavior, rp, metaDataStorage);
   printf("Starting node\n");
   replica->start();

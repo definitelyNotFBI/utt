@@ -14,7 +14,7 @@
 #include "bftengine/ClientMsgs.hpp"
 #include "msg_receiver.h"
 
-namespace bft::client {
+using namespace bft::client;
 
 void UnmatchedReplyQueue::push(UnmatchedReply&& reply) {
   {
@@ -63,8 +63,6 @@ void MsgReceiver::onNewMessage(bft::communication::NodeNum source, const char* c
     return;
   }
 
-  printf("Got a valid reply from the replicas\n");
-
   auto metadata = ReplyMetadata{};
   metadata.primary = ReplicaId{header->currentPrimaryId};
   metadata.seq_num = header->reqSeqNum;
@@ -97,5 +95,3 @@ void MsgReceiver::deactivate() {
 }
 
 std::vector<UnmatchedReply> MsgReceiver::wait(std::chrono::milliseconds timeout) { return queue_.wait(timeout); }
-
-}  // namespace bft::client
