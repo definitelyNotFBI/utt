@@ -112,7 +112,7 @@ class SimpleTestClient {
       bft::client::RequestConfig req_config;
       req_config.timeout = 100s;
       bft::client::WriteConfig write_config{req_config, ByzantineSafeQuorum{}};
-      write_config.request.pre_execute = true;
+      write_config.request.pre_execute = false;
 
       // the python script that runs the client needs to know how many
       // iterations has been done - that's the reason we use printf and not
@@ -135,25 +135,7 @@ class SimpleTestClient {
 
     // // After all requests have been issued, stop communication and clean up.
     client.stop();
-    // std::string metric_comp_name = "clientMetrics_" + std::to_string(id);
-    // LOG_INFO(clientLogger,
-    //          "clientMetrics::retransmissions " << aggregator->GetCounter(metric_comp_name, "retransmissions").Get());
-    // LOG_INFO(
-    //     clientLogger,
-    //     "clientMetrics::retransmissionTimer " << aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get());
-    // test_assert(aggregator->GetCounter(metric_comp_name, "retransmissions").Get() >= 0, "retransmissions <" << 0);
-    // test_assert(aggregator->GetGauge(metric_comp_name, "retransmissionTimer").Get() >= 0, "retransmissionTimer <" << 0);
-    // delete client;
-    // delete comm;
-
-    // cp.measurePerformance = true;
-    // if (cp.measurePerformance) {
-    //   LOG_INFO(clientLogger,
-    //            std::endl
-    //                << "Performance info from client " << cp.clientId << std::endl
-    //                << hist.ToString());
-    // }
-
+    
     // LOG_INFO(clientLogger, "test done, iterations: " << cp.numOfOperations);
     return true;
   }

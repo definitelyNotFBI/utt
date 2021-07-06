@@ -46,7 +46,7 @@ enum class ReplicaBehavior {
 struct ReplicaParams {
   uint16_t replicaId;
   uint16_t numOfReplicas = 4;
-  uint16_t numOfClients = 2;
+  uint16_t numOfClients = 10;
   bool debug = false;
   bool viewChangeEnabled = false;
   bool autoPrimaryRotationEnabled = false;
