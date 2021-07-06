@@ -165,8 +165,6 @@ void signalHandler(int signum) {
 }
 
 int main(int argc, char **argv) {
-  ReplicaConfig::instance().setpreExecutionFeatureEnabled(true);
-
   ReplicaParams rp;
   parse_params(argc, argv, rp);
 

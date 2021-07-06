@@ -225,15 +225,19 @@ class SimpleTestReplica {
     TestCommConfig testCommConfig(replicaLogger);
     ReplicaConfig &replicaConfig = ReplicaConfig::instance();
     testCommConfig.GetReplicaConfig(rp.replicaId, rp.keysFilePrefix, &replicaConfig);
-    replicaConfig.numOfClientProxies = rp.numOfClients;
-    replicaConfig.viewChangeProtocolEnabled = rp.viewChangeEnabled;
+    replicaConfig.numOfClientProxies = 0;
+    // replicaConfig.viewChangeProtocolEnabled = rp.viewChangeEnabled;
     replicaConfig.viewChangeTimerMillisec = rp.viewChangeTimeout;
+    replicaConfig.preExecReqStatusCheckTimerMillisec = 200;
     replicaConfig.replicaId = rp.replicaId;
     replicaConfig.statusReportTimerMillisec = 10000;
-    replicaConfig.concurrencyLevel = 1;
+    replicaConfig.clientBatchingEnabled = true;
+    // replicaConfig.concurrencyLevel = 1;
     replicaConfig.debugPersistentStorageEnabled =
         rp.persistencyMode == PersistencyMode::InMemory || rp.persistencyMode == PersistencyMode::File;
-
+    replicaConfig.preExecutionFeatureEnabled = true;
+    // replicaConfig.setnumOfClientProxies(0);
+    replicaConfig.numOfExternalClients = 10;
     // This is the state machine that the replica will drive.
     SimpleAppState *simpleAppState = new SimpleAppState(rp.numOfClients, rp.numOfReplicas);
 
