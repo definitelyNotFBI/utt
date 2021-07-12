@@ -35,7 +35,12 @@ apt-get update && apt-get ${APT_GET_FLAGS} install \
     python3-setuptools \
     sudo \
     vim \
-    wget
+    wget \
+    libgmp-dev \
+    software-properties-common \
+    gpg-agent \
+    openssh-client
+    
 
 ln -fs /usr/bin/clang-format-9 /usr/bin/clang-format
 ln -fs /usr/bin/clang-format-diff-9 /usr/bin/clang-format-diff
@@ -260,3 +265,47 @@ git clone -b v1.37.1 --depth 1 --recurse-submodules https://github.com/grpc/grpc
 
 # After installing all libraries, let's make sure that they will be found at runtime
 ldconfig
+wget ${WGET_FLAGS} --no-check-certificate \
+ https://sourceforge.net/projects/asio/files/asio/1.18.1%20%28Stable%29/asio-1.18.1.tar.bz2 && \
+    tar -xf asio-1.18.1.tar.bz2 && \
+    cd asio-1.18.1 && \
+    ./configure && make && make install && \
+    cd .. && rm -rf asio*
+
+# Libutt deps
+NUM_CPUS=$(cat /proc/cpuinfo | grep processor | wc -l)
+
+# 1. libsodium
+cd ${HOME}
+tar -xvzf libsodium-1.0.18.tar.gz && \
+    cd libsodium-1.0.18 && \
+    ./configure && \
+    make -j${NUM_CPUS} && make check && \
+    make install && \
+    cd .. & \
+    rm -rf libsodium-1.0.18.tar.gz libsodium-1.0.18
+
+# 2. ntl (Use whatever homebrew is using, since Alin uses Homebrew)
+cd ${HOME}
+tar -xvzf ntl-11.5.1.tar.gz && \
+    cd ntl-11.5.1/src && \
+    ./configure && \
+    make -j${NUM_CPUS} && \
+    make install && \
+    cd ../.. && \
+    rm -rf ntl-11.5.1.tar.gz ntl-11.5.1
+
+cd ${HOME}
+REPO_NAME="deb http://apt.llvm.org/bionic/   llvm-toolchain-bionic-12  main"
+apt-key add llvm-snapshot.gpg.key && \
+    add-apt-repository "${REPO_NAME}" && \
+    apt-get update && \
+    apt-get install -y \
+        clang-12 \
+        lldb-12 \
+        lld-12 \
+        clangd-12 && \
+    apt-get install -y \
+        libc++-12-dev \
+        libomp-dev \
+        libomp5

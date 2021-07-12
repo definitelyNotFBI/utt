@@ -20,7 +20,15 @@ target_include_directories(simpleEcash_client
                            ${CMAKE_SOURCE_DIR}/bftclient/include
 )
 
-target_link_libraries(simpleEcash_client PUBLIC corebft test_config_lib bftclient_new)
+target_link_libraries(simpleEcash_client 
+    PUBLIC 
+    corebft 
+    test_config_lib 
+    bftclient_new
+    utt
+    stdc++fs
+    gomp
+)
 set_target_properties(simpleEcash_client PROPERTIES OUTPUT_NAME client)
 
 # simple server
@@ -46,8 +54,13 @@ target_include_directories(simpleEcash_server
                            ${bftengine_SOURCE_DIR}/include
 )
 
-target_link_libraries(simpleEcash_server PUBLIC corebft 
- simple_file_storage_lib test_config_lib)
+target_link_libraries(simpleEcash_server 
+    PUBLIC 
+    corebft 
+    simple_file_storage_lib 
+    test_config_lib
+    utt
+)
 set_target_properties(simpleEcash_server PROPERTIES OUTPUT_NAME server)
 
 if(${USE_COMM_PLAIN_TCP})

@@ -13,6 +13,20 @@ LABEL Description="Build environment for concord-bft"
 ENV HOME /root
 COPY ./install_deps.sh /install_deps.sh
 
+# Shamelessly copied from
+# https://stackoverflow.com/questions/23391839/clone-private-git-repo-with-dockerfile
+# Remove once the repo becomes public
+ADD repo.key /
+ADD \
+    https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
+    /root
+ADD \
+    https://libntl.org/ntl-11.5.1.tar.gz \
+    /root
+ADD \
+    https://apt.llvm.org/llvm-snapshot.gpg.key \
+    /root
+
 SHELL ["/bin/bash", "-c"]
 
 RUN echo $'path-exclude /usr/share/doc/* \n\

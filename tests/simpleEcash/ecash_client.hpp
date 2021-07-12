@@ -11,22 +11,12 @@
 
 #pragma once
 
-// #include <queue>
-// #include <unordered_map>
-// #include <mutex>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
-// #include <condition_variable>
-// #include <SimpleClient.hpp>
 
-// #include "ClientMsgs.hpp"
-// #include "OpenTracing.hpp"
-// #include "assertUtils.hpp"
-// #include "TimeUtils.hpp"
-// #include "DynamicUpperLimitWithSimpleFilter.hpp"
 #include "Logger.hpp"
 #include "bftclient/bft_client.h"
-// #include "DynamicUpperLimitWithSimpleFilter.hpp"
 #include "test_parameters.hpp"
 
 using namespace std;
@@ -39,6 +29,7 @@ class EcashClient : public bft::client::Client {
         EcashClient(ICommunication* comm, bft::client::ClientConfig &cp);
         void wait_for_connections();
         ~EcashClient();
+        static void Pool(size_t);
     protected:
         uint16_t num_replicas_;
         bft::client::RequestConfig req_config_;
