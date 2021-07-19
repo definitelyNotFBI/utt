@@ -15,11 +15,13 @@
 #include "SimpleClient.hpp"
 #include "adapter_config.hpp"
 #include "bftclient/bft_client.h"
+#include "utt/Utt.h"
 
 using namespace std;
 using namespace std::chrono;
 using namespace bftEngine;
 using namespace bft::communication;
+using namespace libutt;
 
 std::set<bft::client::ReplicaId> generateSetOfReplicas_helpFunc(const int16_t numberOfReplicas) {
   std::set<bft::client::ReplicaId> retVal;
@@ -31,8 +33,11 @@ std::set<bft::client::ReplicaId> generateSetOfReplicas_helpFunc(const int16_t nu
 
 EcashClient::EcashClient(ICommunication *comm, bft::client::ClientConfig &conf)
   :bft::client::Client(std::unique_ptr<ICommunication>(comm),conf),
-  num_replicas_(conf.all_replicas.size())
+  num_replicas_(conf.all_replicas.size()),
+  coins()
 {
+  libutt::initialize(nullptr);
+  
 }
 
 void EcashClient::wait_for_connections() {

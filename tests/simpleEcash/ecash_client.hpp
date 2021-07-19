@@ -14,10 +14,12 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
 #include "Logger.hpp"
 #include "bftclient/bft_client.h"
 #include "test_parameters.hpp"
+#include "utt/Coin.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -33,6 +35,7 @@ class EcashClient : public bft::client::Client {
     protected:
         uint16_t num_replicas_;
         bft::client::RequestConfig req_config_;
+        std::vector<libutt::CoinSecrets> coins;
     private:
 };
 

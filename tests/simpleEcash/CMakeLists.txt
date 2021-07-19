@@ -59,7 +59,6 @@ target_link_libraries(simpleEcash_server
     corebft 
     simple_file_storage_lib 
     test_config_lib
-    utt
 )
 set_target_properties(simpleEcash_server PROPERTIES OUTPUT_NAME server)
 

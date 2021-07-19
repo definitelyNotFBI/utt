@@ -162,6 +162,18 @@ include_directories(
 )
 
 set(
+  UTT_INCLUDES
+  "libutt/libutt/include"
+)
+
+set(
+  UTT_LIBS
+  "utt"
+  "stdc++fs"
+  "gomp"
+)
+
+set(
   CURVE
   "BN128"
   CACHE
@@ -190,6 +202,25 @@ if(${CURVE} STREQUAL "BN128")
     -DBN_SUPPORT_SNARK=1
   )
 endif()
+
+# Adding libutt specifics before adding subdirectories so that all the subdirectories can take advantage of libutt
+#
+# Subdirectories
+#
+add_subdirectory(logging)
+add_subdirectory(util)
+add_subdirectory(secretsmanager)
+add_subdirectory(threshsign)
+add_subdirectory(communication)
+add_subdirectory(kvbc)
+add_subdirectory(performance)
+add_subdirectory(bftengine)
+add_subdirectory(tools)
+add_subdirectory(storage)
+add_subdirectory(scripts)
+add_subdirectory(diagnostics)
+add_subdirectory(bftclient)
+add_subdirectory(reconfiguration)
 
 #
 # Setup testing

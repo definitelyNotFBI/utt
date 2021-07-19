@@ -67,3 +67,17 @@ endif(BUILD_ROCKSDB_STORAGE)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/testKeyGeneration.sh
        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+
+add_executable(GenerateUTTKeys
+    GenerateUTTKeys.cpp
+)
+
+target_include_directories(GenerateUTTKeys
+    PUBLIC 
+    ${UTT_INCLUDES}
+)
+
+target_link_libraries(GenerateUTTKeys
+    PUBLIC
+    ${UTT_LIBS}
+)
