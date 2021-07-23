@@ -155,15 +155,12 @@ add_subdirectory(ccron)
 
 # Deps will be installed during image setup
 # Just build libutt here
-# TODO(Adithya)
+# TODO(Adithya) Currently building outside, and running dmake afterwards
 link_directories(libutt/build/libutt/src)
-include_directories(
-    libutt/libutt/include
-)
 
 set(
   UTT_INCLUDES
-  "libutt/libutt/include"
+  ${CMAKE_SOURCE_DIR}/libutt/libutt/include
 )
 
 set(

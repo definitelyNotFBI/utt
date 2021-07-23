@@ -21,7 +21,7 @@ struct ClientParams {
   uint16_t numOfFaulty = 1;
   uint16_t numOfSlow = 0;
   std::string configFileName;
-  bool measurePerformance = false;
+  bool measurePerformance = true;
 
   uint16_t get_numOfReplicas() { return (uint16_t)(3 * numOfFaulty + 2 * numOfSlow + 1); }
 };

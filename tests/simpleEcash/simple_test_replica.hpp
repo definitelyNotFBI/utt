@@ -14,6 +14,7 @@
 #pragma once
 
 #include "Logging4cplus.hpp"
+#include "PrimitiveTypes.hpp"
 #include "assertUtils.hpp"
 #include "OpenTracing.hpp"
 #include "communication/CommFactory.hpp"
@@ -24,14 +25,23 @@
 #include "FileStorage.hpp"
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
+#include <fstream>
+#include <set>
+#include <sstream>
 #include <thread>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 #include "commonDefs.h"
 #include "simple_test_replica_behavior.hpp"
 #include "threshsign/IThresholdSigner.h"
 #include "threshsign/IThresholdVerifier.h"
 #include "state.hpp"
+
+#include "utt/Bank.h"
+#include "utt/Coin.h"
+#include "utt/Params.h"
 
 using namespace bftEngine;
 using namespace bft::communication;
@@ -51,15 +61,32 @@ logging::Logger replicaLogger = logging::getLogger("simpletest.replica");
 
 // The replica state machine.
 class SimpleAppState : public IRequestsHandler {
- private:
+ public:
+  libutt::BankShareSK *shareSK = nullptr;
+  libutt::Params *p = nullptr;
+  uint16_t replicaId = 0;
+  // std::unordered_map<
+  //   uint16_t, 
+  //   std::unordered_map<
+  //     size_t, 
+  //     std::vector<unsigned char>
+  //   >
+  // > stored_sigs;
+
+  // (TODO) DB Stress test
+  // Baselines: ZCash (no anonymity budget) vs UTT,
+  // Veksel?
+  // BFT Baselines, FastPay(RUST) baseline, Coconut, SNARKs
+
  public:
   SimpleAppState(uint16_t numCl, uint16_t numRep)
-      : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {}
+      : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {
+      }
   ~SimpleAppState() { delete[] statePtr; }
   bool verifyMintTx(ExecutionRequest &req) {
     // Our read-write request includes one eight-byte argument, in addition to
     // the request type.
-    if (req.requestSize != sizeof(OpType)) {
+    if (req.requestSize <= sizeof(UTT_Msg)) {
       LOG_WARN(replicaLogger, "Invalid size: Got " << req.requestSize << ", Expected: " << sizeof(OpType));
       req.outExecutionStatus = -1;
       return false;
@@ -68,21 +95,106 @@ class SimpleAppState : public IRequestsHandler {
     // We only support the WRITE operation in read-write mode.
     const OpType *pReqId = reinterpret_cast<const OpType *>(req.request);
     if (*pReqId == OpType::Mint) {
-      printf("Got a mint transaction\n");
+      auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
+      printf("Got a mint transaction to mint %lu money\n", mint_req->val);
     } else {
       printf("Got something else\n");
     }
     return true;
   }
 
-  // This call will execute a Mint and return the changed state
-  bool executeMintTx(ExecutionRequest &req, std::unordered_set<uint8_t> &partial_state) {
-    // Reply with the number of times we've modified the register.
-    test_assert_replica(req.maxReplySize >= sizeof(OpType), "maxReplySize < " << sizeof(OpType));
-    OpType *pRet = const_cast<OpType *>(reinterpret_cast<const OpType *>(req.outReply));
-    *pRet = OpType::MintAck;
-    req.outActualReplySize = sizeof(OpType);
+  // Only fills the common parts without RSI
+  // store the sig locally so we can ship it on execution
+  bool preExecuteMintTx(ExecutionRequest &req) {
+    printf("B: Printing request\n");
+    for(auto i = 0u; i < req.requestSize; i++) {
+      printf("%02x", req.request[i]);
+    }
+    printf("\n");
 
+    // Is the size good?
+    test_assert_replica(req.maxReplySize >= sizeof(UTT_Msg)+sizeof(MintAckMsg), 
+            "maxReplySize < " << sizeof(OpType));
+
+    // Since the request will be deleted after pre-processing, store the request message as the reply
+    req.outReplicaSpecificInfoSize = 0;
+    req.outActualReplySize = req.requestSize;
+    std::memcpy(req.outReply, req.request, req.requestSize);
+
+    // std::cout << "Max Reply Size is:" << req.maxReplySize << std::endl;
+    req.outExecutionStatus = 0;
+
+    return true;
+  }
+
+  bool PostExecuteMintTx(ExecutionRequest &req) {
+    printf("A: Printing request for client: %u\n", req.clientId);
+    for(auto i = 0u; i < req.requestSize; i++) {
+      printf("%02x", req.request[i]);
+    }
+    printf("\n");
+
+    auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
+    
+    std::stringstream ss;
+    ss.rdbuf()->pubsetbuf(
+      const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
+      mint_req->cc_buf_len
+    );
+    libutt::CoinComm cc;
+    ss >> cc;
+    ss.clear();
+
+    auto *pRet = reinterpret_cast<UTT_Msg*>(req.outReply);
+    pRet->type = OpType::MintAck;
+
+    auto coin = shareSK->thresholdSignCoin(*p, cc);
+    ss << coin;
+
+    auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
+    ack->coin_sig_share_size = ss.str().size();
+    ack->coin_id = mint_req->coin_id;
+    std::memcpy(req.outReply+sizeof(UTT_Msg)+sizeof(MintAckMsg), ss.str().data(), ss.str().size());
+    
+    // The last two parts MintAckMsg and the CoinSigShare are replicaSpecific information
+    req.outReplicaSpecificInfoSize = ack->coin_sig_share_size + sizeof(MintAckMsg);
+    req.outActualReplySize = req.outReplicaSpecificInfoSize + sizeof(UTT_Msg);
+
+    // std::cout << "Max Reply Size is:" << req.maxReplySize << std::endl;
+    req.outExecutionStatus = 0;
+    return true;
+  }
+
+  // This call will execute a Mint and return the changed state
+  bool RawExecuteMintTx(ExecutionRequest &req) {
+    // Reply with the number of times we've modified the register.
+    test_assert_replica(req.maxReplySize >= sizeof(UTT_Msg)+sizeof(MintAckMsg), "maxReplySize < " << sizeof(OpType));
+    auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
+    std::stringstream ss;
+    ss.rdbuf()->pubsetbuf(
+      const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
+      mint_req->cc_buf_len
+    );
+    libutt::CoinComm cc;
+    ss >> cc;
+    ss.clear();
+
+    auto *pRet = reinterpret_cast<UTT_Msg*>(req.outReply);
+    pRet->type = OpType::MintAck;
+
+    auto coin = shareSK->thresholdSignCoin(*p, cc);
+    ss << coin;
+
+    auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
+    ack->coin_sig_share_size = ss.str().size();
+    ack->coin_id = mint_req->coin_id;
+    std::memcpy(req.outReply+sizeof(UTT_Msg)+sizeof(MintAckMsg), ss.str().data(), ss.str().size());
+    
+    // The last two parts MintAckMsg and the CoinSigShare are replicaSpecific information
+    req.outReplicaSpecificInfoSize = ack->coin_sig_share_size + sizeof(MintAckMsg);
+    req.outActualReplySize = req.outReplicaSpecificInfoSize + sizeof(UTT_Msg);
+
+    // std::cout << "Max Reply Size is:" << req.maxReplySize << std::endl;
     req.outExecutionStatus = 0;
     return true;
   }
@@ -104,20 +216,44 @@ class SimpleAppState : public IRequestsHandler {
       };
 
       // Not currently used
-      req.outReplicaSpecificInfoSize = 0;
+      // req.outReplicaSpecificInfoSize = 0;
 
-      bool pre_executed = req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG;
-      if (!pre_executed) {
-        if (!verifyMintTx(req)) {
-          continue;
-        }
+      if ((req.flags & MsgFlag::PRE_PROCESS_FLAG)) {
+        printf("Pre-executing\n");
+        // We are being executed in pre-processing
+        auto res = verifyMintTx(req);
+        if (!res) printf("Got an invalid mint tx\n");
+        preExecuteMintTx(req);
+        return;
+      } 
+
+      // We are not in pre-processing and we have not pre-processed the transaction
+      if (!(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {
+        printf("Called without pre-execution\n");
+        auto res = verifyMintTx(req);
+        if (!res) printf("Got an invalid mint tx\n");
+        RawExecuteMintTx(req);
+        return;
       }
-      // By now, either via pre-execution or not, we would have finished verifying the command
+
+      PostExecuteMintTx(req);
+      printf("out reply size is: %u", req.outActualReplySize);
+
+      // if(!(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {
+      //   auto res = verifyMintTx(req);
+      //   if (!res) printf("Got an invalid mint tx\n");
+      //   continue;
+      //   if(req.flags & MsgFlag::PRE_PROCESS_FLAG) {
+      //     executeMintTx(req);
+      //     return;   
+      //   }
+      // }
+
       // Check for conflicts and update the system
-      bool has_conflict = false;
-      has_conflict = executeMintTx(req, updates);
-      statePtr->spent_coins.merge(updates);
-      updates.clear();
+      // bool has_conflict = false;
+      // has_conflict = executeMintTx(req);
+      // statePtr->spent_coins.merge(updates);
+      // updates.clear();
     }
   }
 
@@ -142,6 +278,9 @@ class SimpleTestReplica {
   ISimpleTestReplicaBehavior *behaviorPtr;
   IRequestsHandler *statePtr;
   bftEngine::SimpleInMemoryStateTransfer::ISimpleInMemoryStateTransfer *inMemoryST_;
+  // UTT Params
+  // libutt::Params *p = nullptr;
+  // libutt::BankShareSK *shareSK = nullptr;
 
  public:
   SimpleTestReplica(ICommunication *commObject,
@@ -178,9 +317,10 @@ class SimpleTestReplica {
   uint16_t get_replica_id() { return replicaConfig.replicaId; }
 
   void start() {
-    for (auto &logger: logging::Logger::getCurrentLoggers()) {
-      logger.setLogLevel(log4cplus::TRACE_LOG_LEVEL);
-    }
+    // for (auto &logger: logging::Logger::getCurrentLoggers()) {
+    //   logger.setLogLevel(log4cplus::TRACE_LOG_LEVEL);
+    // }
+
     replica->start();
     ControlStateManager::instance(inMemoryST_).disable();
   }
@@ -260,6 +400,22 @@ class SimpleTestReplica {
                                                        replicaConfig.fVal,
                                                        replicaConfig.cVal,
                                                        true);
+
+    // Load UTT confs
+    LOG_INFO(replicaLogger, "Initializing libutt");
+    libutt::initialize(nullptr, 0);
+
+    std::string ifile = "../utt_pvt_replica_" + std::to_string(rp.replicaId);
+    LOG_INFO(replicaLogger, "Opening iFile" << ifile);
+    std::ifstream fin(ifile);
+
+    simpleAppState->p = new libutt::Params;
+    fin >> *simpleAppState->p;
+
+    simpleAppState->shareSK = new libutt::BankShareSK;
+    fin >> *simpleAppState->shareSK;
+
+    simpleAppState->replicaId = rp.replicaId;
 
     simpleAppState->st = st;
     SimpleTestReplica *replica = new SimpleTestReplica(comm, simpleAppState, replicaConfig, behv, st, metaDataStorage);

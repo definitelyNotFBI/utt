@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "Logger.hpp"
+#include "bftclient/base_types.h"
 #include "bftclient/bft_client.h"
 #include "test_parameters.hpp"
 #include "utt/Coin.h"
@@ -32,10 +33,15 @@ class EcashClient : public bft::client::Client {
         void wait_for_connections();
         ~EcashClient();
         static void Pool(size_t);
+        libutt::CoinComm new_coin();
+        bool verifyMintAckRSI(bft::client::Reply& reply);
     protected:
         uint16_t num_replicas_;
         bft::client::RequestConfig req_config_;
-        std::vector<libutt::CoinSecrets> coins;
+        std::unordered_map<size_t, std::tuple<libutt::CoinComm, libutt::CoinSecrets>> my_coins;
+        std::vector<libutt::BankSharePK> bank_pks;
     private:
+        libutt::Params *p = nullptr;
+        size_t coinCounter = 0;
 };
 

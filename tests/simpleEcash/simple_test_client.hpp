@@ -21,6 +21,7 @@
 
 #include "test_comm_config.hpp"
 #include "test_parameters.hpp"
+#include "bftclient/quorums.h"
 #include "state.hpp"
 #include "communication/CommFactory.hpp"
 #include "communication/CommDefs.hpp"
@@ -37,6 +38,8 @@ using namespace bftEngine;
 using namespace bft::communication;
 using namespace std;
 
+#define PRE_EXEC_ENABLED true
+
 #define test_assert(statement, message)                                                                          \
   {                                                                                                              \
     if (!(statement)) {                                                                                          \
@@ -49,6 +52,7 @@ class SimpleTestClient {
  private:
   ClientParams cp;
   logging::Logger clientLogger;
+  size_t ctr = 1;
 
  public:
   SimpleTestClient(ClientParams& clientParams, logging::Logger& logger) : cp{clientParams}, clientLogger{logger} {}
@@ -111,8 +115,8 @@ class SimpleTestClient {
     for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
       bft::client::RequestConfig req_config;
       req_config.timeout = 100s;
-      bft::client::WriteConfig write_config{req_config, ByzantineSafeQuorum{}};
-      write_config.request.pre_execute = false;
+      bft::client::WriteConfig write_config{req_config, bft::client::ByzantineSafeQuorum{}};
+      write_config.request.pre_execute = PRE_EXEC_ENABLED;
 
       // the python script that runs the client needs to know how many
       // iterations has been done - that's the reason we use printf and not
@@ -122,15 +126,44 @@ class SimpleTestClient {
         printf("Total iterations count: %i\n", i);
       }
 
+      printf("Starting Tx: %d\n", i);
+
       // Prepare request parameters.
-      bft::client::Msg test_message{static_cast<unsigned char>(OpType::Mint)};
+      libutt::CoinComm cc = client.new_coin();
+      bft::client::Msg test_message = UTT_Msg::new_mint_msg(1000, cc, ctr++);
 
       write_config.request.sequence_number = pSeqGen->generateUniqueSequenceNumberForRequest();
 
       // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
+      uint64_t start = get_monotonic_time();
+
       auto x = client.send(write_config,std::move(test_message));
-      printf("Got %lu matched data", x.matched_data.size());
-      printf("Got %lu rsi\n", x.rsi.size());
+      
+      uint64_t end = get_monotonic_time();
+      uint64_t elapsedMicro = end - start;
+
+      if (cp.measurePerformance) {
+        hist.Add(elapsedMicro);
+        // LOG_INFO(clientLogger, "RAWLatencyMicro " << elapsedMicro << " Time " << (uint64_t)(end / 1e3));
+      }
+
+      // printf("Got Tx: %d\n", i);
+
+      // printf("Got %lu bytes of matched data\n", x.matched_data.size());
+      // printf("Got %lu rsi pieces\n", x.rsi.size());
+      // printf("Got %lu rsi data\n", x.rsi.begin()->second.size());
+      auto status = client.verifyMintAckRSI(x);
+      if(!status) {
+        printf("Got invalid transactions from the replicas\n");
+      }
+      printf("Finishing tx: %d\n", i);
+    }
+
+    if (cp.measurePerformance) {
+      LOG_INFO(clientLogger,
+               std::endl
+                   << "Performance info from client " << cp.clientId << std::endl
+                   << hist.ToString());
     }
 
     // // After all requests have been issued, stop communication and clean up.

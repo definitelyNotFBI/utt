@@ -14,10 +14,41 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 
-enum class OpType : uint8_t { Mint, MintAck, Pay };
+#include "utt/Coin.h"
+#include "bftclient/bft_client.h"
+
+enum class OpType : uint8_t { 
+  Mint, 
+  MintAck, 
+  Pay 
+};
 enum class Flags : uint8_t {
   MINT = 0x0,
   PAY = 0x1,
   EMPTY = 0x2,
 };
+
+using namespace bft;
+
+#pragma pack(push,1)
+
+struct MintMsg {
+  size_t val;
+  size_t cc_buf_len;
+  size_t coin_id;
+};
+
+struct MintAckMsg {
+  size_t coin_id;
+  size_t coin_sig_share_size;
+};
+
+struct UTT_Msg {
+  OpType type;
+
+  public:
+  static bft::client::Msg new_mint_msg(size_t value, libutt::CoinComm cc, size_t ctr);
+};
+#pragma pack(pop)
