@@ -26,6 +26,9 @@ ADD \
 ADD \
     https://apt.llvm.org/llvm-snapshot.gpg.key \
     /root
+ADD \
+    deps/libutt.tar.gz \
+    /root
 
 SHELL ["/bin/bash", "-c"]
 
