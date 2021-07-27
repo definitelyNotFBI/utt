@@ -41,7 +41,8 @@ enum Flags : uint8_t {
   READ_ONLY_REQ = 0x1,
   PRE_PROCESS_REQ = 0x2,
   KEY_EXCHANGE_REQ = 0x8,
-  RECONFIG_FLAG = 0x20
+  RECONFIG_FLAG = 0x20,
+  QUICK_PAY_REQ = 0x40,
 };
 
 struct ReplicaSpecificInfo {

@@ -21,6 +21,7 @@
 #include "bftclient/bft_client.h"
 #include "test_parameters.hpp"
 #include "utt/Coin.h"
+#include "utt/Params.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -29,7 +30,7 @@ using namespace bft::communication;
 
 class EcashClient : public bft::client::Client {
     public:
-        EcashClient(ICommunication* comm, bft::client::ClientConfig &cp);
+        EcashClient(ICommunication* comm, bft::client::ClientConfig &cp, libutt::Params *p, std::vector<libutt::BankSharePK> &&bank_pks);
         void wait_for_connections();
         ~EcashClient();
         static void Pool(size_t);
@@ -41,7 +42,10 @@ class EcashClient : public bft::client::Client {
         std::unordered_map<size_t, std::tuple<libutt::CoinComm, libutt::CoinSecrets>> my_coins;
         std::vector<libutt::BankSharePK> bank_pks;
     private:
-        libutt::Params *p = nullptr;
+    // TODO(Come from metadata storage)
+        libutt::Params p;
+        libutt::LTSK my_ltsk;
+        libutt::LTPK my_ltpk;
         size_t coinCounter = 0;
 };
 

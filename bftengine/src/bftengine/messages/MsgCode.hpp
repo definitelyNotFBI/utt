@@ -54,6 +54,8 @@ class MsgCode {
     ClientBatchRequest = 750,
     ClientReply = 800,
 
+    QuickPayRequest = 900,
+    QuickPayOkay,
   };
 };
 
@@ -139,6 +141,12 @@ inline std::ostream& operator<<(std::ostream& os, const MsgCode::Type& c) {
       break;
     case MsgCode::ClientReply:
       os << "ClientReply";
+      break;
+    case MsgCode::QuickPayOkay:
+      os << "QuickPayOkay";
+      break;
+    case MsgCode::QuickPayRequest:
+      os << "QuickPayRequest";
       break;
     default:
       os << "UNKNOWN";

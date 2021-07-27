@@ -80,6 +80,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
                bool,
                false,
                "enables send/receive of batched PreProcess request/reply messages");
+  CONFIG_PARAM(quickPayEnabled, bool, true, "enables the quick-pay feature");
   CONFIG_PARAM(clientBatchingEnabled, bool, false, "enables the concord-client-batch feature");
   CONFIG_PARAM(clientBatchingMaxMsgsNbr, uint16_t, 10, "Maximum messages number in one client batch");
   CONFIG_PARAM(clientTransactionSigningEnabled,
@@ -219,6 +220,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
 
     serialize(outStream, preExecutionFeatureEnabled);
     serialize(outStream, batchedPreProcessEnabled);
+    serialize(outStream, quickPayEnabled);
     serialize(outStream, clientBatchingEnabled);
     serialize(outStream, clientBatchingMaxMsgsNbr);
     serialize(outStream, clientTransactionSigningEnabled);
@@ -287,6 +289,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
 
     deserialize(inStream, preExecutionFeatureEnabled);
     deserialize(inStream, batchedPreProcessEnabled);
+    deserialize(inStream, quickPayEnabled);
     deserialize(inStream, clientBatchingEnabled);
     deserialize(inStream, clientBatchingMaxMsgsNbr);
     deserialize(inStream, clientTransactionSigningEnabled);
@@ -391,6 +394,7 @@ inline std::ostream& operator<<(std::ostream& os, const ReplicaConfig& rc) {
               rc.clientBatchingMaxMsgsNbr,
               rc.keyViewFilePath,
               rc.clientTransactionSigningEnabled,
+              rc.quickPayEnabled,
               rc.adaptiveBatchingIncFactor,
               rc.adaptiveBatchingMaxIncCond,
               rc.adaptiveBatchingMidIncCond,

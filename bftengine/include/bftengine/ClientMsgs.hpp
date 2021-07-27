@@ -17,6 +17,7 @@
 #define REQUEST_MSG_TYPE (700)
 #define BATCH_REQUEST_MSG_TYPE (750)
 #define REPLY_MSG_TYPE (800)
+#define QUICKPAY_MSG_TYPE (900)
 
 namespace bftEngine {
 
@@ -33,8 +34,12 @@ struct ClientBatchRequestMsgHeader {
 struct ClientRequestMsgHeader {
   uint16_t msgType;  // always == REQUEST_MSG_TYPE
   uint32_t spanContextSize = 0u;
-  uint16_t idOfClientProxy;  // TODO - rename - now used mostly as id of external client
-  uint64_t flags;            // bit 0 == isReadOnly, bit 1 = preProcess, bits 2-7 are reserved
+  uint16_t idOfClientProxy;
+  // bit 0 == isReadOnly, 
+  // bit 1 = preProcess, 
+  // bit 2 = quickpay, 
+  // bits 3-7 are reserved
+  uint8_t flags;  
   uint64_t reqSeqNum;
   uint32_t requestLength;
   uint64_t timeoutMilli;
@@ -46,6 +51,23 @@ struct ClientRequestMsgHeader {
 
   // TODO(GG): idOfClientProxy is not needed here
   // TODO(GG): add information about "suggested repliers"
+};
+
+struct ClientQuickPayReplyMsgHeader {
+  uint16_t msgType; // always == QUICKPAY_RESPONSE_TYPE
+  uint32_t spanContextSize = 0u;
+  uint64_t reqSeqNum;
+
+  // Did we fail this transaction?
+  // Can occur if a client tries to double-spend
+  bool fail = false;
+
+  // Total length of the reply including replica specific information
+  uint32_t replyLength;
+
+  // Defines the length of replica specific parts in the total replyLength
+  // If 0 there is no replicaSpecific info
+  uint32_t replicaSpecificInfoLength = 0;
 };
 
 struct ClientReplyMsgHeader {

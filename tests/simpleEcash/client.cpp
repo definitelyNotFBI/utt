@@ -35,6 +35,8 @@
 #include "simple_test_client.hpp"
 #include "Logger.hpp"
 
+#include "utt/Utt.h"
+
 logging::Logger clientLogger = logging::getLogger("simpletest.client");
 
 void parse_params(int argc, char **argv, ClientParams &cp, bftEngine::SimpleClientParams &scp) {
@@ -140,6 +142,7 @@ void parse_params(int argc, char **argv, ClientParams &cp, bftEngine::SimpleClie
 }
 
 int main(int argc, char **argv) {
+  libutt::initialize(nullptr);
   ReplicaConfig::instance().setpreExecutionFeatureEnabled(true);
   // TODO(IG:) configure Log4Cplus's output format, using default for now
 

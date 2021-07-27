@@ -44,6 +44,7 @@ enum ClientMsgFlag : uint8_t {
   HAS_PRE_PROCESSED_REQ = 0x4,
   KEY_EXCHANGE_REQ = 0x8,
   EMPTY_CLIENT_REQ = 0x10,
+  QUICK_PAY_REQ = 0x40,
 };
 
 enum OperationResult : int8_t { SUCCESS, NOT_READY, TIMEOUT, BUFFER_TOO_SMALL, INVALID_REQUEST };

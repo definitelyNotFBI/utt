@@ -23,6 +23,7 @@
 #include "messages/ClientRequestMsg.hpp"
 #include "messages/ClientReplyMsg.hpp"
 #include "messages/ClientBatchRequestMsg.hpp"
+// #include "messages/ClientQuickPayRequestMsg.hpp"
 #include "messages/MsgsCertificate.hpp"
 #include "DynamicUpperLimitWithSimpleFilter.hpp"
 #include "Logger.hpp"
@@ -31,6 +32,7 @@ using namespace std;
 using namespace std::chrono;
 using namespace bft::communication;
 using namespace preprocessor;
+// using namespace quickpay;
 
 namespace bftEngine {
 namespace impl {
@@ -323,6 +325,7 @@ OperationResult SimpleClientImp::sendRequest(uint8_t flags,
                                              const std::string& spanContext) {
   bool isReadOnly = flags & READ_ONLY_REQ;
   bool isPreProcessRequired = flags & PRE_PROCESS_REQ;
+  bool isQuickPay = flags & QUICK_PAY_REQ;
   const std::string msgCid = cid.empty() ? std::to_string(reqSeqNum) + "-" + std::to_string(clientId_) : cid;
   const auto& maxRetransmissionTimeout = limitOfExpectedOperationTime_.upperLimit();
   LOG_DEBUG(logger_,
@@ -331,11 +334,14 @@ OperationResult SimpleClientImp::sendRequest(uint8_t flags,
                   msgCid,
                   isReadOnly,
                   isPreProcessRequired,
+                  isQuickPay,
                   lenOfRequest,
                   reqTimeoutMilli,
                   maxRetransmissionTimeout,
                   spanContext.empty()));
   ConcordAssert(!(isReadOnly && isPreProcessRequired));
+  ConcordAssert(!(isReadOnly && isQuickPay));
+  ConcordAssert(!(isPreProcessRequired && isQuickPay));
 
   if (!communication_->isRunning()) communication_->Start();
   if (!isReadOnly && !isSystemReady()) {
@@ -351,6 +357,9 @@ OperationResult SimpleClientImp::sendRequest(uint8_t flags,
   concordUtils::SpanContext ctx{spanContext};
   if (isPreProcessRequired)
     reqMsg = new ClientPreProcessRequestMsg(clientId_, reqSeqNum, lenOfRequest, request, reqTimeoutMilli, msgCid, ctx);
+  // else if (isQuickPay) {
+  //   reqMsg = new ClientQuickPayRequestMsg(clientId_, reqSeqNum, lenOfRequest, request, reqTimeoutMilli, msgCid, ctx);
+  // }
   else
     reqMsg = new ClientRequestMsg(clientId_, flags, reqSeqNum, lenOfRequest, request, reqTimeoutMilli, msgCid, ctx);
   {

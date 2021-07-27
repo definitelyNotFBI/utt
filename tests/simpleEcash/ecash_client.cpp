@@ -13,15 +13,18 @@
 #include <cstdint>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include <tuple>
 #include <unordered_map>
 
+#include "assertUtils.hpp"
 #include "ecash_client.hpp"
 #include "SimpleClient.hpp"
 #include "adapter_config.hpp"
 #include "bftclient/bft_client.h"
 #include "state.hpp"
 #include "utt/Coin.h"
+#include "utt/Params.h"
 #include "utt/Utt.h"
 
 using namespace std;
@@ -38,26 +41,15 @@ std::set<bft::client::ReplicaId> generateSetOfReplicas_helpFunc(const int16_t nu
   return retVal;
 }
 
-EcashClient::EcashClient(ICommunication *comm, bft::client::ClientConfig &conf)
+EcashClient::EcashClient(ICommunication *comm, bft::client::ClientConfig &conf, libutt::Params *p, std::vector<libutt::BankSharePK>&& bank_pks)
   :bft::client::Client(std::unique_ptr<ICommunication>(comm),conf),
   num_replicas_(conf.all_replicas.size()),
   my_coins(),
-  bank_pks()
+  bank_pks(bank_pks),
+  p(*p),
+  my_ltsk(libutt::LTSK::random()),
+  my_ltpk(libutt::LTPK(*p, my_ltsk))
 {
-
-  libutt::initialize(nullptr);
-
-  // Load the params file
-  p = new libutt::Params;
-  std::ifstream ifile("../utt_pub_client.dat");
-  ifile >> *p;
-  size_t n =num_replicas_;
-  for(size_t i=0; i<n;i++) {
-    BankSharePK bspk;
-    ifile >> bspk;
-    bank_pks.push_back(bspk);
-  }
-  assertEqual(bank_pks.size(), num_replicas_);
 }
 
 void EcashClient::wait_for_connections() {
@@ -84,11 +76,13 @@ EcashClient::~EcashClient() {
   this->stop();
 }
 
+// Send an epk since it has a proof
 CoinComm EcashClient::new_coin() {
-  // CoinSecrets cs(*p, 0);
-  auto x = CoinComm::NewCoin(*p, 100);
-  my_coins[coinCounter++] = x;
-  auto cc = std::get<0>(x);
+  CoinSecrets cs(p, 0);
+  CoinComm cc(p, cs);
+
+  // auto epk = my_ltpk.deriveEPK(p, const Fr &r);
+
   return cc;
 }
 
@@ -108,7 +102,7 @@ bool EcashClient::verifyMintAckRSI(bft::client::Reply& reply) {
   }
 
   auto coin_shares = std::unordered_map<uint16_t, CoinSig>(reply.rsi.size());
-  printf("Reached %d\n", 0);
+  // printf("Reached %d\n", 0);
   // Check size of rsi for every message
   for(auto& [sender, rsi]: reply.rsi) {
     if(rsi.size() <= sizeof(MintAckMsg)) {
@@ -125,12 +119,12 @@ bool EcashClient::verifyMintAckRSI(bft::client::Reply& reply) {
      reinterpret_cast<char*>(rsi.data()+sizeof(MintAckMsg)), 
      static_cast<long>(mint_ack->coin_sig_share_size)
     );
-    printf("Reached %d; Sender is %u\n", 1, sender.val);
+    // printf("Reached %d; Sender is %u\n", 1, sender.val);
     
     // libutt::CoinSig coinShare;
     // ss >> coinShare;
 
-    printf("Reached %d\n", 4);
+    // printf("Reached %d\n", 4);
 
     // printf("Attempting to verify\n");
     auto& [cc, cs] = my_coins[mint_ack->coin_id];
@@ -140,8 +134,8 @@ bool EcashClient::verifyMintAckRSI(bft::client::Reply& reply) {
     // }
 
     // coin_shares.emplace(sender.val, CoinSig{coinShare});
-    printf("Reached %d\n", 2);
+    // printf("Reached %d\n", 2);
   }
-  printf("Reached %d\n", 3);
+  // printf("Reached %d\n", 3);
   return true;
 }

@@ -34,6 +34,8 @@
 #include "adapter_config.hpp"
 #include "bftclient/bft_client.h"
 
+#include "utt/Bank.h"
+
 using namespace bftEngine;
 using namespace bft::communication;
 using namespace std;
@@ -86,7 +88,25 @@ class SimpleTestClient {
     ICommunication* comm = bft::communication::CommFactory::create(conf);
 
     bft::client::ClientConfig adapter_config = make_adapter_config(cp);
-    EcashClient client(comm, adapter_config);
+    // Load the params file (move it out)
+    auto p = new libutt::Params;
+    std::ifstream ifile("utt_pub_client.dat");
+    ConcordAssert(!ifile.fail());
+
+    ifile >> *p;
+    std::vector<libutt::BankSharePK> bank_pks;
+    std::cout<< "Params: " << *p << std::endl;
+    size_t n =cp.numOfReplicas;
+    for(size_t i=0; i<n;i++) {
+      libutt::BankSharePK bspk;
+      ifile >> bspk;
+      bank_pks.push_back(bspk);
+    }
+    assertEqual(bank_pks.size(), cp.numOfReplicas);
+
+    ifile.close();
+
+    EcashClient client(comm, adapter_config, p, std::move(bank_pks));
 
     // MsgReceiver receiver;
     // receiver.activate(10000000);
@@ -126,7 +146,7 @@ class SimpleTestClient {
         printf("Total iterations count: %i\n", i);
       }
 
-      printf("Starting Tx: %d\n", i);
+      // printf("Starting Tx: %d\n", i);
 
       // Prepare request parameters.
       libutt::CoinComm cc = client.new_coin();
@@ -156,7 +176,7 @@ class SimpleTestClient {
       if(!status) {
         printf("Got invalid transactions from the replicas\n");
       }
-      printf("Finishing tx: %d\n", i);
+      // printf("Finishing tx: %d\n", i);
     }
 
     if (cp.measurePerformance) {

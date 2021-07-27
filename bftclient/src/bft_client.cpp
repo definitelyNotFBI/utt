@@ -65,6 +65,8 @@ Msg Client::createClientMsg(const RequestConfig& config, Msg&& request, bool rea
 
   if (write_req_with_pre_exec) {  // read_only messages are never pre-executed
     flags |= PRE_PROCESS_REQ;
+  } else if (config.quickpay) {
+    flags |= QUICK_PAY_REQ;
   }
   if (config.key_exchange) {
     flags |= KEY_EXCHANGE_REQ;

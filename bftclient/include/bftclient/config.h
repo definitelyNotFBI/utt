@@ -80,6 +80,7 @@ struct RequestConfig {
   std::string span_context = "";
   bool key_exchange = false;
   bool reconfiguration = false;
+  bool quickpay = false;
 };
 
 // The configuration for a single write request.

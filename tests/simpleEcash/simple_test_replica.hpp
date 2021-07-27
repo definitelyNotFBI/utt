@@ -183,6 +183,8 @@ class SimpleAppState : public IRequestsHandler {
     pRet->type = OpType::MintAck;
 
     auto coin = shareSK->thresholdSignCoin(*p, cc);
+    // TODO: Check if the value is actually zero
+    // TODO: Add value
     ss << coin;
 
     auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
