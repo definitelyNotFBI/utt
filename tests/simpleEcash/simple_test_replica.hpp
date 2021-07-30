@@ -13,6 +13,19 @@
 
 #pragma once
 
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <fstream>
+#include <memory>
+#include <set>
+#include <sstream>
+#include <string>
+#include <thread>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 #include "Logging4cplus.hpp"
 #include "PrimitiveTypes.hpp"
 #include "assertUtils.hpp"
@@ -23,16 +36,7 @@
 #include "ControlStateManager.hpp"
 #include "SimpleStateTransfer.hpp"
 #include "FileStorage.hpp"
-#include <cstdint>
-#include <cstdio>
-#include <cstring>
-#include <fstream>
-#include <set>
-#include <sstream>
-#include <thread>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+#include "rocksdb/native_client.h"
 #include "commonDefs.h"
 #include "simple_test_replica_behavior.hpp"
 #include "threshsign/IThresholdSigner.h"
@@ -65,15 +69,9 @@ class SimpleAppState : public IRequestsHandler {
   libutt::BankShareSK *shareSK = nullptr;
   libutt::Params *p = nullptr;
   uint16_t replicaId = 0;
-  // std::unordered_map<
-  //   uint16_t, 
-  //   std::unordered_map<
-  //     size_t, 
-  //     std::vector<unsigned char>
-  //   >
-  // > stored_sigs;
 
   // (TODO) DB Stress test
+
   // Baselines: ZCash (no anonymity budget) vs UTT,
   // Veksel?
   // BFT Baselines, FastPay(RUST) baseline, Coconut, SNARKs
@@ -141,14 +139,25 @@ class SimpleAppState : public IRequestsHandler {
       const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
       mint_req->cc_buf_len
     );
-    libutt::CoinComm cc;
-    ss >> cc;
+    
+    libutt::EPK empty_coin;
+    ss >> empty_coin;
     ss.clear();
+
+    // TODO: Check if the value is actually zero
+    if (!libutt::EpkProof::verify(*p, empty_coin)) {
+      printf("verification failed\n");
+      std::cout << "Params:" << *p << std::endl;
+      std::cout << "Got:" << empty_coin << std::endl;
+      return false;
+    }
 
     auto *pRet = reinterpret_cast<UTT_Msg*>(req.outReply);
     pRet->type = OpType::MintAck;
 
-    auto coin = shareSK->thresholdSignCoin(*p, cc);
+    // TODO: Add value
+    libutt::CoinComm cc(*p, empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK->sign(*p, cc);
     ss << coin;
 
     auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
@@ -175,16 +184,26 @@ class SimpleAppState : public IRequestsHandler {
       const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
       mint_req->cc_buf_len
     );
-    libutt::CoinComm cc;
-    ss >> cc;
+    libutt::EPK empty_coin;
+    ss >> empty_coin;
     ss.clear();
+
+    // DONE: Check if the value is actually zero
+    if (!libutt::EpkProof::verify(*p, empty_coin)) {
+      printf("verification failed\n");
+      std::cout << "Got:" << empty_coin << std::endl;
+      return false;
+    }
 
     auto *pRet = reinterpret_cast<UTT_Msg*>(req.outReply);
     pRet->type = OpType::MintAck;
 
-    auto coin = shareSK->thresholdSignCoin(*p, cc);
-    // TODO: Check if the value is actually zero
+    // TODO(try) libutt::Fr(long)
     // TODO: Add value
+    libutt::CoinComm cc(*p, empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK->sign(*p, cc);
+    // Alin: Send r to the client if the bank was one entity; 
+    // We can also set r=0 since the client will re-randomize it anyways.
     ss << coin;
 
     auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
@@ -196,7 +215,6 @@ class SimpleAppState : public IRequestsHandler {
     req.outReplicaSpecificInfoSize = ack->coin_sig_share_size + sizeof(MintAckMsg);
     req.outActualReplySize = req.outReplicaSpecificInfoSize + sizeof(UTT_Msg);
 
-    // std::cout << "Max Reply Size is:" << req.maxReplySize << std::endl;
     req.outExecutionStatus = 0;
     return true;
   }
@@ -208,8 +226,6 @@ class SimpleAppState : public IRequestsHandler {
   void execute(ExecutionRequestsQueue &requests,
                const std::string &batchCid,
                concordUtils::SpanWrapper &parent_span) override {
-    printf("Test tag\n");
-    std::unordered_set<uint8_t> updates;
     for (auto &req : requests) {
       // These are invalid transactions, Ignore.
       if (req.outExecutionStatus != 1) {
@@ -240,27 +256,11 @@ class SimpleAppState : public IRequestsHandler {
 
       PostExecuteMintTx(req);
       printf("out reply size is: %u", req.outActualReplySize);
-
-      // if(!(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {
-      //   auto res = verifyMintTx(req);
-      //   if (!res) printf("Got an invalid mint tx\n");
-      //   continue;
-      //   if(req.flags & MsgFlag::PRE_PROCESS_FLAG) {
-      //     executeMintTx(req);
-      //     return;   
-      //   }
-      // }
-
-      // Check for conflicts and update the system
-      // bool has_conflict = false;
-      // has_conflict = executeMintTx(req);
-      // statePtr->spent_coins.merge(updates);
-      // updates.clear();
     }
   }
 
   struct State {
-    std::unordered_set<uint8_t> spent_coins;
+    std::shared_ptr<concord::storage::rocksdb::NativeClient> client;
   };
 
   State *statePtr;
@@ -380,6 +380,7 @@ class SimpleTestReplica {
     replicaConfig.preExecutionFeatureEnabled = true;
     replicaConfig.numOfExternalClients = 10;
     replicaConfig.clientBatchingEnabled = true;
+
     // This is the state machine that the replica will drive.
     SimpleAppState *simpleAppState = new SimpleAppState(rp.numOfClients, rp.numOfReplicas);
 
@@ -389,11 +390,14 @@ class SimpleTestReplica {
 #elif USE_COMM_TLS_TCP
     TlsTcpConfig conf =
         testCommConfig.GetTlsTCPConfig(true, rp.replicaId, rp.numOfClients, rp.numOfReplicas, rp.configFileName);
+    LOG_INFO(replicaLogger, "GetTlsConfig"<< -1);
 #else
     PlainUdpConfig conf =
         testCommConfig.GetUDPConfig(true, rp.replicaId, rp.numOfClients, rp.numOfReplicas, rp.configFileName);
 #endif
+    printf("GetTlsConfig %d\n", 0);
     auto comm = bft::communication::CommFactory::create(conf);
+    printf("GetTlsConfig %d\n", -1);
 
     bftEngine::SimpleInMemoryStateTransfer::ISimpleInMemoryStateTransfer *st =
         bftEngine::SimpleInMemoryStateTransfer::create(simpleAppState->statePtr,
@@ -407,9 +411,13 @@ class SimpleTestReplica {
     LOG_INFO(replicaLogger, "Initializing libutt");
     libutt::initialize(nullptr, 0);
 
-    std::string ifile = "../utt_pvt_replica_" + std::to_string(rp.replicaId);
+    std::string ifile = "utt_pvt_replica_" + std::to_string(rp.replicaId);
     LOG_INFO(replicaLogger, "Opening iFile" << ifile);
     std::ifstream fin(ifile);
+
+    if (fin.fail()) {
+      throw std::runtime_error("Failed to open libutt params file");
+    }
 
     simpleAppState->p = new libutt::Params;
     fin >> *simpleAppState->p;
@@ -420,6 +428,10 @@ class SimpleTestReplica {
     simpleAppState->replicaId = rp.replicaId;
 
     simpleAppState->st = st;
+    simpleAppState->statePtr = new SimpleAppState::State;
+
+    using namespace concord::storage::rocksdb;
+    simpleAppState->statePtr->client = NativeClient::newClient("local-db"+std::to_string(replicaConfig.replicaId), false, NativeClient::DefaultOptions{});
     SimpleTestReplica *replica = new SimpleTestReplica(comm, simpleAppState, replicaConfig, behv, st, metaDataStorage);
     return replica;
   }

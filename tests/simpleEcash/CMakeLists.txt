@@ -24,6 +24,7 @@ target_include_directories(simpleEcash_client
                            ${CMAKE_SOURCE_DIR}/bftclient/src
                            ${UTT_INCLUDES}
                            ${bftclient_new_INCLUDE_DIRECTORIES}
+                           ${concordbft_storage_INCLUDE_DIRECTORIES}
 )
 
 target_link_libraries(simpleEcash_client 
@@ -31,6 +32,7 @@ target_link_libraries(simpleEcash_client
     corebft 
     test_config_lib 
     bftclient_new
+    concordbft_storage
     ${UTT_LIBS}
 )
 set_target_properties(simpleEcash_client PROPERTIES OUTPUT_NAME client)
@@ -62,6 +64,7 @@ target_include_directories(simpleEcash_server
                            ${bftengine_SOURCE_DIR}/include
                            ${bftclient_new_INCLUDE_DIRECTORIES}
                            ${UTT_INCLUDES}
+                           ${concordbft_storage_INCLUDE_DIRECTORIES}
 )
 
 target_link_libraries(simpleEcash_server 
@@ -69,6 +72,7 @@ target_link_libraries(simpleEcash_server
     corebft 
     simple_file_storage_lib 
     test_config_lib
+    concordbft_storage
     ${UTT_LIBS}
 )
 set_target_properties(simpleEcash_server PROPERTIES OUTPUT_NAME server)
@@ -88,7 +92,7 @@ add_custom_target(generate_test_config2
         		  COMMENT "Generating config files for simpleEcash" 
         		)
 add_custom_target(generate_utt_config
-                  COMMAND GenerateUTTKeys -t 1 -n 4
+                  COMMAND GenerateUTTKeys -t 2 -n 4
                   COMMENT "Generating UTT config files for simpleEcash" 
 )
 

@@ -4,4 +4,4 @@ set -e
 
 scriptdir=$(cd $(dirname $0); pwd -P)
 
-$scriptdir/../client
+$scriptdir/../client -cf comm_config

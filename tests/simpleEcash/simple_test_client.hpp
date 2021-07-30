@@ -14,6 +14,7 @@
 #pragma once
 
 #include <log4cplus/loglevel.h>
+#include <xassert/XAssert.h>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -54,7 +55,6 @@ class SimpleTestClient {
  private:
   ClientParams cp;
   logging::Logger clientLogger;
-  size_t ctr = 1;
 
  public:
   SimpleTestClient(ClientParams& clientParams, logging::Logger& logger) : cp{clientParams}, clientLogger{logger} {}
@@ -89,31 +89,40 @@ class SimpleTestClient {
 
     bft::client::ClientConfig adapter_config = make_adapter_config(cp);
     // Load the params file (move it out)
-    auto p = new libutt::Params;
+    libutt::Params p;
     std::ifstream ifile("utt_pub_client.dat");
     ConcordAssert(!ifile.fail());
 
-    ifile >> *p;
+    ifile >> p;
     std::vector<libutt::BankSharePK> bank_pks;
-    std::cout<< "Params: " << *p << std::endl;
     size_t n =cp.numOfReplicas;
     for(size_t i=0; i<n;i++) {
       libutt::BankSharePK bspk;
       ifile >> bspk;
       bank_pks.push_back(bspk);
     }
-    assertEqual(bank_pks.size(), cp.numOfReplicas);
+    libutt::BankPK main_pk;
+    ifile >> main_pk;
+
+    std::cout << "MainPK: " << main_pk << std::endl;
 
     ifile.close();
+    
+    // // TODO: Check if the main_pk is indeed the lagrange interpolation of the given pk shares
+    //
+    // auto ids = std::vector<size_t>(cp.numOfFaulty+1);
+    // auto pks = std::vector<libutt::BankSharePK>(cp.numOfFaulty+1);
+    // for(auto i=0; i< cp.numOfFaulty+1; i++) {
+    //   ids.push_back(i);
+    //   pks.push_back(bank_pks[i]);
+    // }
 
-    EcashClient client(comm, adapter_config, p, std::move(bank_pks));
+    // auto bpk2 = libutt::BankThresholdKeygen::aggregate(cp.numOfReplicas, ids, pks);
+    // assertEqual(bpk.X, bpk2.X);
 
-    // MsgReceiver receiver;
-    // receiver.activate(10000000);
-    // // Breaking change
-    // // comm->setReceiver(id, &receiver);
-    // // End breaking change
-    // // Comment the above for a safe version
+    assertEqual(bank_pks.size(), cp.numOfReplicas);
+
+    EcashClient client(comm, adapter_config, std::move(p), std::move(bank_pks), main_pk);
 
     client.wait_for_connections();
     printf("Connected to all the replicas\n");
@@ -149,8 +158,8 @@ class SimpleTestClient {
       // printf("Starting Tx: %d\n", i);
 
       // Prepare request parameters.
-      libutt::CoinComm cc = client.new_coin();
-      bft::client::Msg test_message = UTT_Msg::new_mint_msg(1000, cc, ctr++);
+      auto [coin_id, empty_coin] = client.new_coin();
+      bft::client::Msg test_message = UTT_Msg::new_mint_msg(1000, empty_coin, coin_id);
 
       write_config.request.sequence_number = pSeqGen->generateUniqueSequenceNumberForRequest();
 
@@ -173,9 +182,10 @@ class SimpleTestClient {
       // printf("Got %lu rsi pieces\n", x.rsi.size());
       // printf("Got %lu rsi data\n", x.rsi.begin()->second.size());
       auto status = client.verifyMintAckRSI(x);
-      if(!status) {
+      if(!status.has_value()) {
         printf("Got invalid transactions from the replicas\n");
       }
+
       // printf("Finishing tx: %d\n", i);
     }
 

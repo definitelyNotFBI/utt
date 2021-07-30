@@ -54,11 +54,14 @@
 
 #include "test_comm_config.hpp"
 #include "test_parameters.hpp"
+#include "config_file_parser.hpp"
 #include "simple_test_replica.hpp"
 #include "simple_test_replica_behavior.hpp"
 
 // bftEngine includes
 #include "Logger.hpp"
+
+#define FILE_NAME ("./scripts/sample_config.txt")
 
 using namespace std;
 using namespace bftEngine;
@@ -164,6 +167,7 @@ void signalHandler(int signum) {
   exit(0);
 }
 
+
 int main(int argc, char **argv) {
   ReplicaParams rp;
   parse_params(argc, argv, rp);
@@ -187,12 +191,16 @@ int main(int argc, char **argv) {
     rp.viewChangeEnabled = true;
 
   LOG_INFO(replicaLogger,
-           "ReplicaParams: replicaId: " << rp.replicaId << ", numOfReplicas: " << rp.numOfReplicas << ", numOfClients: "
+           "ReplicaParams: replicaId: " << rp.replicaId 
+                                        << ", numOfReplicas: " << rp.numOfReplicas 
+                                        << ", numOfClients: "
                                         << rp.numOfClients << ", vcEnabled: " << rp.viewChangeEnabled
                                         << ", vcTimeout: " << rp.viewChangeTimeout
                                         << ", statusReportTimerMillisec: " << rp.statusReportTimerMillisec
                                         << ", behavior: " << (uint16_t)rp.replicaBehavior
-                                        << ", persistencyMode: " << (uint16_t)rp.persistencyMode);
+                                        << ", persistencyMode: " << (uint16_t)rp.persistencyMode
+                                        << ", configFileName: " << rp.configFileName
+  );
   
   replica = SimpleTestReplica::create_replica(replicaBehavior, rp, metaDataStorage);
   printf("Starting node\n");

@@ -28,7 +28,10 @@
 #include <fstream>
 #include <algorithm>
 #include <cstring>
+#include "Logging4cplus.hpp"
 #include "string.hpp"
+
+logging::Logger testLogger = logging::getLogger("simpletest.replica.test");
 
 using std::string;
 using std::getline;
@@ -46,29 +49,42 @@ bool ConfigFileParser::Parse() {
   while (stream) {
     string value, tmp;
     getline(stream, tmp, end_of_line_);
+    LOG_INFO(testLogger, "Processing: " << tmp.c_str());
     // get rid of leading and trailing spaces
     concord::util::trim_inplace(tmp);
-    if (tmp[0] == comment_delimiter_)  // Ignore comments.
+    if (tmp[0] == comment_delimiter_)  // Ignore comments. 
+    {
+      LOG_INFO(testLogger, "Ignoring a comment");
       continue;
+    }
 
     if (tmp.empty())  // Skip empty lines.
+    {
+      LOG_INFO(testLogger, "Ignoring an empty line");
       continue;
+    }
 
     if (tmp[0] == value_delimiter_) {  // of the form '- value'
-      value = tmp.substr(tmp[1]);
+      LOG_INFO(testLogger, "Got a value: tmp[1]?" << tmp[1]);
+      value = tmp.substr(1);
+      LOG_INFO(testLogger, "Got a value: " << value);
       concord::util::ltrim_inplace(tmp);
-      if (!key.empty())
+      if (!key.empty()) {
         parameters_map_.insert(pair<string, string>(key, value));
+        continue;
+      }
       else {
         LOG_FATAL(logger_, "not found key for value " << value);
         return false;
       }
     }
+    LOG_INFO(testLogger, "Extracting a key");
     size_t keyDelimiterPos = tmp.find_first_of(key_delimiter_);
     if (keyDelimiterPos != string::npos) {
       key = tmp.substr(0, keyDelimiterPos);
       if (tmp.size() > key.size() + 1) {
         // Handle simple key-value pair.
+        LOG_INFO(testLogger, "Got a key-value pair");
         value = tmp.substr(keyDelimiterPos + 1);
         concord::util::rtrim_inplace(key);
         concord::util::ltrim_inplace(value);

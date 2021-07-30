@@ -22,12 +22,8 @@
 enum class OpType : uint8_t { 
   Mint, 
   MintAck, 
-  Pay 
-};
-enum class Flags : uint8_t {
-  MINT = 0x0,
-  PAY = 0x1,
-  EMPTY = 0x2,
+  Pay,
+  PayAck,
 };
 
 using namespace bft;
@@ -45,10 +41,14 @@ struct MintAckMsg {
   size_t coin_sig_share_size;
 };
 
+struct PayMsg {
+
+};
+
 struct UTT_Msg {
   OpType type;
 
   public:
-  static bft::client::Msg new_mint_msg(size_t value, libutt::CoinComm cc, size_t ctr);
+  static bft::client::Msg new_mint_msg(size_t value, libutt::EPK empty_coin, size_t ctr);
 };
 #pragma pack(pop)

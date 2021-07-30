@@ -4,10 +4,10 @@
 #include "state.hpp"
 #include "bftclient/bft_client.h"
 
-bft::client::Msg UTT_Msg::new_mint_msg(size_t value, libutt::CoinComm cc, size_t ctr) {
+bft::client::Msg UTT_Msg::new_mint_msg(size_t value, libutt::EPK empty_coin, size_t ctr) {
   std::stringstream ss;
-  ss << cc;
-  auto cc_buf = ss.tellp();
+  ss << empty_coin;
+  auto cc_buf = ss.str().size();
 
   bft::client::Msg msg(sizeof(UTT_Msg)+sizeof(MintMsg)+cc_buf);
 

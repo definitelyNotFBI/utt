@@ -20,6 +20,7 @@
 #include <vector>
 #include <fstream>
 
+#include "Logging4cplus.hpp"
 #include "communication/CommFactory.hpp"
 #include "threshsign/ThresholdSignaturesSchemes.h"
 #include "KeyfileIOUtils.hpp"
@@ -34,6 +35,7 @@ using bft::communication::NodeInfo;
 using bftEngine::ReplicaConfig;
 using std::string;
 using std::vector;
+
 
 #define CLIENTS_CONFIG "clients_config"
 #define REPLICAS_CONFIG "replicas_config"
@@ -53,7 +55,8 @@ const std::string TestCommConfig::default_listen_ip_ = "0.0.0.0";
 // values are loaded for non-cryptographic configuration parameters.
 void TestCommConfig::GetReplicaConfig(uint16_t replica_id,
                                       std::string keyFilePrefix,
-                                      bftEngine::ReplicaConfig* out_config) {
+                                      bftEngine::ReplicaConfig* out_config) 
+{
   std::string key_file_name = keyFilePrefix + std::to_string(replica_id);
   auto sys = inputReplicaKeyfileMultisig(key_file_name, *out_config);
   if (sys) bftEngine::CryptoManager::instance(sys);
@@ -71,6 +74,7 @@ std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool 
     LOG_FATAL(logger_, "Failed to parse configuration file: " << config_file_name);
     exit(-1);
   }
+
   num_of_clients = static_cast<uint16_t>(config_file_parser.Count(CLIENTS_CONFIG));
   num_of_replicas = static_cast<uint16_t>(config_file_parser.Count(REPLICAS_CONFIG));
   if ((is_replica && (node_id + 1 > num_of_replicas)) ||
@@ -177,10 +181,12 @@ TlsTcpConfig TestCommConfig::GetTlsTCPConfig(bool is_replica,
                                              const std::string& cert_root_path) {
   string ip;
   uint16_t port;
-
   std::unordered_map<NodeNum, NodeInfo> nodes =
       SetUpNodes(is_replica, id, ip, port, num_of_clients, num_of_replicas, config_file_name);
 
+  for(auto& [k,v]: nodes) {
+    LOG_INFO(clientLogger, "Key:"<< k);
+  }
   // private key decryption configuration for tests
   concord::secretsmanager::SecretData secretData;
   secretData.algo = "AES/CBC/PKCS5Padding";
