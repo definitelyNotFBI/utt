@@ -69,6 +69,8 @@ bool ConfigFileParser::Parse() {
       value = tmp.substr(1);
       LOG_INFO(testLogger, "Got a value: " << value);
       concord::util::ltrim_inplace(tmp);
+      // Trim the value in place
+      concord::util::ltrim_inplace(value);
       if (!key.empty()) {
         parameters_map_.insert(pair<string, string>(key, value));
         continue;

@@ -184,9 +184,9 @@ TlsTcpConfig TestCommConfig::GetTlsTCPConfig(bool is_replica,
   std::unordered_map<NodeNum, NodeInfo> nodes =
       SetUpNodes(is_replica, id, ip, port, num_of_clients, num_of_replicas, config_file_name);
 
-  for(auto& [k,v]: nodes) {
-    LOG_INFO(clientLogger, "Key:"<< k);
-  }
+  // for(auto& [k,v]: nodes) {
+  //   LOG_INFO(clientLogger, "Key:"<< k);
+  // }
   // private key decryption configuration for tests
   concord::secretsmanager::SecretData secretData;
   secretData.algo = "AES/CBC/PKCS5Padding";
