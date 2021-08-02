@@ -163,11 +163,22 @@ set(
   ${CMAKE_SOURCE_DIR}/libutt/libutt/include
 )
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 set(
   UTT_LIBS
   "utt"
   "stdc++fs"
   "gomp"
+  "ntl"
+  "ff"
+  "pthread"
+  "gmp"
+  "gmpxx"
+  "zm"
+  "xutils"
+  "xassert"
+  "Threads::Threads"
 )
 
 set(

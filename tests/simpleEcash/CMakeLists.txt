@@ -92,11 +92,12 @@ add_custom_target(generate_test_config2
         		  COMMENT "Generating config files for simpleEcash" 
         		)
 add_custom_target(generate_utt_config
-                  COMMAND GenerateUTTKeys -t 2 -n 4
+                  COMMAND GenerateUTTKeys -t 2 -n 4 -g 10
                   COMMENT "Generating UTT config files for simpleEcash" 
 )
 
-add_dependencies(simpleEcash_server generate_test_config2 generate_utt_config)
+add_dependencies(simpleEcash_server generate_test_config2)
+add_dependencies(simpleEcash_server generate_utt_config)
 
 add_custom_target(copy_simple_test_scripts2 ALL COMMENT "Copying scripts of simpleEcash")
 add_custom_command(TARGET copy_simple_test_scripts2

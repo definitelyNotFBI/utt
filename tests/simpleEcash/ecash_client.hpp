@@ -20,6 +20,7 @@
 #include "Logger.hpp"
 #include "bftclient/base_types.h"
 #include "bftclient/bft_client.h"
+#include "state.hpp"
 #include "test_parameters.hpp"
 #include "utt/Bank.h"
 #include "utt/Coin.h"
@@ -34,26 +35,30 @@ class EcashClient : public bft::client::Client {
     public:
         EcashClient(ICommunication* comm, 
             bft::client::ClientConfig &cp, 
-            libutt::Params &&p, 
+            const libutt::Params &p, 
             std::vector<libutt::BankSharePK> &&bank_pks,
-            libutt::BankPK bpk
+            libutt::BankPK bpk,
+            std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> &&my_initial_coins
         );
         void wait_for_connections();
         ~EcashClient();
         static void Pool(size_t);
         std::tuple<size_t, libutt::EPK> new_coin();
         std::optional<libutt::CoinSig> verifyMintAckRSI(bft::client::Reply& reply);
-    protected:
-        uint16_t num_replicas_;
-        bft::client::RequestConfig req_config_;
-        std::unordered_map<size_t, libutt::ESK> my_coins;
-        std::vector<libutt::BankSharePK> bank_pks;
+        bool verifyPayAckRSI(bft::client::Reply& reply);
+        bft::client::Msg NewTestPaymentTx();
     private:
     // TODO(Come from metadata storage)
         libutt::Params p;
         libutt::LTSK my_ltsk;
         libutt::LTPK my_ltpk;
-        size_t coinCounter = 0;
+        size_t coinCounter = 1;
         libutt::BankPK bpk;
+    protected:
+        uint16_t num_replicas_;
+        std::unordered_map<size_t, libutt::ESK> my_coins;
+        std::vector<libutt::BankSharePK> bank_pks;
+        std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
 };
+
 

@@ -17,7 +17,9 @@
 #include <xassert/XAssert.h>
 #include <chrono>
 #include <cstdint>
+#include <fstream>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "test_comm_config.hpp"
@@ -107,6 +109,29 @@ class SimpleTestClient {
     std::cout << "MainPK: " << main_pk << std::endl;
 
     ifile.close();
+
+    auto genesis_file_id = cp.clientId - cp.numOfReplicas;
+    auto genesis_file = "./genesis_" + std::to_string(genesis_file_id);
+    std::cout << "Reading genesis file: " << genesis_file << std::endl;
+
+    std::ifstream gen_file(genesis_file);
+    ConcordAssert(!gen_file.fail());
+
+    std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
+
+    for(auto j=0; j<2;j++) {
+      libutt::CoinSecrets cs_temp;
+      libutt::CoinComm cc_temp;
+      libutt::CoinSig csign_temp;
+
+      gen_file >> cs_temp;
+      gen_file >> cc_temp;
+      gen_file >> csign_temp;
+
+      my_initial_coins.push_back(std::make_tuple(cs_temp, cc_temp, csign_temp));
+    }
+
+    gen_file.close();
     
     // // TODO: Check if the main_pk is indeed the lagrange interpolation of the given pk shares
     //
@@ -122,13 +147,10 @@ class SimpleTestClient {
 
     assertEqual(bank_pks.size(), cp.numOfReplicas);
 
-    EcashClient client(comm, adapter_config, std::move(p), std::move(bank_pks), main_pk);
+    EcashClient client(comm, adapter_config, p, std::move(bank_pks), main_pk, std::move(my_initial_coins));
 
     client.wait_for_connections();
     printf("Connected to all the replicas\n");
-
-    concordUtils::Histogram hist;
-    hist.Clear();
 
     LOG_INFO(clientLogger, "Starting " << cp.numOfOperations);
 
@@ -141,9 +163,72 @@ class SimpleTestClient {
       exit(-1);
     }
 
+    concordUtils::Histogram hist;
+    // hist.Clear();
+
+    // for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
+    //   bft::client::RequestConfig req_config;
+    //   req_config.timeout = 100s;
+    //   bft::client::WriteConfig write_config{req_config, bft::client::ByzantineSafeQuorum{}};
+    //   write_config.request.pre_execute = PRE_EXEC_ENABLED;
+
+    //   // the python script that runs the client needs to know how many
+    //   // iterations has been done - that's the reason we use printf and not
+    //   // logging module - to keep the output exactly as we expect.
+    //   if (i > 0 && i % 100 == 0) {
+    //     printf("Iterations count: 100\n");
+    //     printf("Total iterations count: %i\n", i);
+    //   }
+
+    //   // printf("Starting Tx: %d\n", i);
+
+    //   // Prepare request parameters.
+    //   auto [coin_id, empty_coin] = client.new_coin();
+    //   bft::client::Msg test_message = UTT_Msg::new_mint_msg(1000, empty_coin, coin_id);
+    //   // std::cout << "Sending: " << empty_coin << std::endl;
+    //   // std::cout << "Coin id: " << coin_id << std::endl;
+
+    //   write_config.request.sequence_number = pSeqGen->generateUniqueSequenceNumberForRequest();
+
+    //   // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
+    //   uint64_t start = get_monotonic_time();
+
+    //   auto x = client.send(write_config,std::move(test_message));
+      
+    //   uint64_t end = get_monotonic_time();
+    //   uint64_t elapsedMicro = end - start;
+
+    //   if (cp.measurePerformance) {
+    //     hist.Add(elapsedMicro);
+    //     // LOG_INFO(clientLogger, "RAWLatencyMicro " << elapsedMicro << " Time " << (uint64_t)(end / 1e3));
+    //   }
+
+    //   // printf("Got Tx: %d\n", i);
+
+    //   // printf("Got %lu bytes of matched data\n", x.matched_data.size());
+    //   // printf("Got %lu rsi pieces\n", x.rsi.size());
+    //   // printf("Got %lu rsi data\n", x.rsi.begin()->second.size());
+    //   auto status = client.verifyMintAckRSI(x);
+    //   if(!status.has_value()) {
+    //     printf("Got invalid transactions from the replicas\n");
+    //     return false;
+    //   }
+    // }
+
+    // if (cp.measurePerformance) {
+    //   LOG_INFO(clientLogger,
+    //            std::endl
+    //                << "Performance info from client " << cp.clientId << std::endl
+    //                << hist.ToString());
+    // }
+
+    // Start the second set of experiments for Payments
+    hist.Clear();
+
     for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
       bft::client::RequestConfig req_config;
       req_config.timeout = 100s;
+      req_config.max_reply_size = 10000000;
       bft::client::WriteConfig write_config{req_config, bft::client::ByzantineSafeQuorum{}};
       write_config.request.pre_execute = PRE_EXEC_ENABLED;
 
@@ -155,11 +240,11 @@ class SimpleTestClient {
         printf("Total iterations count: %i\n", i);
       }
 
-      // printf("Starting Tx: %d\n", i);
-
       // Prepare request parameters.
-      auto [coin_id, empty_coin] = client.new_coin();
-      bft::client::Msg test_message = UTT_Msg::new_mint_msg(1000, empty_coin, coin_id);
+      bft::client::Msg test_message = client.NewTestPaymentTx();
+
+      // std::cout << "Sending: " << empty_coin << std::endl;
+      // std::cout << "Coin id: " << coin_id << std::endl;
 
       write_config.request.sequence_number = pSeqGen->generateUniqueSequenceNumberForRequest();
 
@@ -181,19 +266,13 @@ class SimpleTestClient {
       // printf("Got %lu bytes of matched data\n", x.matched_data.size());
       // printf("Got %lu rsi pieces\n", x.rsi.size());
       // printf("Got %lu rsi data\n", x.rsi.begin()->second.size());
-      auto status = client.verifyMintAckRSI(x);
-      if(!status.has_value()) {
-        printf("Got invalid transactions from the replicas\n");
-      }
-
-      // printf("Finishing tx: %d\n", i);
-    }
-
-    if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
-                   << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
+      // auto status = client.verifyPayAckRSI(x);
+      // if(!status) {
+        // printf("Got invalid transactions from the replicas\n");
+        // return false;
+      // }
+      // IGNORE CLIENT VERIFICATION FOR NOW
+      // THE GOAL IS TO STRESS TEST THE PAYMENTS ON THE SERVER SIDE, NOT ON THE CLIENT SIDE
     }
 
     // // After all requests have been issued, stop communication and clean up.

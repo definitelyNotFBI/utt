@@ -41,8 +41,10 @@ struct MintAckMsg {
   size_t coin_sig_share_size;
 };
 
-struct PayMsg {
-
+struct PayAckMsg {
+  size_t tx_len;
+  size_t cc_len[2];
+  size_t csign_len[2];
 };
 
 struct UTT_Msg {
@@ -50,5 +52,6 @@ struct UTT_Msg {
 
   public:
   static bft::client::Msg new_mint_msg(size_t value, libutt::EPK empty_coin, size_t ctr);
+  static bft::client::Msg new_pay_msg();
 };
 #pragma pack(pop)

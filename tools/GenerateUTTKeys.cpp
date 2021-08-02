@@ -10,6 +10,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <sstream>
+#include <tuple>
 
 #include "utt/Bank.h"
 #include "utt/Utt.h"
@@ -23,6 +24,7 @@ std::string genesis_prefix = "genesis_";
 size_t n = 4 ;
 size_t t = 1 ;
 size_t number_of_genesis_files = 0;
+size_t number_of_coins_to_generate = 2;
 bool debug = false;
 
 static struct option longOptions[] = {
@@ -34,6 +36,7 @@ static struct option longOptions[] = {
     {"num-genesis-coins", required_argument, 0, 'g'},
     {"genesis-prefix", required_argument, 0, 'p'},
     {"debug", no_argument, 0, 'd'},
+    {"coins", no_argument, 0, 'C'},
 };
 
 int main(int argc, char **argv)
@@ -41,7 +44,7 @@ int main(int argc, char **argv)
     libutt::initialize(nullptr, 0);
     int o = 0;
     int optionIndex = 0;
-    while((o = getopt_long(argc, argv, "k:n:t:o:c:g:p:d", longOptions, &optionIndex)) != -1) {
+    while((o = getopt_long(argc, argv, "k:n:t:o:c:g:p:dC:", longOptions, &optionIndex)) != -1) {
         switch (o) {
             case 'k': {
                 fileNamePrefix = optarg;
@@ -68,6 +71,10 @@ int main(int argc, char **argv)
             }
             case 'd': {
                 debug = true;
+                break;
+            }
+            case 'C': {
+                number_of_coins_to_generate = atol(optarg);
                 break;
             }
             case '?': {
@@ -112,35 +119,72 @@ int main(int argc, char **argv)
 
     std::ofstream cliFile(dirname + "/"+ clientFileName);
     cliFile << p;
+    if (debug) {
+        std::cout << "Wrote Params: " << p 
+            << std::endl;
+    }
+
     auto skShares = keys.getAllShareSKs();
     std::vector<BankSharePK> pkShares;
-    for (auto& sk: skShares) {
-        pkShares.push_back(sk.toSharePK(p));
+    for (size_t i=0; i<n; i++) {
+        pkShares.push_back(skShares[i].toSharePK(p));
     }
 
     for(size_t i=0; i< n;i++) {
-        cliFile << pkShares.at(i);
+        cliFile << pkShares[i];
+        if (debug) {
+            std::cout << "Wrote PK shares: " << pkShares[i]
+                << std::endl;
+        }
     }
     cliFile << keys.getPK(p);
+    if (debug) {
+        std::cout << "Wrote: " << keys.getPK(p)
+            << std::endl;
+    }
     cliFile.close();
 
     // Generate Genesis configs
     for (auto i=0ul; i< number_of_genesis_files; i++) {
+        auto filename = dirname + "/" + genesis_prefix + std::to_string(i);
         // Make a new genesis file
-        std::ofstream genfile(dirname + genesis_prefix + std::to_string(i));
+        std::ofstream genfile(filename);
+        if(!genfile.is_open()) {
+            printf("Failed to open genesis file\n");
+            return 1;
+        }
+
+        std::cout << "Writing Genesis " << filename << std::endl;
         
-        // Put 2 coins with value 1 each, so they can keep paying themselves for the benchmarking
-        // TODO
+        // Put 2 coins with value 1024 (default v for CoinSecrets constructor) each, so they can keep paying themselves for the benchmarking
+        // std::vector<std::tuple<CoinSecrets, CoinComm, CoinSig>> c;
+        // std::vector<std::tuple<LTPK, Fr>> recv;
+
+        libutt::CoinSecrets cs[2];
+
+        for(auto j=0ul; j<2;j++) {
+            cs[j] = CoinSecrets(p);
+            auto cc = CoinComm(p, cs[j]);
+            auto csign = keys.sk.thresholdSignCoin(p, cc, keys.u);
+            // c.push_back(std::make_tuple(cs[j], cc, csign));
+
+            genfile << cs[j];
+            genfile << cc;
+            genfile << csign;
+        }
+        genfile.close();
+        // libutt::Tx::create(p, c, recv);
+    //     // TODO
 
         // Close the file
-        genfile.close(); 
+    //     genfile.close(); 
     }
 
     std::cout << "Created replica files in "
-        << dirname + fileNamePrefix
+        << dirname + "/" + fileNamePrefix
         << std::endl;
     std::cout << "Created client files in "
-        << dirname + clientFileName
+        << dirname + "/" + clientFileName
         << std::endl;
 
     return 0;
