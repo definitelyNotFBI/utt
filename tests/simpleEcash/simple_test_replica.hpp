@@ -134,17 +134,17 @@ class SimpleAppState : public IRequestsHandler {
   bool preExecutePayTx(ExecutionRequest& req) {
     LOG_DEBUG(replicaLogger, "Pre-executing payment tx");
 
-    // libutt::Tx tx;
-    // std::stringstream ss;
-    // // Tx tx(unsigned char*, size_t);
-    // ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    // ss >> tx;
+    libutt::Tx tx;
+    std::stringstream ss;
+    // Tx tx(unsigned char*, size_t);
+    ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
+    ss >> tx;
 
-    // if (!tx.verify(p, bpk)) {
-    //   LOG_DEBUG(replicaLogger, "Got an invalid tx");
-    //   req.outExecutionStatus = -1;
-    //   return false;
-    // }
+    if (!tx.verify(p, bpk)) {
+      LOG_DEBUG(replicaLogger, "Got an invalid tx");
+      req.outExecutionStatus = -1;
+      return false;
+    }
 
     // std::string value;
     // // Now check if the nullifiers are already burnt
@@ -244,11 +244,12 @@ class SimpleAppState : public IRequestsHandler {
     //   ss << tx.outs[i].cc.get();
     //   ss << tx.outs[i].sig.get();
     // }
-    req.outReplicaSpecificInfoSize = 2;
+    req.outReplicaSpecificInfoSize = 0;
     req.outExecutionStatus = 0;
     req.outActualReplySize = sizeof(UTT_Msg) + req.outReplicaSpecificInfoSize;
     auto pay_ack = reinterpret_cast<UTT_Msg*>(req.outReply);
     pay_ack->type = OpType::PayAck;
+    // std::memcpy(req.outReply, req.request, 1);
     // LOG_DEBUG(replicaLogger, "Mem copying" << ss.str().size());
     // std::memcpy(req.outReply+sizeof(UTT_Msg), ss.str().data(), ss.str().size());
 

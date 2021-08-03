@@ -37,7 +37,7 @@ struct RetryTimeoutConfig {
   std::chrono::milliseconds min_retry_timeout = 50ms;
 
   // The maximum that the timeout can be set to dynamically.
-  std::chrono::milliseconds max_retry_timeout = 1s;
+  std::chrono::milliseconds max_retry_timeout = 10s;
 
   // The number of standard deviations within the average that we expect reply times to fall into.
   uint16_t number_of_standard_deviations_to_tolerate = 2;

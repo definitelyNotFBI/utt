@@ -216,6 +216,7 @@ Reply Client::send(const MatchConfig& match_config,
     if (primary_ && !read_only) {
       communication_->send(primary_.value().val, std::move(msg));
     } else {
+      LOG_INFO(logger_, "Retransmission to all the replicas");
       std::set<bft::communication::NodeNum> dests;
       for (const auto& d : match_config.quorum.destinations) {
         dests.emplace(d.val);

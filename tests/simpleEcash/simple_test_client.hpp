@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 
+#include "bftclient/exception.h"
 #include "test_comm_config.hpp"
 #include "test_parameters.hpp"
 #include "bftclient/quorums.h"
@@ -62,6 +63,9 @@ class SimpleTestClient {
   SimpleTestClient(ClientParams& clientParams, logging::Logger& logger) : cp{clientParams}, clientLogger{logger} {}
 
   bool run() {
+    for (auto &logger: logging::Logger::getCurrentLoggers()) {
+      logger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
+    }
     clientLogger.setLogLevel(log4cplus::ALL_LOG_LEVEL);
     // This client's index number. Must be larger than the largest replica index
     // number.
@@ -227,7 +231,7 @@ class SimpleTestClient {
 
     for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
       bft::client::RequestConfig req_config;
-      req_config.timeout = 100s;
+      req_config.timeout = 2s;
       req_config.max_reply_size = 10000000;
       bft::client::WriteConfig write_config{req_config, bft::client::ByzantineSafeQuorum{}};
       write_config.request.pre_execute = PRE_EXEC_ENABLED;
@@ -250,8 +254,12 @@ class SimpleTestClient {
 
       // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
       uint64_t start = get_monotonic_time();
-
-      auto x = client.send(write_config,std::move(test_message));
+      try {
+        auto x = client.send(write_config,std::move(test_message));
+      } catch (client::BftClientException& e) {
+        i--;
+        continue;
+      }
       
       uint64_t end = get_monotonic_time();
       uint64_t elapsedMicro = end - start;
