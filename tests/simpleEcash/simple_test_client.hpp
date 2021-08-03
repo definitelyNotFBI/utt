@@ -229,10 +229,12 @@ class SimpleTestClient {
     // Start the second set of experiments for Payments
     hist.Clear();
 
+    cp.numOfOperations = 100;
+
     for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
       bft::client::RequestConfig req_config;
       req_config.timeout = 2s;
-      req_config.max_reply_size = 10000000;
+      req_config.max_reply_size = 100000;
       bft::client::WriteConfig write_config{req_config, bft::client::ByzantineSafeQuorum{}};
       write_config.request.pre_execute = PRE_EXEC_ENABLED;
 
@@ -254,12 +256,12 @@ class SimpleTestClient {
 
       // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
       uint64_t start = get_monotonic_time();
-      try {
+      // try {
         auto x = client.send(write_config,std::move(test_message));
-      } catch (client::BftClientException& e) {
-        i--;
-        continue;
-      }
+      // } catch (client::BftClientException& e) {
+        // i--;
+        // continue;
+      // }
       
       uint64_t end = get_monotonic_time();
       uint64_t elapsedMicro = end - start;
@@ -268,6 +270,7 @@ class SimpleTestClient {
         hist.Add(elapsedMicro);
         // LOG_INFO(clientLogger, "RAWLatencyMicro " << elapsedMicro << " Time " << (uint64_t)(end / 1e3));
       }
+
 
       // printf("Got Tx: %d\n", i);
 
@@ -281,6 +284,13 @@ class SimpleTestClient {
       // }
       // IGNORE CLIENT VERIFICATION FOR NOW
       // THE GOAL IS TO STRESS TEST THE PAYMENTS ON THE SERVER SIDE, NOT ON THE CLIENT SIDE
+    }
+
+    if (cp.measurePerformance) {
+      LOG_INFO(clientLogger,
+               std::endl
+                   << "Performance info from client " << cp.clientId << std::endl
+                   << hist.ToString());
     }
 
     // // After all requests have been issued, stop communication and clean up.

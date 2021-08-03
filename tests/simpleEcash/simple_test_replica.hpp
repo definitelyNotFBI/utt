@@ -146,27 +146,27 @@ class SimpleAppState : public IRequestsHandler {
       return false;
     }
 
-    // std::string value;
-    // // Now check if the nullifiers are already burnt
-    // for(auto& txin: tx.ins) {
-    //   auto str = txin.null.toString();
-    //   bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
-    //   // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-    //   if(key_may_exist) {
-    //     auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
-    //     if (!status.IsNotFound()) {
-    //       // The key exists, abort
-    //       req.outExecutionStatus = -1;
-    //       return false;
-    //     }
-    //   }
-    // }
+    std::string value;
+    // Now check if the nullifiers are already burnt
+    for(auto& txin: tx.ins) {
+      auto str = txin.null.toString();
+      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+      // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+      if(key_may_exist) {
+        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+        if (!status.IsNotFound()) {
+          // The key exists, abort
+          req.outExecutionStatus = -1;
+          return false;
+        }
+      }
+    }
 
     // If unspent, reply with the nullifiers
     // TODO: What to reply?
     req.outReplicaSpecificInfoSize = 0;
-    req.outActualReplySize = 3;
-    std::memcpy(req.outReply, req.request, 3);
+    req.outActualReplySize = req.requestSize;
+    std::memcpy(req.outReply, req.request, req.requestSize);
 
     req.outExecutionStatus = 0;
 
@@ -204,46 +204,46 @@ class SimpleAppState : public IRequestsHandler {
     LOG_DEBUG(replicaLogger, "Post Executing payment transaction");
 
     libutt::Tx tx;
-    // std::stringstream ss;
-    // ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    // ss >> tx;
+    std::stringstream ss;
+    ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
+    ss >> tx;
 
     // We checked that the transaction is valid in pre-execution
     // Check again that the tx is unspent
-    // std::string value;
-    // for(auto& txin: tx.ins) {
-    //   auto str = txin.null.toString();
-    //   bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
-    //   if(key_may_exist) {
-    //     // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-    //     auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
-    //     if (!status.IsNotFound()) {
-    //       // The key exists, abort
-    //       req.outExecutionStatus = -1;
-    //       return false;
-    //     }
-    //   }
-    // }
+    std::string value;
+    for(auto& txin: tx.ins) {
+      auto str = txin.null.toString();
+      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+      if(key_may_exist) {
+        // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+        if (!status.IsNotFound()) {
+          // The key exists, abort
+          req.outExecutionStatus = -1;
+          return false;
+        }
+      }
+    }
 
     // Process the tx (The coins are still unspent)
-    // tx.process(p, shareSK);
+    tx.process(p, shareSK);
 
     // Add nullifiers to the DB
-    // for(auto& txin: tx.ins) {
-    //   // HACK so that the client can re-use the same coin
-    //   auto str = txin.null.toString() + std::to_string(statePtr->val);
-    //   LOG_DEBUG(replicaLogger, "Atomic Pointer Str: "<<str);
-    //   statePtr->val.fetch_add(1);
-    //   statePtr->client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
-    // }
+    for(auto& txin: tx.ins) {
+      // HACK so that the client can re-use the same coin
+      auto str = txin.null.toString() + std::to_string(statePtr->val);
+      LOG_DEBUG(replicaLogger, "Atomic Pointer Str: "<<str);
+      statePtr->val.fetch_add(1);
+      statePtr->client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
+    }
 
     // Send the signed coins back to the clients via RSI
-    // ss.clear();
-    // ss << tx;
-    // for(size_t i=0;i<2;i++) {
-    //   ss << tx.outs[i].cc.get();
-    //   ss << tx.outs[i].sig.get();
-    // }
+    ss.clear();
+    ss << tx;
+    for(size_t i=0;i<2;i++) {
+      ss << tx.outs[i].cc.get();
+      ss << tx.outs[i].sig.get();
+    }
     req.outReplicaSpecificInfoSize = 0;
     req.outExecutionStatus = 0;
     req.outActualReplySize = sizeof(UTT_Msg) + req.outReplicaSpecificInfoSize;
