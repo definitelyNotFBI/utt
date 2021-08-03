@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <log4cplus/loglevel.h>
 #include <rocksdb/options.h>
 #include <rocksdb/status.h>
 #include <atomic>
@@ -71,8 +72,8 @@ logging::Logger replicaLogger = logging::getLogger("simpletest.replica");
 // The replica state machine.
 class SimpleAppState : public IRequestsHandler {
  public:
-  libutt::BankShareSK *shareSK = nullptr;
-  libutt::Params *p = nullptr;
+  libutt::BankShareSK shareSK;
+  libutt::Params p;
   libutt::BankPK bpk;
   uint16_t replicaId = 0;
 
@@ -87,6 +88,7 @@ class SimpleAppState : public IRequestsHandler {
       : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {
       }
   ~SimpleAppState() { delete[] statePtr; }
+
   bool verifyTx(ExecutionRequest& req) {
     if (req.requestSize <= sizeof(UTT_Msg)) {
       LOG_WARN(replicaLogger, "Invalid size: Got " << req.requestSize << ", Expected: " << sizeof(OpType));
@@ -99,17 +101,21 @@ class SimpleAppState : public IRequestsHandler {
       return verifyMintTx(req);
     } else if (*pReqId == OpType::Pay) {
       return verifyPayTx(req);
+    } else {
+      LOG_DEBUG(replicaLogger, "Unknown tx");
+      return false;
     }
     return true;
   }
+
   bool verifyMintTx(ExecutionRequest &req) {
     auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
-    printf("Got a mint transaction to mint %lu money\n", mint_req->val);
+    LOG_DEBUG(replicaLogger, "Got a mint transaction to mint money: " << mint_req->val);
 
     return true;
   }
   bool verifyPayTx(ExecutionRequest &req) {
-    printf("Got a payment transaction\n");
+    LOG_DEBUG(replicaLogger, "Got a payment transaction");
     return true;
   }
 
@@ -119,46 +125,48 @@ class SimpleAppState : public IRequestsHandler {
       return preExecuteMintTx(req);
     } else if (utt_msg->type == OpType::Pay) {
       return preExecutePayTx(req);
+    } else {
+      LOG_DEBUG(replicaLogger, "Unknown tx");
     }
     return false;
   }
 
   bool preExecutePayTx(ExecutionRequest& req) {
-    printf("Pre-executing payment tx");
+    LOG_DEBUG(replicaLogger, "Pre-executing payment tx");
 
-    libutt::Tx tx;
-    std::stringstream ss;
-    ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    ss >> tx;
+    // libutt::Tx tx;
+    // std::stringstream ss;
+    // // Tx tx(unsigned char*, size_t);
+    // ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
+    // ss >> tx;
 
-    // std::cout << "Got Tx: " << tx << std::endl;
-    printf("Got a valid tx? %d\n", tx.verify(*p, bpk));
+    // if (!tx.verify(p, bpk)) {
+    //   LOG_DEBUG(replicaLogger, "Got an invalid tx");
+    //   req.outExecutionStatus = -1;
+    //   return false;
+    // }
 
-    std::string value;
-    bool unspent = true;
-    // Now check if the nullifiers are already burnt
-    for(auto& txin: tx.ins) {
-      auto str = txin.null.toString();
-      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
-      // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-      if(!key_may_exist) {
-        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
-        if (!status.IsNotFound()) {
-          // The key exists, abort
-          unspent = false;
-          break;
-        } else {
-          continue;
-        }
-      }
-      unspent = unspent & key_may_exist;
-    }
+    // std::string value;
+    // // Now check if the nullifiers are already burnt
+    // for(auto& txin: tx.ins) {
+    //   auto str = txin.null.toString();
+    //   bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+    //   // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+    //   if(key_may_exist) {
+    //     auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+    //     if (!status.IsNotFound()) {
+    //       // The key exists, abort
+    //       req.outExecutionStatus = -1;
+    //       return false;
+    //     }
+    //   }
+    // }
 
     // If unspent, reply with the nullifiers
     // TODO: What to reply?
     req.outReplicaSpecificInfoSize = 0;
-    req.outActualReplySize = req.requestSize;
-    std::memcpy(req.outReply, req.request, req.requestSize);
+    req.outActualReplySize = 3;
+    std::memcpy(req.outReply, req.request, 3);
 
     req.outExecutionStatus = 0;
 
@@ -168,16 +176,6 @@ class SimpleAppState : public IRequestsHandler {
   // Only fills the common parts without RSI
   // store the sig locally so we can ship it on execution
   bool preExecuteMintTx(ExecutionRequest &req) {
-    // printf("B: Printing request\n");
-    // for(auto i = 0u; i < req.requestSize; i++) {
-    //   printf("%02x", req.request[i]);
-    // }
-    // printf("\n");
-
-    // Is the size good?
-    test_assert_replica(req.maxReplySize >= sizeof(UTT_Msg)+sizeof(MintAckMsg), 
-            "maxReplySize < " << sizeof(OpType));
-
     // Since the request will be deleted after pre-processing, store the request message as the reply
     req.outReplicaSpecificInfoSize = 0;
     req.outActualReplySize = req.requestSize;
@@ -195,81 +193,73 @@ class SimpleAppState : public IRequestsHandler {
       return PostExecuteMintTx(req);
     } else if (utt_msg->type == OpType::Pay) {
       return PostExecutePayTx(req);
+    } else {
+      LOG_DEBUG(replicaLogger, "Unknown tx");
+      return false;
     }
     return false;
   }
 
   bool PostExecutePayTx(ExecutionRequest& req) {
-    printf("Post Executing payment transaction\n");
+    LOG_DEBUG(replicaLogger, "Post Executing payment transaction");
 
     libutt::Tx tx;
-    std::stringstream ss;
-    ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    ss >> tx;
+    // std::stringstream ss;
+    // ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
+    // ss >> tx;
 
     // We checked that the transaction is valid in pre-execution
     // Check again that the tx is unspent
-    bool unspent = true;
-    std::string value;
-    for(auto& txin: tx.ins) {
-      auto str = txin.null.toString();
-      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
-      if(!key_may_exist) {
-        // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
-        if (!status.IsNotFound()) {
-          // The key exists, abort
-          unspent = false;
-          break;
-        }
-        key_may_exist = false;
-      }
-      unspent = unspent && !key_may_exist;
-    }
-    if(!unspent) {
-      // Abort the Tx
-      printf("Aborting the tx\n");
-      return false;
-    }
+    // std::string value;
+    // for(auto& txin: tx.ins) {
+    //   auto str = txin.null.toString();
+    //   bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+    //   if(key_may_exist) {
+    //     // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+    //     auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+    //     if (!status.IsNotFound()) {
+    //       // The key exists, abort
+    //       req.outExecutionStatus = -1;
+    //       return false;
+    //     }
+    //   }
+    // }
 
     // Process the tx (The coins are still unspent)
-    tx.process(*p, *shareSK);
+    // tx.process(p, shareSK);
 
     // Add nullifiers to the DB
-    for(auto& txin: tx.ins) {
-      // HACK so that the client can re-use the same coin
-      auto str = txin.null.toString() + std::to_string(statePtr->val);
-      statePtr->val.fetch_add(1);
-      statePtr->client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
-    }
+    // for(auto& txin: tx.ins) {
+    //   // HACK so that the client can re-use the same coin
+    //   auto str = txin.null.toString() + std::to_string(statePtr->val);
+    //   LOG_DEBUG(replicaLogger, "Atomic Pointer Str: "<<str);
+    //   statePtr->val.fetch_add(1);
+    //   statePtr->client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
+    // }
 
     // Send the signed coins back to the clients via RSI
-    ss.clear();
-    ss << tx;
-    for(size_t i=0;i<2;i++) {
-      ss << tx.outs[i].cc.get();
-      ss << tx.outs[i].sig.get();
-    }
-    req.outReplicaSpecificInfoSize = ss.str().size();
+    // ss.clear();
+    // ss << tx;
+    // for(size_t i=0;i<2;i++) {
+    //   ss << tx.outs[i].cc.get();
+    //   ss << tx.outs[i].sig.get();
+    // }
+    req.outReplicaSpecificInfoSize = 2;
     req.outExecutionStatus = 0;
     req.outActualReplySize = sizeof(UTT_Msg) + req.outReplicaSpecificInfoSize;
     auto pay_ack = reinterpret_cast<UTT_Msg*>(req.outReply);
     pay_ack->type = OpType::PayAck;
-    std::memcpy(req.outReply+sizeof(UTT_Msg), ss.str().data(), ss.str().size());
+    // LOG_DEBUG(replicaLogger, "Mem copying" << ss.str().size());
+    // std::memcpy(req.outReply+sizeof(UTT_Msg), ss.str().data(), ss.str().size());
 
     return true;
   }
 
   bool PostExecuteMintTx(ExecutionRequest &req) {
-    printf("A: Printing request for client: %u\n", req.clientId);
-    for(auto i = 0u; i < req.requestSize; i++) {
-      printf("%02x", req.request[i]);
-    }
-    printf("\n");
-
     auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
     
     std::stringstream ss;
+
     ss.rdbuf()->pubsetbuf(
       const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
       mint_req->cc_buf_len
@@ -280,9 +270,9 @@ class SimpleAppState : public IRequestsHandler {
     ss.clear();
 
     // TODO: Check if the value is actually zero
-    if (!libutt::EpkProof::verify(*p, empty_coin)) {
+    if (!libutt::EpkProof::verify(p, empty_coin)) {
       printf("verification failed\n");
-      std::cout << "Params:" << *p << std::endl;
+      std::cout << "Params:" << p << std::endl;
       std::cout << "Got:" << empty_coin << std::endl;
       return false;
     }
@@ -291,8 +281,8 @@ class SimpleAppState : public IRequestsHandler {
     pRet->type = OpType::MintAck;
 
     // TODO: Add value
-    libutt::CoinComm cc(*p, empty_coin, mint_req->val);
-    libutt::CoinSigShare coin = shareSK->sign(*p, cc);
+    libutt::CoinComm cc(p, empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK.sign(p, cc);
     ss << coin;
 
     std::cout << "Receiving: " << empty_coin << std::endl;
@@ -324,7 +314,7 @@ class SimpleAppState : public IRequestsHandler {
   }
 
   bool RawExecutePayTx(ExecutionRequest& req) {
-    printf("Raw executing a payment transaction\n");
+    LOG_DEBUG(replicaLogger, "Raw executing a payment transaction");
     return true;
   }
 
@@ -344,7 +334,7 @@ class SimpleAppState : public IRequestsHandler {
     ss.clear();
 
     // DONE: Check if the value is actually zero
-    if (!libutt::EpkProof::verify(*p, empty_coin)) {
+    if (!libutt::EpkProof::verify(p, empty_coin)) {
       printf("verification failed\n");
       std::cout << "Got:" << empty_coin << std::endl;
       return false;
@@ -358,8 +348,8 @@ class SimpleAppState : public IRequestsHandler {
 
     // TODO(try) libutt::Fr(long) 
     // This works
-    libutt::CoinComm cc(*p, empty_coin, mint_req->val);
-    libutt::CoinSigShare coin = shareSK->sign(*p, cc);
+    libutt::CoinComm cc(p, empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK.sign(p, cc);
     // Alin: Send r to the client if the bank was one entity; 
     // We can also set r=0 since the client will re-randomize it anyways.
     ss << coin;
@@ -395,25 +385,31 @@ class SimpleAppState : public IRequestsHandler {
       // req.outReplicaSpecificInfoSize = 0;
 
       if ((req.flags & MsgFlag::PRE_PROCESS_FLAG)) {
-        printf("Pre-executing\n");
+        LOG_DEBUG(replicaLogger, "Pre-executing");
         // We are being executed in pre-processing
         auto res = verifyTx(req);
-        if (!res) printf("Got an invalid tx\n");
+        if (!res) {
+          LOG_ERROR(replicaLogger, "Got an invalid tx");
+          continue;
+        };
         preExecuteTx(req);
         return;
       } 
 
       // We are not in pre-processing and we have not pre-processed the transaction
       if (!(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {
-        printf("Called without pre-execution\n");
+        LOG_DEBUG(replicaLogger, "Called without pre-execution");
         auto res = verifyTx(req);
-        if (!res) printf("Got an invalid tx\n");
+        if (!res) {
+          LOG_ERROR(replicaLogger, "Got an invalid tx");
+          return;
+        } 
         RawExecuteTx(req);
         return;
       }
 
       PostExecuteTx(req);
-      printf("out reply size is: %u", req.outActualReplySize);
+      LOG_DEBUG(replicaLogger, "out reply size is: "<< req.outActualReplySize);
     }
   }
 
@@ -478,9 +474,10 @@ class SimpleTestReplica {
   uint16_t get_replica_id() { return replicaConfig.replicaId; }
 
   void start() {
-    // for (auto &logger: logging::Logger::getCurrentLoggers()) {
-    //   logger.setLogLevel(log4cplus::TRACE_LOG_LEVEL);
-    // }
+    // Set all the loggers to TRACE_LOG_LEVEL
+    for (auto &logger: logging::Logger::getCurrentLoggers()) {
+      logger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
+    }
 
     replica->start();
     ControlStateManager::instance(inMemoryST_).disable();
@@ -578,12 +575,8 @@ class SimpleTestReplica {
       throw std::runtime_error("Failed to open libutt params file");
     }
 
-    simpleAppState->p = new libutt::Params;
-    fin >> *simpleAppState->p;
-
-    simpleAppState->shareSK = new libutt::BankShareSK;
-    fin >> *simpleAppState->shareSK;
-
+    fin >> simpleAppState->p;
+    fin >> simpleAppState->shareSK;
     fin >> simpleAppState->bpk;
 
     simpleAppState->replicaId = rp.replicaId;

@@ -115,6 +115,7 @@ bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
   // Check RSI for every sender
   for(auto& [sender, rsi]: reply.rsi) {
     std::stringstream ss;
+
     ss.write(reinterpret_cast<const char*>(rsi.data()), rsi.size());
     libutt::Tx tx;
     ss >> tx;
@@ -183,6 +184,7 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
     }
 
     std::stringstream ss;
+
     ss.write(
       reinterpret_cast<char*>(rsi.data()+sizeof(MintAckMsg)),
       static_cast<long>(mint_ack->coin_sig_share_size)
@@ -256,10 +258,10 @@ bft::client::Msg EcashClient::NewTestPaymentTx() {
     auto r = libutt::Fr(std::get<0>(my_initial_coins[j]).val);
     recv.push_back(std::make_tuple(my_ltpk, r));
   }
-  printf("Tag %d\n", 3);
+  // printf("Tag %d\n", 3);
 
   libutt::Tx tx = libutt::Tx::create(p, my_initial_coins, recv);
-  printf("Tag %d\n", 4);
+  // printf("Tag %d\n", 4);
   // std::cout << tx << std::endl;
 
   printf("Self test %d\n", tx.verify(p, bpk));

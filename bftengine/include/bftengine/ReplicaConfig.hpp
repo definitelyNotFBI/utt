@@ -145,7 +145,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
 
   // Messages
   CONFIG_PARAM(maxExternalMessageSize, uint32_t, 131072, "maximum size of external message");
-  CONFIG_PARAM(maxReplyMessageSize, uint32_t, 8192, "maximum size of reply message");
+  CONFIG_PARAM(maxReplyMessageSize, uint32_t, 100000, "maximum size of reply message");
 
   // StateTransfer
   CONFIG_PARAM(maxNumOfReservedPages, uint32_t, 2048, "maximum number of reserved pages managed by State Transfer");

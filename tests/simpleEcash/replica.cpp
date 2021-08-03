@@ -169,6 +169,8 @@ void signalHandler(int signum) {
 
 
 int main(int argc, char **argv) {
+  libutt::initialize(nullptr, 0);
+
   ReplicaParams rp;
   parse_params(argc, argv, rp);
 
