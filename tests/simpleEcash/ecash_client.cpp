@@ -20,12 +20,14 @@
 #include <unordered_map>
 #include <vector>
 
+#include "Logging4cplus.hpp"
 #include "assertUtils.hpp"
 #include "bftclient/base_types.h"
 #include "ecash_client.hpp"
 #include "SimpleClient.hpp"
 #include "adapter_config.hpp"
 #include "bftclient/bft_client.h"
+#include "kvstream.h"
 #include "state.hpp"
 #include "utt/Bank.h"
 #include "utt/Coin.h"
@@ -48,7 +50,8 @@ std::set<bft::client::ReplicaId> generateSetOfReplicas_helpFunc(const int16_t nu
   return retVal;
 }
 
-EcashClient::EcashClient(ICommunication *comm, 
+EcashClient::EcashClient(logging::Logger logger_,
+  ICommunication *comm, 
   bft::client::ClientConfig &conf, 
   const libutt::Params &p, 
   std::vector<libutt::BankSharePK>&& bank_pks, libutt::BankPK bpk,
@@ -59,6 +62,7 @@ EcashClient::EcashClient(ICommunication *comm,
     my_ltsk(libutt::LTSK::random()),
     my_ltpk(libutt::LTPK(p, my_ltsk)),
     bpk(bpk),
+    logger_(logger_),
     num_replicas_(conf.all_replicas.size()),
     my_coins(),
     bank_pks(bank_pks),
@@ -99,23 +103,51 @@ std::tuple<size_t, EPK> EcashClient::new_coin() {
   return std::make_tuple<size_t, libutt::EPK>(coinCounter++, std::move(epk));
 }
 
+bft::client::Msg EcashClient::NewMintTx(long value) {
+  auto [ctr, empty_coin] = new_coin();
+  std::stringstream ss;
+  ss << empty_coin;
+  auto cc_buf = ss.str().size();
+
+  bft::client::Msg msg(sizeof(UTT_Msg)+sizeof(MintMsg)+cc_buf);
+
+  // Create the header first
+  auto utt_msg = UTT_MSG_PTR(msg.data());
+  utt_msg->type = OpType::Mint;
+
+  // Create the Mint Msg header
+  auto mint_msg = MINT_MSG_PTR(msg.data());
+  mint_msg->val = value;
+  mint_msg->coin_id = ctr;
+  mint_msg->cc_buf_len = cc_buf;
+
+  // Copy the mint empty coin data
+  std::memcpy(
+    MINT_EMPTY_COIN_PTR(msg.data()), 
+    ss.str().data(), 
+    cc_buf
+  );
+
+  // export the message
+  return msg;
+}
+
 bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
   // Check size for matched data
-  if (reply.matched_data.size() != sizeof(UTT_Msg)) {
-    printf("Invalid matched data\n");
+  if (reply.matched_data.size() < sizeof(UTT_Msg)) {
+    LOG_ERROR(logger_, "Invalid matched data");
     return false;
   }
   // Check correct response format
-  auto utt_msg = reinterpret_cast<UTT_Msg*>(reply.matched_data.data());
+  auto utt_msg = UTT_MSG_PTR(reply.matched_data.data());
   if(utt_msg->type != OpType::PayAck) {
-    printf("Invalid OpType\n");
+    LOG_ERROR(logger_, "Invalid OpType");
     return false;
   }
 
   // Check RSI for every sender
   for(auto& [sender, rsi]: reply.rsi) {
     std::stringstream ss;
-
     ss.write(reinterpret_cast<const char*>(rsi.data()), rsi.size());
     libutt::Tx tx;
     ss >> tx;
@@ -153,40 +185,46 @@ bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
 
 std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) {
   // Check size for matched data
-  if (reply.matched_data.size() != sizeof(UTT_Msg)) {
-    printf("Invalid matched data\n");
+  if (reply.matched_data.size() < sizeof(UTT_Msg)) {
+    LOG_ERROR(logger_, "Invalid matched data");
     return nullopt;
   }
 
   // Check correct response format
-  auto utt_msg = reinterpret_cast<UTT_Msg*>(reply.matched_data.data());
+  auto utt_msg = UTT_MSG_PTR(reply.matched_data.data());
   if(utt_msg->type != OpType::MintAck) {
-    printf("Invalid OpType\n");
+    LOG_ERROR(logger_, "Invalid OpType");
     return nullopt;
   }
 
-  auto ids = std::vector<size_t>(reply.rsi.size());
-  auto signed_shares = std::vector<CoinSigShare>(reply.rsi.size());
+  auto ids = std::vector<size_t>();
+  ids.reserve(reply.rsi.size());
+  auto signed_shares = std::vector<CoinSigShare>();
+  signed_shares.reserve(reply.rsi.size());
   libutt::CoinComm cc;
   bool first = true;
   
   // Check size of rsi for every message
   for(auto& [sender, rsi]: reply.rsi) {
-    if(rsi.size() <= sizeof(MintAckMsg)) {
-      printf("Invalid size for rsi\n");
+    if(rsi.size() < sizeof(MintAckMsg)) {
+      LOG_ERROR(logger_, "Invalid size for rsi\n");
       return nullopt;
     } 
 
-    auto mint_ack = reinterpret_cast<MintAckMsg*>(rsi.data());
+    auto mint_ack = MINTACK_MSG_PTR(rsi.data());
     if(rsi.size() != sizeof(MintAckMsg)+mint_ack->coin_sig_share_size) {
-      printf("Mismatch of size %lu in MintAck %lu\n", rsi.size(), sizeof(MintAckMsg)+mint_ack->coin_sig_share_size);
+      LOG_ERROR(logger_, 
+        "Mismatch of size in RSI:" << rsi.size() << 
+        ", and in MintAck: " << 
+          sizeof(MintAckMsg)+mint_ack->coin_sig_share_size
+      );
       return nullopt;
     }
 
     std::stringstream ss;
 
     ss.write(
-      reinterpret_cast<char*>(rsi.data()+sizeof(MintAckMsg)),
+      MINTACK_COINSHARE_PTR(rsi.data()),
       static_cast<long>(mint_ack->coin_sig_share_size)
     );
     
@@ -196,17 +234,15 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
     // For now, I know it is 1000
     // TODO(AB): Get it from the coin id
     if (my_coins.find(mint_ack->coin_id) == my_coins.end()) {
-      printf("I don't know the coin id");
+      LOG_ERROR(logger_, "I don't know the coin id");
       return nullopt;
     }
     auto& esk = my_coins[mint_ack->coin_id];
 
-    // std::cout << "esk in loop" << esk.s << std::endl;
-    // std::cout << "p in loop" << p << std::endl;
-    libutt::CoinComm cc2(p, esk.toEPK(p), 1000);
+    libutt::CoinComm cc2(p, esk.toEPK(p), DEFAULT_COIN_VALUE);
 
     if(!first && cc != cc2) {
-      printf("Got invalid coin commitments");
+      LOG_ERROR(logger_, "Got invalid coin commitments");
       return nullopt;
     } else {
       first = false;
@@ -215,7 +251,10 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
     // std::cout << "cc in loop" << cc << std::endl;
 
     if(!coinShare.verify(p, cc, bank_pks[sender.val])) {
-      printf("Coin share verification failed for %u\n", sender.val);
+      LOG_ERROR(logger_, "Coin share verification failed for " << sender.val);
+      LOG_ERROR(logger_, "Params:" << p);
+      LOG_ERROR(logger_, "Coin Commitment:" << cc);
+      LOG_ERROR(logger_, "Coin Sig Share:" << coinShare);
       return nullopt;
     }
 
@@ -230,30 +269,34 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
   // std::cout << "cc out loop" << cc << std::endl;
 
   // Combine the threshold coins
+  LOG_DEBUG(logger_, "NumReplicas:" << num_replicas_);
+  LOG_DEBUG(logger_, "Signed Shares Len:" << signed_shares.size());
+  LOG_DEBUG(logger_, "Ids len:" << ids.size());
   auto combined_coin = CoinSig::aggregate(num_replicas_, signed_shares, ids);
-  // std::cout << "Verifying with bpk" << bpk << std::endl;
 
   // TODO: No idea why this fails, for now move on. Already spent 2 days on this.
-  if (combined_coin.verify(p, cc, bpk)) {
-    printf("Combined verification failed before re-randomization\n");
+  if (!combined_coin.verify(p, cc, bpk)) {
+    LOG_ERROR(logger_, "Combined verification failed before re-randomization");
     return nullopt;
   }
 
-  // I don't know the coin idGot invalid transactions from the replicasI don't know the coin idGot invalid transactions from the replicasRe-randomize the coin
-  auto r_delta = libutt::Fr::random_element(), 
-    u_delta = libutt::Fr::random_element();
-  combined_coin.rerandomize(r_delta, u_delta);
+  // Re-randomize the coin
+  // auto r_delta = libutt::Fr::random_element(), 
+  //   u_delta = libutt::Fr::random_element();
+  // combined_coin.rerandomize(r_delta, u_delta);
 
   // TODO: Check if the newly minted coin verifies against the aggregated public key of the servers, because if it doesn't then the servers won't accept this coin
-  if (combined_coin.verify(p, cc, bpk)) {
-    printf("Combined verification failed after re-randomization\n");
-    return nullopt;
-  }
+  // TODO (Check with Alin on how to do this correctly)
+  // if (!combined_coin.verify(p, cc, bpk)) {
+  //   LOG_ERROR(logger_, "Combined verification failed after re-randomization");
+  //   return nullopt;
+  // }
   return std::optional<CoinSig>(combined_coin);
 }
 
 bft::client::Msg EcashClient::NewTestPaymentTx() {
   std::vector<std::tuple<libutt::LTPK, libutt::Fr>> recv;
+  recv.reserve(2);
   for(auto j=0; j<2;j++) {
     auto r = libutt::Fr(std::get<0>(my_initial_coins[j]).val);
     recv.push_back(std::make_tuple(my_ltpk, r));

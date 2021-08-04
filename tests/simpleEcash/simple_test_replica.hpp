@@ -150,10 +150,10 @@ class SimpleAppState : public IRequestsHandler {
     // Now check if the nullifiers are already burnt
     for(auto& txin: tx.ins) {
       auto str = txin.null.toString();
-      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+      bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
       // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
       if(key_may_exist) {
-        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+        auto status = client->rawDB().Get(rocksdb::ReadOptions{}, client->defaultColumnFamilyHandle(), str, &value);
         if (!status.IsNotFound()) {
           // The key exists, abort
           req.outExecutionStatus = -1;
@@ -176,12 +176,23 @@ class SimpleAppState : public IRequestsHandler {
   // Only fills the common parts without RSI
   // store the sig locally so we can ship it on execution
   bool preExecuteMintTx(ExecutionRequest &req) {
+    if(req.requestSize < sizeof(UTT_Msg)+sizeof(MintMsg)) {
+      LOG_ERROR(replicaLogger, "[No headers]:Invalid request message size" << req.requestSize);
+      req.outReplicaSpecificInfoSize = -1;
+      return false;
+    }
+
+    auto mint_req = CONST_MINT_MSG_PTR(req.request);
+    if(mint_req->cc_buf_len + sizeof(UTT_Msg) + sizeof(MintMsg) != req.requestSize) {
+      LOG_ERROR(replicaLogger, "[No empty coin]:Invalid request message size" << req.requestSize);
+      req.outReplicaSpecificInfoSize = -1;
+      return false;
+    }
+
     // Since the request will be deleted after pre-processing, store the request message as the reply
-    req.outReplicaSpecificInfoSize = 0;
     req.outActualReplySize = req.requestSize;
     std::memcpy(req.outReply, req.request, req.requestSize);
 
-    // std::cout << "Max Reply Size is:" << req.maxReplySize << std::endl;
     req.outExecutionStatus = 0;
 
     return true;
@@ -213,10 +224,10 @@ class SimpleAppState : public IRequestsHandler {
     std::string value;
     for(auto& txin: tx.ins) {
       auto str = txin.null.toString();
-      bool key_may_exist = statePtr->client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamily(), &value, nullptr);
+      bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
       if(key_may_exist) {
         // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-        auto status = statePtr->client->rawDB().Get(rocksdb::ReadOptions{}, statePtr->client->defaultColumnFamilyHandle(), str, &value);
+        auto status = client->rawDB().Get(rocksdb::ReadOptions{}, client->defaultColumnFamilyHandle(), str, &value);
         if (!status.IsNotFound()) {
           // The key exists, abort
           req.outExecutionStatus = -1;
@@ -231,14 +242,14 @@ class SimpleAppState : public IRequestsHandler {
     // Add nullifiers to the DB
     for(auto& txin: tx.ins) {
       // HACK so that the client can re-use the same coin
-      auto str = txin.null.toString() + std::to_string(statePtr->val);
+      auto str = txin.null.toString() + std::to_string(val);
       LOG_DEBUG(replicaLogger, "Atomic Pointer Str: "<<str);
-      statePtr->val.fetch_add(1);
-      statePtr->client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
+      val.fetch_add(1);
+      client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
     }
 
     // Send the signed coins back to the clients via RSI
-    ss.clear();
+    ss.str(std::string());
     ss << tx;
     for(size_t i=0;i<2;i++) {
       ss << tx.outs[i].cc.get();
@@ -257,28 +268,27 @@ class SimpleAppState : public IRequestsHandler {
   }
 
   bool PostExecuteMintTx(ExecutionRequest &req) {
-    auto mint_req = reinterpret_cast<const MintMsg*>(req.request+sizeof(UTT_Msg));
-    
+    auto mint_req = CONST_MINT_MSG_PTR(req.request);
     std::stringstream ss;
-
-    ss.rdbuf()->pubsetbuf(
-      const_cast<char*>(req.request+sizeof(UTT_Msg)+sizeof(MintMsg)), 
+    ss.write(
+      CONST_MINT_EMPTY_COIN_PTR(req.request), 
       mint_req->cc_buf_len
     );
-    
     libutt::EPK empty_coin;
     ss >> empty_coin;
-    ss.clear();
+    ss.str(std::string());
+
+    LOG_DEBUG(replicaLogger, "Got empty coin:" << empty_coin);
 
     // TODO: Check if the value is actually zero
     if (!libutt::EpkProof::verify(p, empty_coin)) {
-      printf("verification failed\n");
-      std::cout << "Params:" << p << std::endl;
-      std::cout << "Got:" << empty_coin << std::endl;
+      LOG_ERROR(replicaLogger, "verification failed");
+      LOG_ERROR(replicaLogger, "Params:" << p);
+      LOG_ERROR(replicaLogger, "Got:" << empty_coin);
       return false;
     }
 
-    auto *pRet = reinterpret_cast<UTT_Msg*>(req.outReply);
+    auto pRet = UTT_MSG_PTR(req.outReply);
     pRet->type = OpType::MintAck;
 
     // TODO: Add value
@@ -286,9 +296,8 @@ class SimpleAppState : public IRequestsHandler {
     libutt::CoinSigShare coin = shareSK.sign(p, cc);
     ss << coin;
 
-    std::cout << "Receiving: " << empty_coin << std::endl;
-    std::cout << "Coin id: " << mint_req->coin_id << std::endl;
-
+    LOG_DEBUG(replicaLogger, "Coin id: " << mint_req->coin_id);
+    LOG_DEBUG(replicaLogger, "Sending coin sig share:" << coin);
 
     auto ack = reinterpret_cast<MintAckMsg*>(req.outReply+sizeof(UTT_Msg));
     ack->coin_sig_share_size = ss.str().size();
@@ -332,7 +341,7 @@ class SimpleAppState : public IRequestsHandler {
 
     libutt::EPK empty_coin;
     ss >> empty_coin;
-    ss.clear();
+    ss.str(std::string());
 
     // DONE: Check if the value is actually zero
     if (!libutt::EpkProof::verify(p, empty_coin)) {
@@ -415,11 +424,11 @@ class SimpleAppState : public IRequestsHandler {
   }
 
   struct State {
-    std::atomic_uint64_t val = 0;
-    std::shared_ptr<concord::storage::rocksdb::NativeClient> client;
   };
 
   State *statePtr;
+  std::atomic_uint64_t val = 0;
+  std::shared_ptr<concord::storage::rocksdb::NativeClient> client;
 
   uint16_t numOfClients;
   uint16_t numOfReplicas;
@@ -566,7 +575,6 @@ class SimpleTestReplica {
 
     // Load UTT confs
     LOG_INFO(replicaLogger, "Initializing libutt");
-    libutt::initialize(nullptr, 0);
 
     std::string ifile = "utt_pvt_replica_" + std::to_string(rp.replicaId);
     LOG_INFO(replicaLogger, "Opening iFile" << ifile);
@@ -580,13 +588,16 @@ class SimpleTestReplica {
     fin >> simpleAppState->shareSK;
     fin >> simpleAppState->bpk;
 
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->p);
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->shareSK);
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->bpk);
+
     simpleAppState->replicaId = rp.replicaId;
 
     simpleAppState->st = st;
-    simpleAppState->statePtr = new SimpleAppState::State;
 
     using namespace concord::storage::rocksdb;
-    simpleAppState->statePtr->client = NativeClient::newClient("local-db"+std::to_string(replicaConfig.replicaId), false, NativeClient::DefaultOptions{});
+    simpleAppState->client = NativeClient::newClient("local-db"+std::to_string(replicaConfig.replicaId), false, NativeClient::DefaultOptions{});
     SimpleTestReplica *replica = new SimpleTestReplica(comm, simpleAppState, replicaConfig, behv, st, metaDataStorage);
     return replica;
   }
