@@ -74,7 +74,7 @@ if(SLEEP_FOR_DBG)
 endif()
 
 option(USE_OPENTRACING "Enable OpenTracing" ON)
-option(USE_GRPC "Enable GRPC and Protobuf" ON)
+option(USE_GRPC "Enable GRPC and Protobuf" OFF)
 #
 # Compiler options
 #
