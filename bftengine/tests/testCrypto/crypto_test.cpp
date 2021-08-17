@@ -14,13 +14,13 @@
 
 namespace {
 TEST(crypto_test, load_keys_from_pem) {
-  ASSERT_NO_THROW(bftEngine::impl::ECDSASigner("/concord-bft/bftengine/tests/testCrypto/privateKey.pem"));
-  ASSERT_NO_THROW(bftEngine::impl::ECDSAVerifier("/concord-bft/bftengine/tests/testCrypto/publicKey.pem"));
+  ASSERT_NO_THROW(bftEngine::impl::ECDSASigner("/home/ubuntu/concord-latest/bftengine/tests/testCrypto/privateKey.pem"));
+  ASSERT_NO_THROW(bftEngine::impl::ECDSAVerifier("/home/ubuntu/concord-latest/bftengine/tests/testCrypto/publicKey.pem"));
 }
 
 TEST(crypto_test, test_sign_and_verify) {
-  auto signer = bftEngine::impl::ECDSASigner("/concord-bft/bftengine/tests/testCrypto/privateKey.pem");
-  auto verifier = bftEngine::impl::ECDSAVerifier("/concord-bft/bftengine/tests/testCrypto/publicKey.pem");
+  auto signer = bftEngine::impl::ECDSASigner("/home/ubuntu/concord-latest/bftengine/tests/testCrypto/privateKey.pem");
+  auto verifier = bftEngine::impl::ECDSAVerifier("/home/ubuntu/concord-latest/bftengine/tests/testCrypto/publicKey.pem");
   std::string data = "Hello-world";
   auto sig = signer.sign(data);
   ASSERT_TRUE(verifier.verify(data, sig));

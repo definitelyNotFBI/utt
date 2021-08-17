@@ -92,7 +92,7 @@ add_custom_target(generate_test_config2
         		  COMMENT "Generating config files for simpleEcash" 
         		)
 add_custom_target(generate_utt_config
-                  COMMAND GenerateUTTKeys -t 2 -n 4 -g 10
+                  COMMAND GenerateUTTKeys -f 1 -n 4 -g 10
                   COMMENT "Generating UTT config files for simpleEcash" 
 )
 

@@ -13,7 +13,10 @@
 
 #include "basicRandomTestsRunner.hpp"
 #include "assertUtils.hpp"
+#include "config/test_parameters.hpp"
 #include <chrono>
+
+#include "client/Params.hpp"
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -25,13 +28,24 @@ using concord::kvbc::IClient;
 
 namespace BasicRandomTests {
 
-BasicRandomTestsRunner::BasicRandomTestsRunner(logging::Logger &logger, IClient &client, size_t numOfOperations)
-    : logger_(logger), client_(client), numOfOperations_(numOfOperations) {
+BasicRandomTestsRunner::BasicRandomTestsRunner(logging::Logger &logger, IClient &client, const ClientParams& cparams)
+    : logger_(logger), client_(client), numOfOperations_(cparams.numOfOperations) {
   // We have to start the client here, since construction of the TestsBuilder
   // uses the client.
   ConcordAssert(!client_.isRunning());
   client_.start();
   testsBuilder_ = new TestsBuilder(logger_, client);
+  // Load the utt config
+  auto utt_params = cparams.utt_file_name;
+  if (utt_params.empty()) {
+    return;
+  }
+  std::string& configFile = utt_params;
+  LOG_INFO(logger_, "Using UTT config:" << configFile);
+  std::ifstream pfile(configFile);
+  ConcordAssert(!pfile.fail());
+
+  mParams_ = std::make_shared<utt_bft::client::Params>(pfile);
 }
 
 void BasicRandomTestsRunner::sleep(int ops) {
@@ -55,7 +69,8 @@ void BasicRandomTestsRunner::run() {
     requests.pop_front();
     expectedReplies.pop_front();
 
-    bool readOnly = (request->type != COND_WRITE);
+    // TODO: Make Mint a RO command
+    bool readOnly = (request->type == READ || request->type == GET_LAST_BLOCK || request->type == GET_BLOCK_DATA);
     size_t requestSize = TestsBuilder::sizeOfRequest(request);
     size_t expectedReplySize = TestsBuilder::sizeOfReply(expectedReply);
     uint32_t actualReplySize = 0;
@@ -93,6 +108,12 @@ bool BasicRandomTestsRunner::isReplyCorrect(RequestType requestType,
       break;
     case GET_LAST_BLOCK:
       if (((SimpleReply_GetLastBlock *)expectedReply)->isEquiv(*(SimpleReply_GetLastBlock *)reply, error)) return true;
+      break;
+    case MINT: 
+      return true;
+      break;
+    case PAY:
+      return true;
       break;
     default:;
   }

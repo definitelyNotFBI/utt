@@ -3,7 +3,7 @@ project (bftengine LANGUAGES CXX)
 add_subdirectory(src/preprocessor)
 find_package(CMFC REQUIRED)
 add_subdirectory("cmf")
-add_subdirectory(src/quickpay)
+# add_subdirectory(src/quickpay)
 
 set(corebft_source_files
     src/bftengine/PrimitiveTypes.cpp
@@ -103,7 +103,7 @@ target_include_directories(corebft PUBLIC include/simplestatetransfer)
 target_include_directories(corebft PUBLIC include/metadatastorage)
 target_include_directories(corebft PRIVATE src/bftengine)
 target_include_directories(corebft PRIVATE src/preprocessor)
-target_include_directories(corebft PRIVATE src/quickpay)
+# target_include_directories(corebft PRIVATE src/quickpay)
 target_include_directories(corebft PUBLIC ${CRYPTOPP_INCLUDE_DIRS})
 target_include_directories(corebft PUBLIC ${perf_include}/performance/include)
 target_include_directories(corebft PUBLIC tests/mocks)
@@ -113,7 +113,7 @@ target_link_libraries(corebft PUBLIC
   util
   concordbft_storage
   preprocessor
-  quickpay
+  # quickpay
   bftcommunication
   diagnostics
   concordbft_reconfiguration
@@ -126,7 +126,7 @@ target_link_libraries(corebft PUBLIC
 target_include_directories(bftclient PUBLIC include/bftengine)
 target_include_directories(bftclient PUBLIC src/bftengine)
 target_include_directories(bftclient PUBLIC src/preprocessor)
-target_include_directories(bftclient PUBLIC src/quickpay)
+# target_include_directories(bftclient PUBLIC src/quickpay)
 target_include_directories(bftclient PUBLIC ${perf_include})
 target_include_directories(bftclient PUBLIC ${kvbc_include})
 target_link_libraries(bftclient PUBLIC bftcommunication diagnostics)
@@ -134,7 +134,7 @@ target_link_libraries(bftclient PUBLIC bftcommunication diagnostics)
 target_include_directories(bftclient_shared PUBLIC include/bftengine)
 target_include_directories(bftclient_shared PUBLIC src/bftengine)
 target_include_directories(bftclient_shared PUBLIC src/preprocessor)
-target_include_directories(bftclient_shared PUBLIC src/quickpay)
+# target_include_directories(bftclient_shared PUBLIC src/quickpay)
 target_include_directories(bftclient_shared PUBLIC ${CRYPTOPP_INCLUDE_DIRS})
 target_include_directories(bftclient_shared PUBLIC ${perf_include})
 target_include_directories(bftclient_shared PUBLIC ${kvbc_include})

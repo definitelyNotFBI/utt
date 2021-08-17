@@ -22,6 +22,7 @@
 #include "Logger.hpp"
 #include "MetricsServer.hpp"
 #include "config/test_parameters.hpp"
+#include "replica/Params.hpp"
 #include "storage_factory_interface.h"
 #include "PerformanceManager.hpp"
 

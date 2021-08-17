@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <string>
 struct ClientParams {
   uint32_t numOfOperations = 4600;
   uint16_t clientId = 4;
@@ -22,7 +23,8 @@ struct ClientParams {
   uint16_t numOfSlow = 0;
   std::string configFileName;
   bool measurePerformance = true;
-  uint32_t batch_size = 10;
+  uint32_t batch_size = 9;
+  std::string utt_file_name;
 
   uint16_t get_numOfReplicas() { return (uint16_t)(3 * numOfFaulty + 2 * numOfSlow + 1); }
 };
@@ -58,4 +60,10 @@ struct ReplicaParams {
   std::string keysFilePrefix;
   PersistencyMode persistencyMode = PersistencyMode::Off;
   ReplicaBehavior replicaBehavior = ReplicaBehavior::Default;
+  
+  std::string utt_filePrefix = "utt_pvt_replica_";
+
+  std::string get_utt_file_name() const { 
+    return utt_filePrefix + std::to_string(replicaId);
+  }
 };

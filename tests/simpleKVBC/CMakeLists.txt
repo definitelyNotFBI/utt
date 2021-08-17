@@ -1,5 +1,8 @@
 add_subdirectory(cmf)
+
+include_directories(${UTT_INCLUDES})
 add_subdirectory(TesterClient)
+add_subdirectory(UTTClient)
 add_subdirectory(TesterReplica)
 add_subdirectory(TesterCRE)
 add_custom_target(copy_blockchain_scripts2 ALL COMMENT "Copying scripts abcd")

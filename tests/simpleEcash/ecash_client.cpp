@@ -97,9 +97,9 @@ EcashClient::~EcashClient() {
 // Send an epk since it is a commitment to a coin with zero value
 // Also return the coin ID
 std::tuple<size_t, EPK> EcashClient::new_coin() {
-  auto esk = libutt::ESK::random();
+  auto [res, found] = my_coins.emplace(coinCounter, ESK::random());
+  auto& esk = res->second;
   auto epk = esk.toEPK(p);
-  my_coins[coinCounter] = esk;
   return std::make_tuple<size_t, libutt::EPK>(coinCounter++, std::move(epk));
 }
 
@@ -149,17 +149,13 @@ bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
   for(auto& [sender, rsi]: reply.rsi) {
     std::stringstream ss;
     ss.write(reinterpret_cast<const char*>(rsi.data()), rsi.size());
-    libutt::Tx tx;
-    ss >> tx;
+    libutt::Tx tx(ss);
 
     for(int i=0; i<2;i++) {
-      libutt::CoinComm cc;
-      libutt::CoinSig csign;
-
-      ss >> cc;
+      libutt::CoinComm cc(ss);
       tx.outs[i].cc = std::make_unique<libutt::CoinComm>(cc);
 
-      ss >> csign;
+      libutt::CoinSig csign(ss);
       tx.outs[i].sig = std::make_unique<libutt::CoinSig>(csign);
 
       // Check if it is mine
@@ -201,8 +197,7 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
   ids.reserve(reply.rsi.size());
   auto signed_shares = std::vector<CoinSigShare>();
   signed_shares.reserve(reply.rsi.size());
-  libutt::CoinComm cc;
-  bool first = true;
+  std::optional<libutt::CoinComm> cc;
   
   // Check size of rsi for every message
   for(auto& [sender, rsi]: reply.rsi) {
@@ -228,32 +223,31 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
       static_cast<long>(mint_ack->coin_sig_share_size)
     );
     
-    libutt::CoinSigShare coinShare;
-    ss >> coinShare;
+    libutt::CoinSigShare coinShare(ss);
 
     // For now, I know it is 1000
     // TODO(AB): Get it from the coin id
-    if (my_coins.find(mint_ack->coin_id) == my_coins.end()) {
+    auto item = my_coins.find(mint_ack->coin_id); 
+    if (item == my_coins.end()) {
       LOG_ERROR(logger_, "I don't know the coin id");
       return nullopt;
     }
-    auto& esk = my_coins[mint_ack->coin_id];
+    auto& esk = item->second;
 
     libutt::CoinComm cc2(p, esk.toEPK(p), DEFAULT_COIN_VALUE);
 
-    if(!first && cc != cc2) {
+    if(cc.has_value() && cc != cc2) {
       LOG_ERROR(logger_, "Got invalid coin commitments");
       return nullopt;
     } else {
-      first = false;
       cc = cc2;
     }
     // std::cout << "cc in loop" << cc << std::endl;
 
-    if(!coinShare.verify(p, cc, bank_pks[sender.val])) {
+    if(!coinShare.verify(p, cc.value(), bank_pks[sender.val])) {
       LOG_ERROR(logger_, "Coin share verification failed for " << sender.val);
       LOG_ERROR(logger_, "Params:" << p);
-      LOG_ERROR(logger_, "Coin Commitment:" << cc);
+      LOG_ERROR(logger_, "Coin Commitment:" << cc.value());
       LOG_ERROR(logger_, "Coin Sig Share:" << coinShare);
       return nullopt;
     }
@@ -274,8 +268,8 @@ std::optional<CoinSig> EcashClient::verifyMintAckRSI(bft::client::Reply& reply) 
   LOG_DEBUG(logger_, "Ids len:" << ids.size());
   auto combined_coin = CoinSig::aggregate(num_replicas_, signed_shares, ids);
 
-  // TODO: No idea why this fails, for now move on. Already spent 2 days on this.
-  if (!combined_coin.verify(p, cc, bpk)) {
+  // TODO: No idea why this fails, for now move on. Already spent 2 weeks on this.
+  if (!combined_coin.verify(p, cc.value(), bpk)) {
     LOG_ERROR(logger_, "Combined verification failed before re-randomization");
     return nullopt;
   }

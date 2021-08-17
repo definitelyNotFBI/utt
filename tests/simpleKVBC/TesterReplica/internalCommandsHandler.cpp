@@ -12,16 +12,23 @@
 // file.
 
 #include "internalCommandsHandler.hpp"
+#include "Logging4cplus.hpp"
 #include "OpenTracing.hpp"
 #include "assertUtils.hpp"
+#include "simpleKVBTestsBuilder.hpp"
 #include "sliver.hpp"
 #include "kv_types.hpp"
 #include "block_metadata.hpp"
 #include "sha_hash.hpp"
 #include <unistd.h>
 #include <algorithm>
+#include <cstdint>
+#include <cstring>
+#include <sstream>
+#include <string>
 #include <variant>
 #include "ReplicaConfig.hpp"
+#include "utt/Utt.h"
 
 using namespace BasicRandomTests;
 using namespace bftEngine;
@@ -38,7 +45,7 @@ using Hash = Hasher::Digest;
 const uint64_t LONG_EXEC_CMD_TIME_IN_SEC = 11;
 
 template <typename Span>
-static Hash hash(const Span &span) {
+static Hash span_hash(const Span &span) {
   return Hasher{}.digest(span.data(), span.size());
 }
 
@@ -51,7 +58,7 @@ static const std::string &keyHashToCategory(const Hash &keyHash) {
   return BLOCK_MERKLE_CAT_ID;
 }
 
-static const std::string &keyToCategory(const std::string &key) { return keyHashToCategory(hash(key)); }
+static const std::string &keyToCategory(const std::string &key) { return keyHashToCategory(span_hash(key)); }
 
 static void add(std::string &&key,
                 std::string &&value,
@@ -75,7 +82,7 @@ void InternalCommandsHandler::execute(InternalCommandsHandler::ExecutionRequests
   VersionedUpdates verUpdates;
   BlockMerkleUpdates merkleUpdates;
 
-  auto pre_execute = requests.back().flags & bftEngine::PRE_PROCESS_FLAG;
+  // auto pre_execute = requests.back().flags & bftEngine::PRE_PROCESS_FLAG;
 
   for (auto &req : requests) {
     if (req.outExecutionStatus != 1) continue;
@@ -88,39 +95,112 @@ void InternalCommandsHandler::execute(InternalCommandsHandler::ExecutionRequests
       req.outExecutionStatus = -1;
       continue;
     }
-    bool readOnly = req.flags & MsgFlag::READ_ONLY_FLAG;
-    if (readOnly) {
-      res = executeReadOnlyCommand(req.requestSize,
-                                   req.request,
-                                   req.maxReplySize,
-                                   req.outReply,
-                                   req.outActualReplySize,
-                                   req.outReplicaSpecificInfoSize);
-    } else {
-      // Only if requests size is greater than 1 and other conditions are met, block accumulation is enabled.
-      bool isBlockAccumulationEnabled =
-          ((requests.size() > 1) && (!pre_execute && (req.flags & bftEngine::MsgFlag::HAS_PRE_PROCESSED_FLAG)));
-
-      res = executeWriteCommand(req.requestSize,
-                                req.request,
+    auto* request = (SimpleRequest*)req.request;
+    res = 0;
+    
+    if(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) {
+      switch(request->type) {
+        case MINT: {
+          res = postExecuteMint(req.requestSize,
+                                req.request, 
                                 req.executionSequenceNum,
                                 req.flags,
                                 req.maxReplySize,
                                 req.outReply,
                                 req.outActualReplySize,
-                                isBlockAccumulationEnabled,
-                                verUpdates,
-                                merkleUpdates);
+                                req.outReplicaSpecificInfoSize
+          );
+        } break;
+        case PAY: {
+          // TODO
+          res = postExecutePay(req.requestSize,
+                                req.request, 
+                                req.executionSequenceNum,
+                                req.flags,
+                                req.maxReplySize,
+                                req.outReply,
+                                req.outActualReplySize,
+                                req.outReplicaSpecificInfoSize
+          );
+        } break;
+        default: {
+          LOG_ERROR(m_logger, "Got an invalid transaction type");
+        } break;
+      }
+      if (!res) LOG_ERROR(m_logger, "Command post execution failed!");
+      req.outExecutionStatus = res ? 0 : -1;
+      continue;
     }
+
+    if(req.flags & MsgFlag::PRE_PROCESS_FLAG) {
+      switch(request->type) {
+        case MINT: {
+          res = preExecuteMint( req.requestSize,
+                                req.request, 
+                                req.executionSequenceNum,
+                                req.flags,
+                                req.maxReplySize,
+                                req.outReply,
+                                req.outActualReplySize,
+                                req.outReplicaSpecificInfoSize
+          );
+        } break;
+        case PAY: {
+          res = preExecutePay(  req.requestSize,
+                                req.request, 
+                                req.executionSequenceNum,
+                                req.flags,
+                                req.maxReplySize,
+                                req.outReply,
+                                req.outActualReplySize,
+                                req.outReplicaSpecificInfoSize
+          );
+        } break;
+        default: {
+          LOG_ERROR(m_logger, "Got an invalid transaction type");
+        } break;
+      }
+      if (!res) LOG_ERROR(m_logger, "Command execution failed!");
+      req.outExecutionStatus = res ? 0 : -1;
+      continue;
+    }
+
+    LOG_FATAL(m_logger, "Unreachable");
+    ConcordAssert(0);
+    // bool readOnly = req.flags & MsgFlag::READ_ONLY_FLAG;
+    // if (readOnly) {
+    //   res = executeReadOnlyCommand(req.requestSize,
+    //                                req.request,
+    //                                req.maxReplySize,
+    //                                req.outReply,
+    //                                req.outActualReplySize,
+    //                                req.outReplicaSpecificInfoSize);
+    // } else {
+    //   // Only if requests size is greater than 1 and other conditions are met, block accumulation is enabled.
+    //   bool isBlockAccumulationEnabled =
+    //       ((requests.size() > 1) && (!pre_execute && (req.flags & bftEngine::MsgFlag::HAS_PRE_PROCESSED_FLAG)));
+
+    //   res = executeWriteCommand(req.requestSize,
+    //                             req.request,
+    //                             req.executionSequenceNum,
+    //                             req.flags,
+    //                             req.maxReplySize,
+    //                             req.outReply,
+    //                             req.outActualReplySize,
+    //                             isBlockAccumulationEnabled,
+    //                             verUpdates,
+    //                             merkleUpdates,
+    //                             req.outReplicaSpecificInfoSize);
+    // }
 
     if (!res) LOG_ERROR(m_logger, "Command execution failed!");
     req.outExecutionStatus = res ? 0 : -1;
   }
 
-  if (!pre_execute && (merkleUpdates.size() > 0 || verUpdates.size() > 0)) {
-    // Write Block accumulated requests
-    writeAccumulatedBlock(requests, verUpdates, merkleUpdates);
-  }
+  // if (!pre_execute && (merkleUpdates.size() > 0 || verUpdates.size() > 0)) {
+  //   // Write Block accumulated requests
+  //   writeAccumulatedBlock(requests, verUpdates, merkleUpdates);
+  // }
 }
 
 void InternalCommandsHandler::addMetadataKeyValue(VersionedUpdates &updates, uint64_t sequenceNum) const {
@@ -289,6 +369,225 @@ bool InternalCommandsHandler::hasConflictInBlockAccumulatedRequests(
   return false;
 }
 
+// bool InternalCommandsHandler::executeUTT_Pay();
+
+bool InternalCommandsHandler::postExecuteMint(uint32_t requestSize, const char *request,
+                    uint64_t sequenceNum, uint8_t flags,
+                    size_t maxReplySize, char *outReply,
+                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize) {
+  auto *writeReq = (SimpleMintRequest *)request;
+  LOG_INFO(m_logger,
+           "PostExecuting UTT command:"
+               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
+               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
+               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
+               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
+               << " ReplicaSpecificInfo: " << outReplicaSpecificInfoSize
+               << " MAX_REPLY_SIZE=" << maxReplySize
+               );
+  std::stringstream ss;
+  ss.write(reinterpret_cast<const char*>(writeReq->getMintBuffer()), writeReq->cc_buf_len);
+  libutt::EPK epk(ss);
+  ss.str(std::string());
+  libutt::CoinComm cc(mParams_->p, epk, writeReq->val);
+  libutt::CoinSigShare coin = mParams_->my_sk.sign(mParams_->p, cc);
+  ss << coin;
+  auto cc_buf = ss.str().size();
+  auto *response = (SimpleReply_Mint*)outReply;
+  response->header.type = MINT;
+  response->coinId = writeReq->coinId;
+  response->coin_sig_share_len = cc_buf;
+  std::memcpy(response->getCoinSigShareBuffer(), ss.str().data(), cc_buf);
+  outReplicaSpecificInfoSize = response->getRSISize();
+  outReplySize = response->getSize();
+  return true;
+}
+
+bool InternalCommandsHandler::preExecuteMint(uint32_t requestSize, 
+                    const char *request,
+                    uint64_t sequenceNum, 
+                    uint8_t flags,
+                    size_t maxReplySize, 
+                    char *outReply,
+                    uint32_t &outReplySize, 
+                    uint32_t &outReplicaSpecificInfoSize) {
+  auto *writeReq = (SimpleMintRequest *)request;
+  LOG_INFO(m_logger,
+           "PreExecuting UTT command:"
+               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
+               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
+               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
+               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
+               << " ReplicaSpecificInfo=" << outReplicaSpecificInfoSize
+               << " maxReplySize=" << maxReplySize 
+               << " requestSize=" << requestSize
+               );
+  std::string s = "0x";
+  for(auto i=0u;i<requestSize;i++) {
+    s.append(std::to_string(request[i]));
+  }
+  LOG_INFO(m_logger, "Printing Request:" << s);
+  
+  if(writeReq->getSize() != requestSize) {
+    LOG_ERROR(m_logger, "Got invalid size for UTT Mint");
+    LOG_ERROR(m_logger, "Tx says: " << writeReq->getSize() << " , but I got only " << requestSize);
+    return false;
+  }
+  std::stringstream ss;
+  LOG_INFO(m_logger, "Trying to print debug information2");
+  ss.write(reinterpret_cast<const char*>(writeReq->getMintBuffer()), writeReq->cc_buf_len);
+  LOG_INFO(m_logger, "Trying to print debug information3");
+  libutt::EPK epk(ss);
+  LOG_INFO(m_logger, "Trying to print debug information");
+  LOG_INFO(m_logger, "Using params: " << mParams_->p);
+  LOG_INFO(m_logger, "Got EPK: " << epk);
+  if(!libutt::EpkProof::verify(mParams_->p, epk)) {
+    LOG_ERROR(m_logger, "Mint transaction verification failed");
+    return false;
+  }
+  // Copy the request into response 
+  outReplicaSpecificInfoSize = 0;
+  outReplySize = requestSize;
+  std::memcpy(outReply, request, requestSize);
+  
+  return true;
+}
+
+bool InternalCommandsHandler::preExecutePay(uint32_t requestSize, 
+                    const char *request,
+                    uint64_t sequenceNum, 
+                    uint8_t flags,
+                    size_t maxReplySize, 
+                    char *outReply,
+                    uint32_t &outReplySize, 
+                    uint32_t &outReplicaSpecificInfoSize) {
+  auto *writeReq = (SimplePayRequest *)request;
+  LOG_INFO(m_logger,
+           "PreExecuting Pay command:"
+               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
+               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
+               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
+               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
+               << " ReplicaSpecificInfo=" << outReplicaSpecificInfoSize
+               << " maxReplySize=" << maxReplySize 
+               << " requestSize=" << requestSize
+               );
+  
+  if(writeReq->getSize() != requestSize) {
+    LOG_ERROR(m_logger, "Got invalid size for UTT Pay");
+    LOG_ERROR(m_logger, "Tx says: " << writeReq->getSize() << " , but I got only " << requestSize);
+    return false;
+  }
+  std::stringstream ss;
+  ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
+  libutt::Tx tx(ss);
+  // LOG_INFO(m_logger, "Trying to print debug information");
+  LOG_INFO(m_logger, "Using params: " << mParams_->p);
+  LOG_INFO(m_logger, "Got tx: " << tx);
+  if(!tx.verify(mParams_->p, mParams_->main_pk)) {
+    LOG_ERROR(m_logger, "Payment transaction verification failed");
+    return false;
+  }
+  // So far, the transaction looks valid
+  // TODO: Check if we can reject early by checking the storage
+  std::string value;
+  // Now check if the nullifiers are already burnt
+  for(auto& txin: tx.ins) {
+    auto str = txin.null.toString();
+    bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
+    // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+    if(key_may_exist) {
+      auto status = client->rawDB().Get(rocksdb::ReadOptions{}, client->defaultColumnFamilyHandle(), str, &value);
+      if (!status.IsNotFound()) {
+        // The key exists, abort
+        LOG_ERROR(m_logger, "The nullifier already exists in the database");
+        return false;
+      }
+    }
+  }
+
+  // Copy the request into response 
+  outReplicaSpecificInfoSize = 0;
+  outReplySize = requestSize;
+  std::memcpy(outReply, request, requestSize);
+  
+  return true;
+}
+
+bool InternalCommandsHandler::postExecutePay(uint32_t requestSize, 
+                    const char *request,
+                    uint64_t sequenceNum, 
+                    uint8_t flags,
+                    size_t maxReplySize, 
+                    char *outReply,
+                    uint32_t &outReplySize, 
+                    uint32_t &outReplicaSpecificInfoSize) {
+  auto *writeReq = (SimplePayRequest *)request;
+  LOG_INFO(m_logger,
+           "PostExecuting Pay command:"
+               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
+               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
+               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
+               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
+               << " ReplicaSpecificInfo=" << outReplicaSpecificInfoSize
+               << " maxReplySize=" << maxReplySize 
+               << " requestSize=" << requestSize
+               );
+  
+  std::stringstream ss;
+  ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
+  libutt::Tx tx(ss);
+  // The transaction was validated during pre-execution
+  // TODO: Check again if the nullifier was updated
+  std::string value;
+  for(auto& txin: tx.ins) {
+    auto str = txin.null.toString();
+    bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
+    if(key_may_exist) {
+      // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
+      auto status = client->rawDB().Get(rocksdb::ReadOptions{}, client->defaultColumnFamilyHandle(), str, &value);
+      if (!status.IsNotFound()) {
+        // The key exists, abort
+        LOG_ERROR(m_logger, "The nullifier already exists in the database");
+        return false;
+      }
+    }
+  }
+
+  // Process the tx (The coins are still unspent)
+  tx.process(mParams_->p, mParams_->my_sk);
+
+  // Add nullifiers to the DB
+  for(auto& txin: tx.ins) {
+    // HACK so that the client can re-use the same coin for testing
+    auto num = val.fetch_add(1);
+    auto str = txin.null.toString() + std::to_string(num);
+    LOG_DEBUG(m_logger, "Atomic Pointer Str: "<<str);
+    client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
+  }
+
+  // Clear and serialize the new tx
+  ss.str(std::string());
+  ss << tx;
+
+  // Setup the response
+  auto response = (SimpleReply_Pay*)outReply;
+  response->header.type = BasicRandomTests::PAY;
+  response->tx_len = ss.str().size();
+  std::memcpy(response->getTxBuf(), ss.str().data(), response->tx_len);
+
+  // Copy the request into response 
+  outReplicaSpecificInfoSize = response->getRSISize();
+  outReplySize = response->getSize();
+
+  // To delete after fixing
+  outReplicaSpecificInfoSize = 0;
+  outReplySize = requestSize;
+  std::memcpy(outReply, request, requestSize);
+  
+  return true;
+}
+
 bool InternalCommandsHandler::executeWriteCommand(uint32_t requestSize,
                                                   const char *request,
                                                   uint64_t sequenceNum,
@@ -298,7 +597,8 @@ bool InternalCommandsHandler::executeWriteCommand(uint32_t requestSize,
                                                   uint32_t &outReplySize,
                                                   bool isBlockAccumulationEnabled,
                                                   VersionedUpdates &blockAccumulatedVerUpdates,
-                                                  BlockMerkleUpdates &blockAccumulatedMerkleUpdates) {
+                                                  BlockMerkleUpdates &blockAccumulatedMerkleUpdates,
+                                                  uint32_t &outReplicaSpecificInfoSize) {
   auto *writeReq = (SimpleCondWriteRequest *)request;
   LOG_INFO(m_logger,
            "Execute WRITE command:"
@@ -309,6 +609,14 @@ bool InternalCommandsHandler::executeWriteCommand(uint32_t requestSize,
                << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
                << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
                << " BLOCK_ACCUMULATION_ENABLED=" << isBlockAccumulationEnabled);
+
+  // Insert hook to execute UTT Messages
+  if (writeReq->header.type == MINT ) {
+    return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
+  } else if (writeReq->header.type == PAY) {
+    // TODO: Change it to Pay
+    return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
+  }
 
   if (!(flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {
     bool result = verifyWriteCommand(requestSize, *writeReq, maxReplySize, outReplySize);

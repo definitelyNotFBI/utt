@@ -12,8 +12,11 @@
 #include <sstream>
 #include <tuple>
 
+#include "assertUtils.hpp"
 #include "utt/Bank.h"
+#include "utt/Coin.h"
 #include "utt/Utt.h"
+#include "ThresholdParamGen.hpp"
 
 using namespace libutt;
 
@@ -22,7 +25,7 @@ std::string fileNamePrefix = "utt_pvt_replica_";
 std::string clientFileName = "utt_pub_client.dat";
 std::string genesis_prefix = "genesis_";
 size_t n = 4 ;
-size_t t = 1 ;
+size_t f = 1 ;
 size_t number_of_genesis_files = 0;
 size_t number_of_coins_to_generate = 2;
 bool debug = false;
@@ -30,7 +33,7 @@ bool debug = false;
 static struct option longOptions[] = {
     {"key-file-prefix", required_argument, 0, 'k'},
     {"node-num", required_argument, 0, 'n'},
-    {"fault-num", required_argument, 0, 't'},
+    {"fault-num", required_argument, 0, 'f'},
     {"output-dir", required_argument, 0, 'o'},
     {"client-file-prefix", required_argument, 0, 'c'},
     {"num-genesis-coins", required_argument, 0, 'g'},
@@ -42,9 +45,10 @@ static struct option longOptions[] = {
 int main(int argc, char **argv)
 {
     libutt::initialize(nullptr, 0);
+
     int o = 0;
     int optionIndex = 0;
-    while((o = getopt_long(argc, argv, "k:n:t:o:c:g:p:dC:", longOptions, &optionIndex)) != -1) {
+    while((o = getopt_long(argc, argv, "k:n:f:o:c:g:p:dC:", longOptions, &optionIndex)) != -1) {
         switch (o) {
             case 'k': {
                 fileNamePrefix = optarg;
@@ -55,8 +59,8 @@ int main(int argc, char **argv)
             case 'n': {
                 n = atol(optarg);
             } break;
-            case 't': {
-                t = atol(optarg);
+            case 'f': {
+                f = atol(optarg);
             } break;
             case 'o': {
                 dirname = optarg;
@@ -85,14 +89,14 @@ int main(int argc, char **argv)
         }
     }
 
-    if ( n <= 3*(t-1) ) {
+    if ( n <= 3*f ) {
         std::ostringstream ss;
-        ss << "Invalid values for n and t" 
+        ss << "Invalid values for n and f" 
             << std::endl 
             << "n:" << n
-            << "t:" << t
+            << "f:" << f
             << std::endl 
-            << "n must be at least 3t+1"; 
+            << "n must be at least 3f+1"; 
         throw std::runtime_error(ss.str());
     }
     if (debug)
@@ -101,47 +105,26 @@ int main(int argc, char **argv)
         << "Key file prefix:" << fileNamePrefix << std::endl
         << "Client prefix:" << clientFileName << std::endl
         << "Number of nodes:" << n << std::endl
-        << "Number of faults:" << t << std::endl
+        << "Number of faults:" << f << std::endl
         << "Genesis:" << number_of_genesis_files << std::endl
         << "Genesis Prefix:" << genesis_prefix << std::endl
         ;
 
-    // Delete the files if they already exist to prevent libutt from complaining about and failing other builds
-    for(size_t i=0; i < n; i++) {
-        std::string to_delete = dirname + "/" + fileNamePrefix + std::to_string(i); 
-        remove(to_delete.c_str());
+    auto p = libutt::Params::Random();
+
+    utt_bft::ThresholdParams tparams(p, n, f);
+    auto replica_params = tparams.ReplicaParams();
+    auto client_params = tparams.ClientParams();
+
+    for(size_t i=0; i<n;i++) {
+        // Write replica config for all the replicas
+        std::ofstream rfile(dirname + "/" + fileNamePrefix + std::to_string(i));
+        ConcordAssert(!rfile.fail());
+        rfile << replica_params[i];
     }
-
-    libutt::Params p;
-
-    BankThresholdKeygen keys(p, t, n);
-    keys.writeToFiles(dirname, fileNamePrefix);
 
     std::ofstream cliFile(dirname + "/"+ clientFileName);
-    cliFile << p;
-    if (debug) {
-        std::cout << "Wrote Params: " << p 
-            << std::endl;
-    }
-
-    auto skShares = keys.getAllShareSKs();
-    std::vector<BankSharePK> pkShares;
-    for (size_t i=0; i<n; i++) {
-        pkShares.push_back(skShares[i].toSharePK(p));
-    }
-
-    for(size_t i=0; i< n;i++) {
-        cliFile << pkShares[i];
-        if (debug) {
-            std::cout << "Wrote PK shares: " << pkShares[i]
-                << std::endl;
-        }
-    }
-    cliFile << keys.getPK(p);
-    if (debug) {
-        std::cout << "Wrote: " << keys.getPK(p)
-            << std::endl;
-    }
+    cliFile << client_params;
     cliFile.close();
 
     // Generate Genesis configs
@@ -160,12 +143,14 @@ int main(int argc, char **argv)
         // std::vector<std::tuple<CoinSecrets, CoinComm, CoinSig>> c;
         // std::vector<std::tuple<LTPK, Fr>> recv;
 
-        libutt::CoinSecrets cs[2];
+        libutt::CoinSecrets cs[2] = {
+            CoinSecrets{p},
+            CoinSecrets{p}
+        };
 
         for(auto j=0ul; j<2;j++) {
-            cs[j] = CoinSecrets(p);
             auto cc = CoinComm(p, cs[j]);
-            auto csign = keys.sk.thresholdSignCoin(p, cc, keys.u);
+            auto csign = tparams.getSK().thresholdSignCoin(p, cc, tparams.getU());
             // c.push_back(std::make_tuple(cs[j], cc, csign));
 
             genfile << cs[j];

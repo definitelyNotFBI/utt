@@ -13,17 +13,29 @@
 
 #pragma once
 
+#include <fstream>
+#include <memory>
+#include <chrono>
+#include <optional>
+#include <string>
+#include <thread>
+#include <rocksdb/options.h>
+#include <rocksdb/status.h>
+
 #include "Logger.hpp"
+#include "Logging4cplus.hpp"
 #include "OpenTracing.hpp"
+#include "replica/Params.hpp"
+#include "ReplicaConfig.hpp"
+#include "assertUtils.hpp"
 #include "sliver.hpp"
 #include "simpleKVBTestsBuilder.hpp"
 #include "db_interfaces.h"
 #include "block_metadata.hpp"
 #include "KVBCInterfaces.h"
-#include <memory>
 #include "ControlStateManager.hpp"
-#include <chrono>
-#include <thread>
+#include "replica/Params.hpp"
+#include "bft.hpp"
 
 static const std::string VERSIONED_KV_CAT_ID{"replica_tester_versioned_kv_category"};
 static const std::string BLOCK_MERKLE_CAT_ID{"replica_tester_block_merkle_category"};
@@ -34,7 +46,25 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
                           concord::kvbc::IBlockAdder *blocksAdder,
                           concord::kvbc::IBlockMetadata *blockMetadata,
                           logging::Logger &logger)
-      : m_storage(storage), m_blockAdder(blocksAdder), m_blockMetadata(blockMetadata), m_logger(logger) {}
+      : m_storage(storage), m_blockAdder(blocksAdder), m_blockMetadata(blockMetadata), m_logger(logger) {
+            auto& replicaConfig = bftEngine::ReplicaConfig::instance();
+
+            // Setup ROCKSDB for libutt
+            using namespace concord::storage::rocksdb;
+            client = NativeClient::newClient("utt-db"+std::to_string(replicaConfig.replicaId), false, NativeClient::DefaultOptions{});
+            
+            // Setup libutt config here
+            auto utt_params = replicaConfig.get(utt_bft::UTT_PARAMS_REPLICA_KEY, std::string());
+            if (utt_params.empty()) {
+                return;
+            }
+            std::string configFile = utt_params.append(std::to_string(replicaConfig.replicaId));
+            LOG_INFO(m_logger, "Using UTT config:" << configFile);
+            std::ifstream pfile(configFile);
+            ConcordAssert(!pfile.fail());
+
+            mParams_ = utt_bft::replica::Params(pfile);
+        }
 
   virtual void execute(ExecutionRequestsQueue &requests,
                        std::optional<bftEngine::Timestamp> timestamp,
@@ -53,7 +83,8 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
                            uint32_t &outReplySize,
                            bool isBlockAccumulationEnabled,
                            concord::kvbc::categorization::VersionedUpdates &blockAccumulatedVerUpdates,
-                           concord::kvbc::categorization::BlockMerkleUpdates &blockAccumulatedMerkleUpdates);
+                           concord::kvbc::categorization::BlockMerkleUpdates &blockAccumulatedMerkleUpdates,
+                           uint32_t &outReplicaSpecificInfoSize);
 
   bool executeReadOnlyCommand(uint32_t requestSize,
                               const char *request,
@@ -76,6 +107,22 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
   bool executeGetLastBlockCommand(uint32_t requestSize, size_t maxReplySize, char *outReply, uint32_t &outReplySize);
 
   void addMetadataKeyValue(concord::kvbc::categorization::VersionedUpdates &updates, uint64_t sequenceNum) const;
+  bool preExecuteMint(uint32_t requestSize, const char *request,
+                    uint64_t sequenceNum, uint8_t flags,
+                    size_t maxReplySize, char *outReply,
+                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
+  bool postExecuteMint(uint32_t requestSize, const char *request,
+                    uint64_t sequenceNum, uint8_t flags,
+                    size_t maxReplySize, char *outReply,
+                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
+  bool preExecutePay(uint32_t requestSize, const char *request,
+                    uint64_t sequenceNum, uint8_t flags,
+                    size_t maxReplySize, char *outReply,
+                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
+  bool postExecutePay(uint32_t requestSize, const char *request,
+                    uint64_t sequenceNum, uint8_t flags,
+                    size_t maxReplySize, char *outReply,
+                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
 
  private:
   static concordUtils::Sliver buildSliverFromStaticBuf(char *buf);
@@ -106,5 +153,8 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
   size_t m_readsCounter = 0;
   size_t m_writesCounter = 0;
   size_t m_getLastBlockCounter = 0;
+  std::atomic_uint64_t val = 0;
   std::shared_ptr<concord::performance::PerformanceManager> perfManager_;
+  std::optional<utt_bft::replica::Params> mParams_ = nullopt;
+  std::shared_ptr<concord::storage::rocksdb::NativeClient> client = nullptr;
 };

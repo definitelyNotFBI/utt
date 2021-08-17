@@ -72,9 +72,9 @@ logging::Logger replicaLogger = logging::getLogger("simpletest.replica");
 // The replica state machine.
 class SimpleAppState : public IRequestsHandler {
  public:
-  libutt::BankShareSK shareSK;
-  libutt::Params p;
-  libutt::BankPK bpk;
+  std::optional<libutt::BankShareSK> shareSK;
+  std::optional<libutt::Params> p;
+  std::optional<libutt::BankPK> bpk;
   uint16_t replicaId = 0;
 
   // (TODO) DB Stress test
@@ -85,8 +85,7 @@ class SimpleAppState : public IRequestsHandler {
 
  public:
   SimpleAppState(uint16_t numCl, uint16_t numRep)
-      : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {
-      }
+      : statePtr{new SimpleAppState::State[numCl]}, numOfClients{numCl}, numOfReplicas{numRep} {}
   ~SimpleAppState() { delete[] statePtr; }
 
   bool verifyTx(ExecutionRequest& req) {
@@ -134,13 +133,12 @@ class SimpleAppState : public IRequestsHandler {
   bool preExecutePayTx(ExecutionRequest& req) {
     LOG_DEBUG(replicaLogger, "Pre-executing payment tx");
 
-    libutt::Tx tx;
     std::stringstream ss;
     // Tx tx(unsigned char*, size_t);
     ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    ss >> tx;
+    libutt::Tx tx(ss);
 
-    if (!tx.verify(p, bpk)) {
+    if (!tx.verify(p.value(), bpk.value())) {
       LOG_DEBUG(replicaLogger, "Got an invalid tx");
       req.outExecutionStatus = -1;
       return false;
@@ -178,14 +176,14 @@ class SimpleAppState : public IRequestsHandler {
   bool preExecuteMintTx(ExecutionRequest &req) {
     if(req.requestSize < sizeof(UTT_Msg)+sizeof(MintMsg)) {
       LOG_ERROR(replicaLogger, "[No headers]:Invalid request message size" << req.requestSize);
-      req.outReplicaSpecificInfoSize = -1;
+      req.outExecutionStatus = -1;
       return false;
     }
 
     auto mint_req = CONST_MINT_MSG_PTR(req.request);
     if(mint_req->cc_buf_len + sizeof(UTT_Msg) + sizeof(MintMsg) != req.requestSize) {
       LOG_ERROR(replicaLogger, "[No empty coin]:Invalid request message size" << req.requestSize);
-      req.outReplicaSpecificInfoSize = -1;
+      req.outExecutionStatus = -1;
       return false;
     }
 
@@ -214,10 +212,9 @@ class SimpleAppState : public IRequestsHandler {
   bool PostExecutePayTx(ExecutionRequest& req) {
     LOG_DEBUG(replicaLogger, "Post Executing payment transaction");
 
-    libutt::Tx tx;
     std::stringstream ss;
     ss.write(req.request + sizeof(UTT_Msg), req.requestSize - sizeof(UTT_Msg));
-    ss >> tx;
+    libutt::Tx tx(ss);
 
     // We checked that the transaction is valid in pre-execution
     // Check again that the tx is unspent
@@ -237,7 +234,7 @@ class SimpleAppState : public IRequestsHandler {
     }
 
     // Process the tx (The coins are still unspent)
-    tx.process(p, shareSK);
+    tx.process(p.value(), shareSK.value());
 
     // Add nullifiers to the DB
     for(auto& txin: tx.ins) {
@@ -274,16 +271,15 @@ class SimpleAppState : public IRequestsHandler {
       CONST_MINT_EMPTY_COIN_PTR(req.request), 
       mint_req->cc_buf_len
     );
-    libutt::EPK empty_coin;
-    ss >> empty_coin;
+    libutt::EPK empty_coin(ss);
     ss.str(std::string());
 
     LOG_DEBUG(replicaLogger, "Got empty coin:" << empty_coin);
 
     // TODO: Check if the value is actually zero
-    if (!libutt::EpkProof::verify(p, empty_coin)) {
+    if (!libutt::EpkProof::verify(p.value(), empty_coin)) {
       LOG_ERROR(replicaLogger, "verification failed");
-      LOG_ERROR(replicaLogger, "Params:" << p);
+      LOG_ERROR(replicaLogger, "Params:" << p.value());
       LOG_ERROR(replicaLogger, "Got:" << empty_coin);
       return false;
     }
@@ -292,8 +288,8 @@ class SimpleAppState : public IRequestsHandler {
     pRet->type = OpType::MintAck;
 
     // TODO: Add value
-    libutt::CoinComm cc(p, empty_coin, mint_req->val);
-    libutt::CoinSigShare coin = shareSK.sign(p, cc);
+    libutt::CoinComm cc(p.value(), empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK.value().sign(p.value(), cc);
     ss << coin;
 
     LOG_DEBUG(replicaLogger, "Coin id: " << mint_req->coin_id);
@@ -339,12 +335,11 @@ class SimpleAppState : public IRequestsHandler {
       mint_req->cc_buf_len
     );
 
-    libutt::EPK empty_coin;
-    ss >> empty_coin;
+    libutt::EPK empty_coin(ss);
     ss.str(std::string());
 
     // DONE: Check if the value is actually zero
-    if (!libutt::EpkProof::verify(p, empty_coin)) {
+    if (!libutt::EpkProof::verify(p.value(), empty_coin)) {
       printf("verification failed\n");
       std::cout << "Got:" << empty_coin << std::endl;
       return false;
@@ -358,8 +353,8 @@ class SimpleAppState : public IRequestsHandler {
 
     // TODO(try) libutt::Fr(long) 
     // This works
-    libutt::CoinComm cc(p, empty_coin, mint_req->val);
-    libutt::CoinSigShare coin = shareSK.sign(p, cc);
+    libutt::CoinComm cc(p.value(), empty_coin, mint_req->val);
+    libutt::CoinSigShare coin = shareSK.value().sign(p.value(), cc);
     // Alin: Send r to the client if the bank was one entity; 
     // We can also set r=0 since the client will re-randomize it anyways.
     ss << coin;
@@ -382,8 +377,9 @@ class SimpleAppState : public IRequestsHandler {
   // The first time is during pre-execution.
   // The second time is after consensus.
   void execute(ExecutionRequestsQueue &requests,
-               const std::string &batchCid,
-               concordUtils::SpanWrapper &parent_span) override {
+                       std::optional<Timestamp> timestamp,
+                       const std::string &batchCid,
+                       concordUtils::SpanWrapper &parent_span) override {
     for (auto &req : requests) {
       // These are invalid transactions, Ignore.
       if (req.outExecutionStatus != 1) {
@@ -444,7 +440,6 @@ class SimpleTestReplica {
   std::thread *runnerThread = nullptr;
   ISimpleTestReplicaBehavior *behaviorPtr;
   IRequestsHandler *statePtr;
-  bftEngine::SimpleInMemoryStateTransfer::ISimpleInMemoryStateTransfer *inMemoryST_;
   // UTT Params
   // libutt::Params *p = nullptr;
   // libutt::BankShareSK *shareSK = nullptr;
@@ -456,7 +451,7 @@ class SimpleTestReplica {
                     ISimpleTestReplicaBehavior *behvPtr,
                     bftEngine::SimpleInMemoryStateTransfer::ISimpleInMemoryStateTransfer *inMemoryST,
                     MetadataStorage *metaDataStorage)
-      : comm{commObject}, replicaConfig{rc}, behaviorPtr{behvPtr}, statePtr(state), inMemoryST_(inMemoryST) {
+      : comm{commObject}, replicaConfig{rc}, behaviorPtr{behvPtr}, statePtr(state) {
     replica = IReplica::createNewReplica(rc,
                                          std::shared_ptr<bftEngine::IRequestsHandler>(state),
                                          inMemoryST,
@@ -488,9 +483,11 @@ class SimpleTestReplica {
     for (auto &logger: logging::Logger::getCurrentLoggers()) {
       logger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
     }
+    // Set aggregator to prevent SEG FAULTS
+    replica->SetAggregator(std::make_shared<concordMetrics::Aggregator>());
 
     replica->start();
-    ControlStateManager::instance(inMemoryST_).disable();
+    // ControlStateManager::instance().disable();
   }
 
   void stop() {
@@ -584,13 +581,13 @@ class SimpleTestReplica {
       throw std::runtime_error("Failed to open libutt params file");
     }
 
-    fin >> simpleAppState->p;
-    fin >> simpleAppState->shareSK;
-    fin >> simpleAppState->bpk;
+    simpleAppState->p = libutt::Params(fin);
+    simpleAppState->shareSK = libutt::BankShareSK(fin);
+    simpleAppState->bpk = libutt::BankPK(fin);
 
-    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->p);
-    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->shareSK);
-    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->bpk);
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->p.value());
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->shareSK.value());
+    LOG_DEBUG(replicaLogger, "Params:" << simpleAppState->bpk.value());
 
     simpleAppState->replicaId = rp.replicaId;
 

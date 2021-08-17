@@ -21,6 +21,7 @@
 #include "bftengine/ControlStateManager.hpp"
 #include "assertUtils.hpp"
 #include "Metrics.hpp"
+#include "utt/PolyCrypto.h"
 #include <csignal>
 
 #ifdef USE_ROCKSDB
@@ -130,6 +131,8 @@ static void signal_handler(int signal_num) {
 }
 }  // namespace
 int main(int argc, char** argv) {
+  libutt::initialize(nullptr, 0);
+  
   signal(SIGINT, signal_handler);
   signal(SIGTERM, signal_handler);
 

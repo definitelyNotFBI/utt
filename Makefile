@@ -1,11 +1,11 @@
-CONCORD_BFT_DOCKER_REPO?=concordbft/
+CONCORD_BFT_DOCKER_REPO?=
 CONCORD_BFT_DOCKER_IMAGE?=concord-bft
 CONCORD_BFT_DOCKER_IMAGE_VERSION?=0.27
 CONCORD_BFT_DOCKER_CONTAINER?=concord-bft
 
 CONCORD_BFT_DOCKERFILE?=Dockerfile
 CONCORD_BFT_BUILD_DIR?=build
-CONCORD_BFT_TARGET_SOURCE_PATH?=/concord-bft
+CONCORD_BFT_TARGET_SOURCE_PATH?=~/concord-latest
 CONCORD_BFT_KVBC_CMF_PATHS?=${CONCORD_BFT_TARGET_SOURCE_PATH}/build/kvbc/cmf
 CONCORD_BFT_RECONFIGURATION_CMF_PATHS?=${CONCORD_BFT_TARGET_SOURCE_PATH}/build/reconfiguration/cmf
 CONCORD_BFT_BFTENGINE_CMF_PATHS?=${CONCORD_BFT_TARGET_SOURCE_PATH}/build/bftengine/cmf
@@ -17,7 +17,7 @@ CONCORD_BFT_KVBC_PROTO_PATH?=${CONCORD_BFT_TARGET_SOURCE_PATH}/build/kvbc/proto
 CONCORD_BFT_CONTAINER_SHELL?=/bin/bash
 CONCORD_BFT_CONTAINER_CC?=clang
 CONCORD_BFT_CONTAINER_CXX?=clang++
-CONCORD_BFT_CMAKE_BUILD_TYPE?=Release
+CONCORD_BFT_CMAKE_BUILD_TYPE?=Debug
 CONCORD_BFT_CMAKE_BUILD_TESTING?=TRUE
 CONCORD_BFT_CLANG_TIDY?=${CONCORD_BFT_TARGET_SOURCE_PATH}/tools/run-clang-tidy.py
 
@@ -124,22 +124,17 @@ login: ## Login to the container. Note: if the container is already running, log
 
 .PHONY: gen_cmake
 gen_cmake: ## Generate cmake files, used internally
-	docker run ${CONCORD_BFT_USER_GROUP} ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"mkdir -p ${CONCORD_BFT_TARGET_SOURCE_PATH}/${CONCORD_BFT_BUILD_DIR} && \
+		mkdir -p ${CONCORD_BFT_TARGET_SOURCE_PATH}/${CONCORD_BFT_BUILD_DIR} && \
 		cd ${CONCORD_BFT_BUILD_DIR} && \
 		CC=${CONCORD_BFT_CONTAINER_CC} CXX=${CONCORD_BFT_CONTAINER_CXX} \
-		cmake ${CONCORD_BFT_CMAKE_FLAGS} .."
+		cmake ${CONCORD_BFT_CMAKE_FLAGS} ..
 	@echo
 	@echo "CMake finished."
 
 .PHONY: build
 build: gen_cmake ## Build Concord-BFT source. In order to build a specific target run: make TARGET=<target name>.
-	docker run ${CONCORD_BFT_USER_GROUP} ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"cd ${CONCORD_BFT_BUILD_DIR} && \
-		make format-check && \
-		make -j $$(nproc) ${TARGET}"
+		cd ${CONCORD_BFT_BUILD_DIR} && \
+		make -j $$(nproc) ${TARGET}
 	@echo
 	@echo "Build finished. The binaries are in ${CURDIR}/${CONCORD_BFT_BUILD_DIR}"
 
@@ -160,18 +155,14 @@ test-range: ## Run all tests in the range [START,END], inclusive: `make test-ran
 
 .PHONY: format
 format: gen_cmake ## Format Concord-BFT source with clang-format
-	docker run ${CONCORD_BFT_USER_GROUP} ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"cd ${CONCORD_BFT_BUILD_DIR} && \
-		make format"
+		cd ${CONCORD_BFT_BUILD_DIR} && \
+		make format
 	@echo
 	@echo "Format finished."
 
 .PHONY: tidy-check
 tidy-check: gen_cmake ## Run clang-tidy
-	docker run ${CONCORD_BFT_USER_GROUP} ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"set -eo pipefail && \
+		set -eo pipefail && \
 		cd ${CONCORD_BFT_BUILD_DIR} && \
 		make -C ${CONCORD_BFT_KVBC_CMF_PATHS} &> /dev/null && \
 		make -C ${CONCORD_BFT_RECONFIGURATION_CMF_PATHS} &> /dev/null && \
@@ -182,7 +173,7 @@ tidy-check: gen_cmake ## Run clang-tidy
 		make -C ${CONCORD_BFT_THIN_REPLICA_PROTO_PATH} &> /dev/null && \
 		make -C ${CONCORD_BFT_KVBC_PROTO_PATH} &> /dev/null && \
 		${CONCORD_BFT_CLANG_TIDY} -ignore ../.clang-tidy-ignore 2>&1 | tee clang-tidy-report.txt | ( ! grep 'error:\|note:' ) && \
-		../scripts/check-forbidden-usage.sh .." \
+		../scripts/check-forbidden-usage.sh .. \
 		&& (echo "\nClang-tidy finished successfully.") \
 		|| ( echo "\nClang-tidy failed. The full report is in ${CURDIR}/${CONCORD_BFT_BUILD_DIR}/clang-tidy-report.txt. \
 			 \nFor detail information about the checks, please refer to https://clang.llvm.org/extra/clang-tidy/checks/list.html" \
@@ -190,32 +181,24 @@ tidy-check: gen_cmake ## Run clang-tidy
 
 .PHONY: test
 test: ## Run all tests
-	docker run ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"mkdir -p ${CONCORD_BFT_CORE_DIR} && \
+		mkdir -p ${CONCORD_BFT_CORE_DIR} && \
 		cd ${CONCORD_BFT_BUILD_DIR} && \
-		ctest --timeout ${CONCORD_BFT_CTEST_TIMEOUT} --output-on-failure"
+		ctest --timeout ${CONCORD_BFT_CTEST_TIMEOUT} --output-on-failure
 
 .PHONY: list-tests
 list-tests: gen_cmake ## List all tests. This one is helpful to choose which test to run when calling `make single-test TEST_NAME=<test name>`
-	docker run  ${CONCORD_BFT_USER_GROUP} ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"cd ${CONCORD_BFT_BUILD_DIR} && \
-		ctest -N"
+		cd ${CONCORD_BFT_BUILD_DIR} && \
+		ctest -N
 
 .PHONY: single-test
 single-test: ## Run a single test `make single-test TEST_NAME=<test name>`
-	docker run ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"mkdir -p ${CONCORD_BFT_CORE_DIR} && \
+		mkdir -p ${CONCORD_BFT_CORE_DIR} && \
 		cd ${CONCORD_BFT_BUILD_DIR} && \
-		ctest -V -R ${TEST_NAME} --timeout ${CONCORD_BFT_CTEST_TIMEOUT} --output-on-failure"
+		ctest -V -R ${TEST_NAME} --timeout ${CONCORD_BFT_CTEST_TIMEOUT} --output-on-failure
 
 .PHONY: clean
 clean: ## Clean Concord-BFT build directory
-	docker run ${BASIC_RUN_PARAMS} \
-		${CONCORD_BFT_CONTAINER_SHELL} -c \
-		"rm -rf ${CONCORD_BFT_BUILD_DIR}"
+		rm -rf ${CONCORD_BFT_BUILD_DIR}
 
 .PHONY: build-docker-image
 build-docker-image: ## Build the image. Note: without caching

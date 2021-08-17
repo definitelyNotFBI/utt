@@ -16,12 +16,15 @@
 #include "Logger.hpp"
 #include "simpleKVBTestsBuilder.hpp"
 #include "KVBCInterfaces.h"
+#include "config/test_parameters.hpp"
+
+#include "client/Params.hpp"
 
 namespace BasicRandomTests {
 
 class BasicRandomTestsRunner {
  public:
-  BasicRandomTestsRunner(logging::Logger &logger, concord::kvbc::IClient &client, size_t numOfOperations);
+  BasicRandomTestsRunner(logging::Logger &logger, concord::kvbc::IClient &client, const ClientParams& cparams);
   ~BasicRandomTestsRunner() { delete testsBuilder_; }
   void run();
 
@@ -38,6 +41,7 @@ class BasicRandomTestsRunner {
   concord::kvbc::IClient &client_;
   const size_t numOfOperations_;
   TestsBuilder *testsBuilder_;
+  std::shared_ptr<utt_bft::client::Params> mParams_ = nullptr;
 };
 
 }  // namespace BasicRandomTests

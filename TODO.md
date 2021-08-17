@@ -1,14 +1,15 @@
 # Todo
+- Use KVBC replica
 
 # Eval Plan (Essential, Important, Nice to have) 
 TODO: Put it on Overleaf (eval.tex)
 - Micro benchmarks on the target machine (E)
 - Throughput vs. Latency for different batch sizes (For regular payments) (E)
+- Throughput vs. n (For regular) (E)
+- Latency vs. n (For regular) (E)
 - Throughput vs. Latency for different batch sizes (For quickpay payments) (I)
 (Fix batch size from the above experiment; say that we use the parameters from this to limit latency)
-- Throughput vs. n (For regular) (E)
 - Throughput vs. n (For quickpay) (I)
-- Latency vs. n (For regular) (E)
 - Latency vs. n (For quickpay) (I)
 - Throughput vs. # Shards (I)
 

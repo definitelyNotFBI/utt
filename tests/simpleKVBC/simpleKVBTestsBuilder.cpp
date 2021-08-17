@@ -17,7 +17,8 @@
 #include <set>
 #include "basicRandomTestsRunner.hpp"
 #include "commonKVBTests.hpp"
-#include "DbMetadataStorage.cpp"
+#include "DbMetadataStorage.hpp"
+#include "simpleKVBTestsBuilder.hpp"
 #include "storage/db_types.h"
 #include "block_metadata.hpp"
 
@@ -125,15 +126,17 @@ void TestsBuilder::createRandomTest(size_t numOfRequests, size_t seed) {
 void TestsBuilder::create(size_t numOfRequests, size_t seed) {
   srand(seed);
   for (size_t i = 0; i < numOfRequests; i++) {
-    int percent = rand() % 100 + 1;
-    if (percent <= 50)
-      createAndInsertRandomRead();
-    else if (percent <= 95)
-      createAndInsertRandomConditionalWrite();
-    else if (percent <= 100)
-      createAndInsertGetLastBlock();
-    else
-      ConcordAssert(0);
+    // int percent = rand() % 100 + 1;
+    // if (percent <= 50)
+    //   createAndInsertRandomRead();
+    // else if (percent <= 95)
+    //   createAndInsertRandomConditionalWrite();
+    // else if (percent <= 100)
+    //   createAndInsertGetLastBlock();
+    // else
+    //   ConcordAssert(0);
+    // For this test, just insert Mints
+    createAndInsertMint();
   }
 
   for (__attribute__((unused)) auto elem : internalBlockchain_) {
@@ -247,6 +250,24 @@ void TestsBuilder::createAndInsertRandomConditionalWrite() {
   }
 }
 
+// Random UTT Mint Transaction
+void TestsBuilder::createAndInsertMint() {
+  auto *request = new SimpleMintRequest{{MINT}};
+  request->coinId = 1;
+  request->val = 1000;
+
+  requests_.push_back((SimpleRequest*) request);
+
+  // Write the expected reply
+  auto* reply = new SimpleReply_Mint{{MINT}};
+  replies_.push_back((SimpleReply*) reply);
+}
+
+// Random UTT Pay Transaction
+void TestsBuilder::createAndInsertPay() {
+
+}
+
 void TestsBuilder::createAndInsertRandomRead() {
   // Create request
   BlockId readVersion = 0;
@@ -321,6 +342,10 @@ size_t TestsBuilder::sizeOfRequest(SimpleRequest *request) {
       return ((SimpleReadRequest *)request)->getSize();
     case GET_LAST_BLOCK:
       return sizeof(SimpleRequest);
+    case MINT:
+      return sizeof(SimpleMintRequest);
+    // case PAY:
+      // return sizeof(SimplePayRequest);
     default:
       ConcordAssert(0);
   }
@@ -335,6 +360,10 @@ size_t TestsBuilder::sizeOfReply(SimpleReply *reply) {
       return ((SimpleReply_Read *)reply)->getSize();
     case GET_LAST_BLOCK:
       return sizeof(SimpleReply_GetLastBlock);
+    case MINT:
+      return sizeof(SimpleReply_Mint);
+    // case PAY:
+      // return sizeof(SimpleReply_Pay);
     default:
       ConcordAssert(0);
   }

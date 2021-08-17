@@ -111,20 +111,16 @@ class SimpleTestClient {
 
     bft::client::ClientConfig adapter_config = make_adapter_config(cp);
     // Load the params file (move it out)
-    libutt::Params p;
     std::ifstream ifile("utt_pub_client.dat");
     ConcordAssert(!ifile.fail());
 
-    ifile >> p;
+    libutt::Params p(ifile);
     std::vector<libutt::BankSharePK> bank_pks;
     size_t n =cp.numOfReplicas;
     for(size_t i=0; i<n;i++) {
-      libutt::BankSharePK bspk;
-      ifile >> bspk;
-      bank_pks.push_back(bspk);
+      bank_pks.emplace_back(ifile);
     }
-    libutt::BankPK main_pk;
-    ifile >> main_pk;
+    libutt::BankPK main_pk(ifile);
 
     std::cout << "MainPK: " << main_pk << std::endl;
 
@@ -140,13 +136,9 @@ class SimpleTestClient {
     std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
 
     for(auto j=0; j<2;j++) {
-      libutt::CoinSecrets cs_temp;
-      libutt::CoinComm cc_temp;
-      libutt::CoinSig csign_temp;
-
-      gen_file >> cs_temp;
-      gen_file >> cc_temp;
-      gen_file >> csign_temp;
+      libutt::CoinSecrets cs_temp(gen_file);
+      libutt::CoinComm cc_temp(gen_file);
+      libutt::CoinSig csign_temp(gen_file);
 
       my_initial_coins.push_back(std::make_tuple(cs_temp, cc_temp, csign_temp));
     }

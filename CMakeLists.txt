@@ -132,25 +132,9 @@ include(CTest)
 #
 # Subdirectories
 #
-add_subdirectory(logging)
-add_subdirectory(util)
-add_subdirectory(secretsmanager)
-add_subdirectory(threshsign)
-add_subdirectory(communication)
-add_subdirectory(kvbc)
-add_subdirectory(performance)
-add_subdirectory(bftengine)
-add_subdirectory(tools)
-add_subdirectory(storage)
-add_subdirectory(scripts)
-add_subdirectory(diagnostics)
-add_subdirectory(bftclient)
-add_subdirectory(reconfiguration)
-add_subdirectory(client)
 if(USE_GRPC)
 	add_subdirectory(thin-replica-server)
 endif()
-add_subdirectory(ccron)
 # add_subdirectory(libutt/libutt)
 
 # Deps will be installed during image setup
@@ -223,12 +207,16 @@ add_subdirectory(communication)
 add_subdirectory(kvbc)
 add_subdirectory(performance)
 add_subdirectory(bftengine)
-add_subdirectory(tools)
 add_subdirectory(storage)
 add_subdirectory(scripts)
 add_subdirectory(diagnostics)
 add_subdirectory(bftclient)
 add_subdirectory(reconfiguration)
+add_subdirectory(client)
+add_subdirectory(ccron)
+add_subdirectory(utt_bft)
+add_subdirectory(tools)
+
 
 #
 # Setup testing

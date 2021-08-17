@@ -72,12 +72,14 @@ add_executable(GenerateUTTKeys
     GenerateUTTKeys.cpp
 )
 
+get_target_property(UTT_BFT_INCLUDES utt_bft INCLUDE_DIRECTORIES)
+
 target_include_directories(GenerateUTTKeys
-    PUBLIC 
-    ${UTT_INCLUDES}
+    PUBLIC
+    ${UTT_BFT_INCLUDES}
 )
 
 target_link_libraries(GenerateUTTKeys
     PUBLIC
-    ${UTT_LIBS}
+    utt_bft
 )

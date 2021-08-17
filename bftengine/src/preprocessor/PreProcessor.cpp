@@ -654,7 +654,7 @@ bool PreProcessor::handleSingleClientRequestMessage(ClientPreProcessReqMsgUnique
         cancelPreProcessingOnNonPrimary(clientMsg, senderId, reqOffsetInBatch, (reqEntry->reqRetryId)++);
       LOG_INFO(logger(),
                "Request has already been executed - let replica decide how to proceed further"
-                   << KVLOG(batchCid, batchSize, reqSeqNum, clientId, senderId));
+                   << KVLOG(batchCid, batchSize, reqSeqNum, clientId, senderId, batchedPreProcessEnabled_));
       incomingMsgsStorage_->pushExternalMsg(clientMsg->convertToClientRequestMsg(false));
       return false;
     }

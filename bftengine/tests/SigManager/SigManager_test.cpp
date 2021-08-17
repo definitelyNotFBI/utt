@@ -33,7 +33,7 @@ constexpr char KEYS_BASE_PATH[] = "/tmp/transaction_signing_keys";
 constexpr char PRIV_KEY_NAME[] = "privkey.pem";
 constexpr char PUB_KEY_NAME[] = "pubkey.pem";
 constexpr char KEYS_GEN_SCRIPT_PATH[] =
-    "/concord-bft//scripts/linux/create_concord_clients_transaction_signing_keys.sh";
+    "~/concord-latest/scripts/linux/create_concord_clients_transaction_signing_keys.sh";
 constexpr size_t RANDOM_DATA_SIZE = 1000U;
 
 std::default_random_engine generator;

@@ -260,6 +260,7 @@ class SimpleTestReplica {
 
     simpleAppState->st = st;
     SimpleTestReplica *replica = new SimpleTestReplica(comm, simpleAppState, replicaConfig, behv, st, metaDataStorage);
+    replica->replica->SetAggregator(std::make_shared<concordMetrics::Aggregator>());
     return replica;
   }
 };

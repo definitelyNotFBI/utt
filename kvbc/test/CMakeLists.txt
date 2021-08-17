@@ -12,19 +12,19 @@ if(Boost_FOUND)
     )
 endif()
 
-add_test(NAME kvbc_filter_test COMMAND kvbc_filter_test)
-add_executable(kvbc_filter_test
-        kvbc_app_filter/kvbc_filter_test.cpp)
-
-target_link_libraries(kvbc_filter_test
-        ${Boost_LIBRARIES}
-        GTest::Main
-        GTest::GTest
-        ${yaml-cpp_LIBRARIES}
-        kvbc
-        concord-kvbc-proto
-        concordbft_reconfiguration
-        logging)
+# add_test(NAME kvbc_filter_test COMMAND kvbc_filter_test)
+# add_executable(kvbc_filter_test
+#        kvbc_app_filter/kvbc_filter_test.cpp)
+#
+# target_link_libraries(kvbc_filter_test
+#         ${Boost_LIBRARIES}
+#         GTest::Main
+#         GTest::GTest
+#         ${yaml-cpp_LIBRARIES}
+#         kvbc
+#         concord-kvbc-proto
+#         concordbft_reconfiguration
+#         logging)
 
 add_executable(order_test order_test.cpp )
 add_test(order_test order_test)

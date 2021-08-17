@@ -13,13 +13,18 @@
 
 #pragma once
 
+#include <cstdlib>
 #include <list>
 #include <map>
 #include <cstring>
+#include <memory>
 #include <sstream>
+#include "assertUtils.hpp"
 #include "kv_types.hpp"
 #include "KVBCInterfaces.h"
 #include "Logger.hpp"
+
+#include "client/Params.hpp"
 
 namespace BasicRandomTests {
 
@@ -62,6 +67,8 @@ enum RequestType : char {
   GET_LAST_BLOCK = 3,
   GET_BLOCK_DATA = 4,
   LONG_EXEC_COND_WRITE = 5,
+  MINT = 6,
+  PAY = 7,
 };
 
 struct SimpleRequest {
@@ -146,6 +153,57 @@ struct SimpleReadRequest {
   concord::kvbc::BlockId readVersion = 0;  // If 0, read from the latest version
   size_t numberOfKeysToRead = 0;
   SimpleKey keys[1];
+};
+
+// Adding Mint Request to KVBC Replica
+struct SimpleMintRequest {
+  static SimpleMintRequest* alloc(const size_t coin_len) {
+    auto *req = (SimpleMintRequest*)malloc(sizeof(SimpleMintRequest)+coin_len);
+    req->header.type = MINT;
+    req->cc_buf_len = coin_len;
+    return req;
+  }
+
+  size_t getSize() const {
+    size_t size = sizeof(SimpleMintRequest) + cc_buf_len;
+    return size;
+  }
+
+  static size_t getSize(const size_t coin_len) {
+    return sizeof(SimpleMintRequest) + coin_len;
+  }
+
+  // Use this to load up the stringstream to obtain the libutt::EPK from the Mint message
+  uint8_t* getMintBuffer() { 
+    return (uint8_t*)this + sizeof(SimpleMintRequest); 
+  }
+  
+  static void free(SimpleMintRequest* buf) {delete buf;}
+
+  SimpleRequest header;
+  size_t val;
+  size_t coinId;
+  size_t cc_buf_len = 0;
+};
+
+struct SimplePayRequest {
+  SimpleRequest header;
+  size_t tx_buf_len = 0;
+
+  uint8_t* getTxBuf() {
+    return (uint8_t*)this + sizeof(SimplePayRequest); 
+  }
+
+  // Used to determine the size of the request
+  static size_t getSize(size_t tx_buf_len) {
+    return sizeof(SimplePayRequest) + tx_buf_len;
+  }
+
+  // Returns my size (What I think my size is)
+  size_t getSize() const {
+    return sizeof(SimplePayRequest) + tx_buf_len;
+  }
+
 };
 
 struct SimpleReply {
@@ -283,6 +341,74 @@ struct SimpleReply_HaveYouStopped {
   int64_t stopped;
 };
 
+
+// Adding a mint response to KVBC Blockchains
+struct SimpleReply_Mint {
+  static SimpleReply_Mint* alloc(size_t coin_sig_share_len) {
+    return (SimpleReply_Mint*)malloc(getSize(coin_sig_share_len));
+  }
+
+  size_t getSize() const {
+    size_t size = getSize(coin_sig_share_len);
+    return size;
+  }
+
+  static size_t getSize(size_t coin_sig_share_len) {
+    return sizeof(SimpleReply_Mint) + coin_sig_share_len;
+  }
+
+  // Get the size of the RSI
+  size_t getRSISize() {
+    return sizeof(coin_sig_share_len) + coin_sig_share_len;
+  }
+
+  // Return the Non-RSI size
+  // The non-RSI size is the size after removing the coin_sig_share_len field
+  static size_t getCommonSize() {
+    return sizeof(SimpleReply_Mint)-sizeof(coin_sig_share_len);
+  }
+
+  static size_t RSI_getCoinSigShareLen(uint8_t* rsi) {
+    return *((size_t*)rsi);
+  }
+
+  static uint8_t* RSI_getCoinSigShareBuffer(uint8_t* rsi) {
+    return rsi + sizeof(coin_sig_share_len);
+  }
+
+  uint8_t* getCoinSigShareBuffer() const {
+    return (uint8_t*)this + sizeof(SimpleReply_Mint);
+  }
+  static void free(SimpleReply_Mint* buf) {delete buf;}
+
+  SimpleReply header;
+  size_t coinId;
+  size_t coin_sig_share_len = 0;
+};
+
+struct SimpleReply_Pay {
+  SimpleReply header;
+  size_t tx_len;
+
+  static size_t getSize(size_t tx_len) {
+    return sizeof(SimpleReply_Pay) + tx_len;
+  }
+
+  size_t getSize() const {
+    return getSize(tx_len);
+  }
+
+  size_t getRSISize() const {
+    // Everything except the header is RSI
+    return getSize() - sizeof(header) ;
+  }
+
+  uint8_t* getTxBuf() const {
+    return (uint8_t*)this + sizeof(SimpleReply_Pay);
+  }
+
+};
+
 #pragma pack(pop)
 
 class SimpleKeyBlockIdPair  // Represents <key, blockId>
@@ -329,6 +455,10 @@ class TestsBuilder {
   void createAndInsertRandomConditionalWrite();
   void createAndInsertRandomRead();
   void createAndInsertGetLastBlock();
+  // UTT Mint
+  void createAndInsertMint();
+  // UTT Pay
+  void createAndInsertPay();
   void addExpectedWriteReply(bool foundConflict);
   bool lookForConflicts(concord::kvbc::BlockId readVersion, size_t numOfKeysInReadSet, SimpleKey* readKeysArray);
   void addNewBlock(size_t numOfWrites, SimpleKV* writesKVArray);
@@ -344,6 +474,8 @@ class TestsBuilder {
   KeyBlockIdToValueMap allKeysToValueMap_;
   concord::kvbc::BlockId prevLastBlockId_ = 0;
   concord::kvbc::BlockId lastBlockId_ = 0;
+ public:
+  std::shared_ptr<utt_bft::client::Params> mParams = nullptr;
 };
 
 }  // namespace BasicRandomTests

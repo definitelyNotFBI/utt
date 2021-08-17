@@ -65,9 +65,7 @@ bool ConfigFileParser::Parse() {
     }
 
     if (tmp[0] == value_delimiter_) {  // of the form '- value'
-      LOG_INFO(testLogger, "Got a value: tmp[1]?" << tmp[1]);
       value = tmp.substr(1);
-      LOG_INFO(testLogger, "Got a value: " << value);
       concord::util::ltrim_inplace(tmp);
       // Trim the value in place
       concord::util::ltrim_inplace(value);

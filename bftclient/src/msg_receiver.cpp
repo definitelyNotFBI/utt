@@ -9,6 +9,7 @@
 // terms. Your use of these subcomponents is subject to the terms and conditions of the
 // subcomponent's license, as noted in the LICENSE file.
 
+#include "Logging4cplus.hpp"
 #include "kvstream.h"
 #include "assertUtils.hpp"
 #include "bftengine/ClientMsgs.hpp"
@@ -40,6 +41,7 @@ void UnmatchedReplyQueue::clear() {
 }
 
 void MsgReceiver::onNewMessage(bft::communication::NodeNum source, const char* const message, size_t msg_len) {
+  LOG_DEBUG(logger_, "Got something from " << source);
   auto max_reply_size = max_reply_size_.load();
   if (max_reply_size == 0) {
     // There are no outstanding requests, so any replies are stale.

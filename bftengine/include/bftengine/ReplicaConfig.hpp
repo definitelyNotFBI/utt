@@ -405,8 +405,9 @@ inline std::ostream& operator<<(std::ostream& os, const ReplicaConfig& rc) {
               rc.timeServiceSoftLimitMillis.count(),
               rc.timeServiceHardLimitMillis.count(),
               rc.timeServiceEpsilonMillis.count(),
-              rc.numWorkerThreadsForBlockIO,
-              rc.batchedPreProcessEnabled);
+              rc.numWorkerThreadsForBlockIO);
+  os << ",";
+  os << KVLOG(rc.batchedPreProcessEnabled);
 
   for (auto& [param, value] : rc.config_params_) os << param << ": " << value << "\n";
   return os;

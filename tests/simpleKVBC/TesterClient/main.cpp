@@ -25,6 +25,8 @@
 #include "config/test_parameters.hpp"
 #include "communication/CommFactory.hpp"
 
+#include "utt/Keys.h"
+
 using namespace bftEngine;
 using namespace bft::communication;
 using namespace BasicRandomTests;
@@ -44,7 +46,7 @@ ClientParams setupClientParams(int argc, char **argv) {
   clientParams.numOfOperations = UINT16_MAX;
   char argTempBuffer[PATH_MAX + 10];
   int o = 0;
-  while ((o = getopt(argc, argv, "i:f:c:p:n:")) != EOF) {
+  while ((o = getopt(argc, argv, "i:f:c:p:n:U:")) != EOF) {
     switch (o) {
       case 'i': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
@@ -83,7 +85,11 @@ ClientParams setupClientParams(int argc, char **argv) {
         argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
         clientParams.configFileName = argTempBuffer;
       } break;
-
+      case 'U': {
+        strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
+        argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
+        clientParams.utt_file_name = argTempBuffer;
+      } break;
       default:
         break;
     }
@@ -119,6 +125,8 @@ ClientConfig setupConsensusParams(ClientParams &clientParams) {
 }
 
 int main(int argc, char **argv) {
+  libutt::initialize(nullptr, 0);
+
   ClientParams clientParams = setupClientParams(argc, argv);
   if (clientParams.clientId == UINT16_MAX || clientParams.numOfFaulty == UINT16_MAX ||
       clientParams.numOfSlow == UINT16_MAX || clientParams.numOfOperations == UINT32_MAX) {
@@ -129,6 +137,6 @@ int main(int argc, char **argv) {
   ClientConfig clientConfig = setupConsensusParams(clientParams);
   auto *comm = setupCommunicationParams(clientParams);
   IClient *client = createClient(clientConfig, comm);
-  BasicRandomTestsRunner testsRunner(logger, *client, clientParams.numOfOperations);
+  BasicRandomTestsRunner testsRunner(logger, *client, clientParams);
   testsRunner.run();
 }

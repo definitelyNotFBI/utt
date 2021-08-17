@@ -142,7 +142,7 @@ void parse_params(int argc, char **argv, ClientParams &cp, bftEngine::SimpleClie
 }
 
 int main(int argc, char **argv) {
-  libutt::initialize(nullptr);
+  libutt::initialize(nullptr, 0);
   ReplicaConfig::instance().setpreExecutionFeatureEnabled(true);
   // TODO(IG:) configure Log4Cplus's output format, using default for now
 
