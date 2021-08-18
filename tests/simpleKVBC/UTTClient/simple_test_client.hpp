@@ -56,8 +56,8 @@ using namespace std;
 #define PRE_EXEC_ENABLED true
 // #define TEST_NORMAL_MINT
 // #define TEST_BATCH_MINT
-// #define TEST_NORMAL_PAY
-#define TEST_BATCH_PAY
+#define TEST_NORMAL_PAY
+// #define TEST_BATCH_PAY
 
 #define test_assert(statement, message)                                                                          \
   {                                                                                                              \
