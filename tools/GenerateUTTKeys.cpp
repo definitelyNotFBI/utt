@@ -144,8 +144,8 @@ int main(int argc, char **argv)
         // std::vector<std::tuple<LTPK, Fr>> recv;
 
         libutt::CoinSecrets cs[2] = {
-            CoinSecrets{p},
-            CoinSecrets{p}
+            CoinSecrets{p, 1024},
+            CoinSecrets{p, 1024}
         };
 
         for(auto j=0ul; j<2;j++) {

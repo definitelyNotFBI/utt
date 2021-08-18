@@ -1,6 +1,7 @@
 set(utt_bft_test_sources
     TestSerialization.cpp
     TestMintFlow.cpp
+    TestPayFlow.cpp
 )
 
 foreach(appSrc ${utt_bft_test_sources})

@@ -56,8 +56,8 @@ using namespace std;
 #define PRE_EXEC_ENABLED true
 // #define TEST_NORMAL_MINT
 // #define TEST_BATCH_MINT
-#define TEST_NORMAL_PAY
-// #define TEST_BATCH_PAY
+// #define TEST_NORMAL_PAY
+#define TEST_BATCH_PAY
 
 #define test_assert(statement, message)                                                                          \
   {                                                                                                              \
@@ -290,6 +290,7 @@ class SimpleTestClient {
                    << hist.ToString());
     }
 #endif
+
 #ifdef TEST_NORMAL_PAY
     // Third set of experiments for Payments
     hist.Clear();
@@ -325,6 +326,61 @@ class SimpleTestClient {
       LOG_DEBUG(clientLogger, "Got Pay Tx: " << i);
 
       LOG_DEBUG(clientLogger, "(Matched) Response Size: " << x.matched_data.size());
+      // auto status = client.verifyMintAckRSI(x);
+      // if(!status.has_value()) {
+        // printf("Got invalid transactions from the replicas\n");
+      // }
+    }
+
+    if (cp.measurePerformance) {
+      LOG_INFO(clientLogger,
+               std::endl
+                   << "Performance info from client " << cp.clientId << std::endl
+                   << hist.ToString());
+    }
+#endif
+
+#ifdef TEST_BATCH_PAY
+    // Third set of experiments for Payments
+    hist.Clear();
+
+    for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
+      // the python script that runs the client needs to know how many
+      // iterations has been done - that's the reason we use printf and not
+      // logging module - to keep the output exactly as we expect.
+      if (i > 0 && i % 100 == 0) {
+        printf("Iterations count: 100\n");
+        printf("Total iterations count: %i\n", i);
+      }
+
+      std::deque<bft::client::WriteRequest> batch_req;
+
+      for(uint32_t j = 0; j < cp.batch_size; j++) {
+        bft::client::WriteRequest req;
+        req.config.request.timeout = 100s;
+        req.config.request.pre_execute = PRE_EXEC_ENABLED;
+        req.config.quorum = client::LinearizableQuorum{};
+        req.request = client.NewTestPaymentTx();
+        req.config.request.sequence_number = pSeqGen.unique();
+        batch_req.push_back(req);
+      }
+
+      LOG_DEBUG(clientLogger, "Starting Tx: " << i);
+
+      // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
+      uint64_t start = get_monotonic_time();
+      auto x = client.sendBatch(batch_req, std::to_string(cp.clientId));
+      
+      uint64_t end = get_monotonic_time();
+      uint64_t elapsedMicro = end - start;
+
+      if (cp.measurePerformance) {
+        hist.Add(double(elapsedMicro));
+      }
+
+      LOG_DEBUG(clientLogger, "Got Pay Tx: " << i);
+
+      LOG_DEBUG(clientLogger, "RSI Response Size: " << x.size());
       // auto status = client.verifyMintAckRSI(x);
       // if(!status.has_value()) {
         // printf("Got invalid transactions from the replicas\n");
