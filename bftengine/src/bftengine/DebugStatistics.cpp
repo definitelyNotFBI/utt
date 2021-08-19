@@ -71,6 +71,7 @@ void DebugStatistics::onCycleCheck() {
                     << "    LastExecutedSeqNumber = " << d.lastExecutedSequenceNumber << endl
                     << "    PrePrepareMessages = " << d.prePrepareMessages << endl
                     << "    AvgBatchSize = " << fixed << setprecision(2) << avgBatchSize << endl
+                    << "    RealThroughput = " << fixed << setprecision(2) << writeThroughput*avgBatchSize << endl
                     << "    AvgPendingRequest = " << fixed << setprecision(2) << avgPendingRequests << endl);
 
   d.lastCycleTime = currTime;
