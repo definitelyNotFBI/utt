@@ -1,0 +1,1265 @@
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing: # Setup for replicas
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:57|bool ConfigFileParser::Parse()|Ignoring a comment
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing: 
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:63|bool ConfigFileParser::Parse()|Ignoring an empty line
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing: replicas_config:
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:81|bool ConfigFileParser::Parse()|Extracting a key
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.15.235.77:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.135.214.22:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.222.168.106:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.129.67.249:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing: clients_config:
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:81|bool ConfigFileParser::Parse()|Extracting a key
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3001
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3002
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3003
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3004
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3005
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3006
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3007
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3008
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.119.157.250:3009
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3001
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3002
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3003
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3004
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3005
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3006
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3007
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3008
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 3.143.0.131:3009
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3000
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3001
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3002
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3003
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3004
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3005
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3006
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3007
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3008
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing:     - 18.116.19.228:3009
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:52|bool ConfigFileParser::Parse()|Processing: 
+2021-08-18T17:08:11,588Z|INFO ||simpletest.replica.test||||config_file_parser.cpp:63|bool ConfigFileParser::Parse()|Ignoring an empty line
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:97|bool ConfigFileParser::Parse()|File: comm_config successfully parsed.
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||config_file_parser.cpp:103|size_t ConfigFileParser::Count(const std::__cxx11::string &)|count() returns: 30 for key: clients_config
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||config_file_parser.cpp:103|size_t ConfigFileParser::Count(const std::__cxx11::string &)|count() returns: 4 for key: replicas_config
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:110|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|getValues() for key: replicas_config
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.15.235.77:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.135.214.22:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.222.168.106:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.129.67.249:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:110|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|getValues() for key: clients_config
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.119.157.250:3009
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 3.143.0.131:3009
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:114|vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|value: 18.116.19.228:3009
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.15.235.77:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.15.235.77
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 0, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.135.214.22:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.135.214.22
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 1, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.222.168.106:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.222.168.106
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 2, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.129.67.249:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.129.67.249
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 3, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 0, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3001, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3001
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 1, port:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3002, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3002
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 2, port:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3003, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3003
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 3, port:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3004, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3004
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 4, port:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3005, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3005
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 5, port:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3006, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3006
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 6, port:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3007, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3007
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 7, port:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3008, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3008
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 8, port:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.119.157.250:3009, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.119.157.250
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3009
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 9, port:3009
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 10, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3001, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3001
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 11, port:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3002, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3002
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 12, port:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3003, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3003
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 13, port:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3004, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3004
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 14, port:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3005, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3005
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 15, port:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3006, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3006
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 16, port:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3007, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3007
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 17, port:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3008, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3008
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 18, port:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 3.143.0.131:3009, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3.143.0.131
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3009
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 19, port:3009
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3000, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3000
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 20, port:3000
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3001, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3001
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 21, port:3001
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3002, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3002
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 22, port:3002
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3003, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3003
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 23, port:3003
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3004, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3004
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 24, port:3004
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3005, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3005
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 25, port:3005
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3006, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3006
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 26, port:3006
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3007, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3007
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 27, port:3007
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3008, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3008
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 28, port:3008
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:121|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|valueToSplit: 18.116.19.228:3009, delimiter: :
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 18.116.19.228
+2021-08-18T17:08:11,588Z|DEBUG||utt.bft.client||||config_file_parser.cpp:127|std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|Value after split: 3009
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||test_comm_config.cpp:101|std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|setUpConfiguredNodes() node_id: 13, k: 29, port:3009
+2021-08-18T17:08:11,588Z|INFO ||utt.bft.client||||simple_test_client.hpp:116|bool SimpleTestClient::run()|ClientParams: clientId: 13, numOfReplicas: 4, numOfClients: 30, numOfIterations: 400, fVal: 1, cVal: 0
+2021-08-18T17:08:11,588Z|INFO ||communication.factory||||CommFactory.cpp:49|static bft::communication::ICommunication *bft::communication::CommFactory::create(const bft::communication::BaseCommConfig &)|Using TlsTCP: Host=0.0.0.0, Port=3009
+Initial retry timeout150
+Max retry timeout1000
+Reading genesis file: ./genesis_9
+2021-08-18T17:08:11,590Z|INFO ||metrics||||Metrics.cpp:176|concordMetrics::Aggregator::Aggregator(bool)| metricsEnabled: True
+2021-08-18T17:08:11,590Z|INFO ||concord-bft.tls.runner||||TlsRunner.cpp:32|void bft::communication::tls::Runner::start()|Starting TLS Runner
+2021-08-18T17:08:11,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:43|void bft::communication::tls::ConnectionManager::start()|Starting connection manager for 13
+2021-08-18T17:08:11,591Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 0: 3.15.235.77:3000 to 3.15.235.77:3000
+2021-08-18T17:08:11,591Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 1: 3.135.214.22:3000 to 3.135.214.22:3000
+2021-08-18T17:08:11,591Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 2: 18.222.168.106:3000 to 18.222.168.106:3000
+2021-08-18T17:08:11,591Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 3: 3.129.67.249:3000 to 3.129.67.249:3000
+2021-08-18T17:08:11,591Z|WARN ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:309|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Failed to connect to node 1: 3.135.214.22:3000 : Connection refused
+2021-08-18T17:08:11,591Z|WARN ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:309|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Failed to connect to node 3: 3.129.67.249:3000 : Connection refused
+2021-08-18T17:08:11,591Z|WARN ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:309|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Failed to connect to node 0: 3.15.235.77:3000 : Connection refused
+2021-08-18T17:08:11,591Z|WARN ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:309|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Failed to connect to node 2: 18.222.168.106:3000 : Connection refused
+2021-08-18T17:08:12,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 0: 3.15.235.77:3000 to 3.15.235.77:3000
+2021-08-18T17:08:12,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 1: 3.135.214.22:3000 to 3.135.214.22:3000
+2021-08-18T17:08:12,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 2: 18.222.168.106:3000 to 18.222.168.106:3000
+2021-08-18T17:08:12,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:295|auto bft::communication::tls::ConnectionManager::resolve(bft::communication::NodeNum)::(anonymous class)::operator()(const type-parameter-0-0 &, type-parameter-0-1) const|Resolved node 3: 3.129.67.249:3000 to 3.129.67.249:3000
+2021-08-18T17:08:12,590Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:315|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Connected to node 0: 3.15.235.77:3000
+2021-08-18T17:08:12,592Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:315|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Connected to node 1: 3.135.214.22:3000
+2021-08-18T17:08:12,593Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:315|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Connected to node 2: 18.222.168.106:3000
+2021-08-18T17:08:12,593Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:315|auto bft::communication::tls::ConnectionManager::connect(bft::communication::NodeNum, const asio::ip::tcp::endpoint &)::(anonymous class)::operator()(const type-parameter-0-0 &) const|Connected to node 3: 3.129.67.249:3000
+2021-08-18T17:08:12,601Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:231|void bft::communication::tls::ConnectionManager::onClientHandshakeComplete(const asio::error_code &, bft::communication::NodeNum)|Client handshake succeeded for peer 0
+2021-08-18T17:08:12,610Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:231|void bft::communication::tls::ConnectionManager::onClientHandshakeComplete(const asio::error_code &, bft::communication::NodeNum)|Client handshake succeeded for peer 1
+2021-08-18T17:08:12,610Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:231|void bft::communication::tls::ConnectionManager::onClientHandshakeComplete(const asio::error_code &, bft::communication::NodeNum)|Client handshake succeeded for peer 2
+2021-08-18T17:08:12,610Z|INFO ||concord-bft.tls.connMgr||||TlsConnectionManager.cpp:231|void bft::communication::tls::ConnectionManager::onClientHandshakeComplete(const asio::error_code &, bft::communication::NodeNum)|Client handshake succeeded for peer 3
+2021-08-18T17:08:13,596Z|INFO ||utt.bft.client||||simple_test_client.hpp:158|bool SimpleTestClient::run()|Connected to all the replicas
+
+2021-08-18T17:08:13,596Z|INFO ||utt.bft.client||||simple_test_client.hpp:159|bool SimpleTestClient::run()|Starting 400
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:14,160Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 1
+2021-08-18T17:08:14,211Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 1
+2021-08-18T17:08:14,211Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:14,720Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 2
+2021-08-18T17:08:14,772Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 2
+2021-08-18T17:08:14,772Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:15,177Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 3
+2021-08-18T17:08:15,256Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 3
+2021-08-18T17:08:15,256Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:15,746Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 4
+2021-08-18T17:08:15,809Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 4
+2021-08-18T17:08:15,809Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:16,214Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 5
+2021-08-18T17:08:17,740Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 5
+2021-08-18T17:08:17,740Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:18,110Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 6
+2021-08-18T17:08:19,197Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 6
+2021-08-18T17:08:19,197Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:19,568Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 7
+2021-08-18T17:08:20,346Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 7
+2021-08-18T17:08:20,346Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:20,716Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 8
+2021-08-18T17:08:21,981Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 8
+2021-08-18T17:08:21,981Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:22,351Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 9
+2021-08-18T17:08:23,489Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 9
+2021-08-18T17:08:23,489Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:23,859Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 10
+2021-08-18T17:08:24,956Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 10
+2021-08-18T17:08:24,956Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:25,426Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 11
+2021-08-18T17:08:25,495Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 11
+2021-08-18T17:08:25,495Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:25,865Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 12
+2021-08-18T17:08:25,917Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 12
+2021-08-18T17:08:25,917Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:26,315Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 13
+2021-08-18T17:08:26,819Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 13
+2021-08-18T17:08:26,819Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:27,190Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 14
+2021-08-18T17:08:28,375Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 14
+2021-08-18T17:08:28,375Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:28,865Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 15
+2021-08-18T17:08:28,955Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 15
+2021-08-18T17:08:28,955Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:29,421Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 16
+2021-08-18T17:08:29,488Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 16
+2021-08-18T17:08:29,488Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:29,991Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 17
+2021-08-18T17:08:30,161Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 17
+2021-08-18T17:08:30,161Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:30,531Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 18
+2021-08-18T17:08:31,510Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 18
+2021-08-18T17:08:31,510Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:31,881Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 19
+2021-08-18T17:08:32,393Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 19
+2021-08-18T17:08:32,393Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:32,763Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 20
+2021-08-18T17:08:33,683Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 20
+2021-08-18T17:08:33,683Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:34,057Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 21
+2021-08-18T17:08:34,923Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 21
+2021-08-18T17:08:34,923Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:35,294Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 22
+2021-08-18T17:08:36,687Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 22
+2021-08-18T17:08:36,687Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:37,059Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 23
+2021-08-18T17:08:37,146Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 23
+2021-08-18T17:08:37,146Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:37,568Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 24
+2021-08-18T17:08:37,615Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 24
+2021-08-18T17:08:37,615Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:37,985Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 25
+2021-08-18T17:08:38,087Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 25
+2021-08-18T17:08:38,087Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:38,510Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 26
+2021-08-18T17:08:38,574Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 26
+2021-08-18T17:08:38,574Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:39,039Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 27
+2021-08-18T17:08:39,084Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 27
+2021-08-18T17:08:39,084Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:39,454Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 28
+2021-08-18T17:08:39,779Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 28
+2021-08-18T17:08:39,779Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:40,150Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 29
+2021-08-18T17:08:40,717Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 29
+2021-08-18T17:08:40,717Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:41,088Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 30
+2021-08-18T17:08:42,057Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 30
+2021-08-18T17:08:42,057Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:42,427Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 31
+2021-08-18T17:08:43,028Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 31
+2021-08-18T17:08:43,028Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:43,398Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 32
+2021-08-18T17:08:43,952Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 32
+2021-08-18T17:08:43,952Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:44,345Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 33
+2021-08-18T17:08:45,181Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 33
+2021-08-18T17:08:45,181Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:45,574Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 34
+2021-08-18T17:08:45,839Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 34
+2021-08-18T17:08:45,839Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:46,209Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 35
+2021-08-18T17:08:46,336Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 35
+2021-08-18T17:08:46,336Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:46,742Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 36
+2021-08-18T17:08:47,093Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 36
+2021-08-18T17:08:47,093Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:47,465Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 37
+2021-08-18T17:08:47,639Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 37
+2021-08-18T17:08:47,639Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:48,056Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 38
+2021-08-18T17:08:48,199Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 38
+2021-08-18T17:08:48,199Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:48,587Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 39
+2021-08-18T17:08:48,811Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 39
+2021-08-18T17:08:48,811Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:49,189Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 40
+2021-08-18T17:08:50,162Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 40
+2021-08-18T17:08:50,162Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:50,538Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 41
+2021-08-18T17:08:50,590Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 41
+2021-08-18T17:08:50,590Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:50,998Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 42
+2021-08-18T17:08:51,251Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 42
+2021-08-18T17:08:51,251Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:51,642Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 43
+2021-08-18T17:08:51,691Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 43
+2021-08-18T17:08:51,691Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:52,060Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 44
+2021-08-18T17:08:52,137Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 44
+2021-08-18T17:08:52,137Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:52,628Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 45
+2021-08-18T17:08:52,674Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 45
+2021-08-18T17:08:52,674Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:53,045Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 46
+2021-08-18T17:08:53,105Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 46
+2021-08-18T17:08:53,105Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:53,571Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 47
+2021-08-18T17:08:53,665Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 47
+2021-08-18T17:08:53,665Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:54,127Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 48
+2021-08-18T17:08:54,183Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 48
+2021-08-18T17:08:54,183Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:54,555Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 49
+2021-08-18T17:08:54,601Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 49
+2021-08-18T17:08:54,601Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:55,054Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 50
+2021-08-18T17:08:55,647Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 50
+2021-08-18T17:08:55,647Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:56,019Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 51
+2021-08-18T17:08:56,105Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 51
+2021-08-18T17:08:56,105Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:56,503Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 52
+2021-08-18T17:08:56,598Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 52
+2021-08-18T17:08:56,598Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:57,049Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 53
+2021-08-18T17:08:57,115Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 53
+2021-08-18T17:08:57,115Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:57,604Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 54
+2021-08-18T17:08:57,707Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 54
+2021-08-18T17:08:57,707Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:58,077Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 55
+2021-08-18T17:08:58,171Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 55
+2021-08-18T17:08:58,172Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:58,567Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 56
+2021-08-18T17:08:58,732Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 56
+2021-08-18T17:08:58,732Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:59,159Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 57
+2021-08-18T17:08:59,239Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 57
+2021-08-18T17:08:59,239Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:08:59,648Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 58
+2021-08-18T17:08:59,773Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 58
+2021-08-18T17:08:59,773Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:00,188Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 59
+2021-08-18T17:09:00,382Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 59
+2021-08-18T17:09:00,382Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:00,752Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 60
+2021-08-18T17:09:01,058Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 60
+2021-08-18T17:09:01,058Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:01,444Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 61
+2021-08-18T17:09:02,153Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 61
+2021-08-18T17:09:02,153Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:02,547Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 62
+2021-08-18T17:09:02,915Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 62
+2021-08-18T17:09:02,915Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:03,285Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 63
+2021-08-18T17:09:03,420Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 63
+2021-08-18T17:09:03,420Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:03,874Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 64
+2021-08-18T17:09:04,143Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 64
+2021-08-18T17:09:04,143Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:04,513Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 65
+2021-08-18T17:09:04,764Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 65
+2021-08-18T17:09:04,764Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:05,135Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 66
+2021-08-18T17:09:05,212Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 66
+2021-08-18T17:09:05,212Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:05,611Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 67
+2021-08-18T17:09:05,775Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 67
+2021-08-18T17:09:05,775Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:06,169Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 68
+2021-08-18T17:09:06,353Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 68
+2021-08-18T17:09:06,353Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:06,740Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 69
+2021-08-18T17:09:06,839Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 69
+2021-08-18T17:09:06,839Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:07,250Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 70
+2021-08-18T17:09:07,444Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 70
+2021-08-18T17:09:07,444Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:07,888Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 71
+2021-08-18T17:09:08,056Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 71
+2021-08-18T17:09:08,056Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:08,466Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 72
+2021-08-18T17:09:08,675Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 72
+2021-08-18T17:09:08,675Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:09,188Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 73
+2021-08-18T17:09:09,259Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 73
+2021-08-18T17:09:09,259Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:09,630Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 74
+2021-08-18T17:09:09,722Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 74
+2021-08-18T17:09:09,722Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:10,094Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 75
+2021-08-18T17:09:10,185Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 75
+2021-08-18T17:09:10,185Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:10,592Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 76
+2021-08-18T17:09:10,646Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 76
+2021-08-18T17:09:10,646Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:11,115Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 77
+2021-08-18T17:09:11,942Z|DEBUG||utt.bft.client||||simple_test_client.hpp:381|bool SimpleTestClient::run()|Got Pay Tx: 77
+2021-08-18T17:09:11,942Z|DEBUG||utt.bft.client||||simple_test_client.hpp:383|bool SimpleTestClient::run()|RSI Response Size: 10
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+Self test 1
+2021-08-18T17:09:12,313Z|DEBUG||utt.bft.client||||simple_test_client.hpp:368|bool SimpleTestClient::run()|Starting Tx: 78
+terminate called after throwing an instance of 'bft::client::BatchTimeoutException'
+  what():  Timeout for a batch request with correlation id: 13
+bash: line 1: 31551 Aborted                 (core dumped) ../UTTClient/client -n comm_config -f 1 -c 0 -p 400 -U utt_pub_client.dat -i 13
