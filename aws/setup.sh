@@ -1,4 +1,5 @@
 for ip in `cat ips.log`; do
+    ssh-keyscan $ip >> ~/.ssh/known_hosts
     ssh ubuntu@$ip "cd concord-latest && git pull origin && make" &
     # TODO: Send the local genesis config files to the machines
 done

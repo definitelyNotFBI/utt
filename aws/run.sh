@@ -1,6 +1,6 @@
 id=0
 N=4
-InternalClients=1
+InternalClients=16
 
 for ip in `cat ips.log`; do
     ssh ubuntu@$ip "killall -9 skvbc_replica client" &
