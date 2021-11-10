@@ -49,18 +49,18 @@ bool ConfigFileParser::Parse() {
   while (stream) {
     string value, tmp;
     getline(stream, tmp, end_of_line_);
-    LOG_INFO(testLogger, "Processing: " << tmp.c_str());
+    LOG_DEBUG(testLogger, "Processing: " << tmp.c_str());
     // get rid of leading and trailing spaces
     concord::util::trim_inplace(tmp);
     if (tmp[0] == comment_delimiter_)  // Ignore comments. 
     {
-      LOG_INFO(testLogger, "Ignoring a comment");
+      LOG_DEBUG(testLogger, "Ignoring a comment");
       continue;
     }
 
     if (tmp.empty())  // Skip empty lines.
     {
-      LOG_INFO(testLogger, "Ignoring an empty line");
+      LOG_DEBUG(testLogger, "Ignoring an empty line");
       continue;
     }
 
@@ -78,13 +78,13 @@ bool ConfigFileParser::Parse() {
         return false;
       }
     }
-    LOG_INFO(testLogger, "Extracting a key");
+    LOG_DEBUG(testLogger, "Extracting a key");
     size_t keyDelimiterPos = tmp.find_first_of(key_delimiter_);
     if (keyDelimiterPos != string::npos) {
       key = tmp.substr(0, keyDelimiterPos);
       if (tmp.size() > key.size() + 1) {
         // Handle simple key-value pair.
-        LOG_INFO(testLogger, "Got a key-value pair");
+        LOG_DEBUG(testLogger, "Got a key-value pair");
         value = tmp.substr(keyDelimiterPos + 1);
         concord::util::rtrim_inplace(key);
         concord::util::ltrim_inplace(value);
@@ -100,7 +100,7 @@ bool ConfigFileParser::Parse() {
 
 size_t ConfigFileParser::Count(const string& key) {
   size_t res = parameters_map_.count(key);
-  LOG_INFO(logger_, "count() returns: " << res << " for key: " << key);
+  LOG_DEBUG(logger_, "count() returns: " << res << " for key: " << key);
   return res;
 }
 

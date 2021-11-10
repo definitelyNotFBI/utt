@@ -96,7 +96,7 @@ std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool 
       k = 0;
     }
     vector<string> ip_port_pair = config_file_parser.SplitValue(current_vector[k++], ip_port_delimiter_);
-    LOG_INFO(logger_,
+    LOG_DEBUG(logger_,
              "setUpConfiguredNodes() node_id: " << node_id << ", k: " << k - 1
                                                 << ", port:" << (uint16_t)(std::stoi(ip_port_pair[1])));
     if (ip_port_pair.size() != 2) {
