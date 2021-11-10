@@ -3,7 +3,7 @@ echo "Making sure no previous replicas are up..."
 killall -9 skvbc_replica client
 
 # Delete all previous DB instances (if any)
-rm -rf simpleKVBTests_DB_0 simpleKVBTests_DB_1 simpleKVBTests_DB_2 simpleKVBTests_DB_3 utt-db0 utt-db1 utt-db2 utt-db3
+rm -rf simpleKVBTests_DB_{0,1,2,3} utt-db{0,1,2,3}
 
 # Create UTT configs if not already created
 if [ ! -e replica_keys_3 ]; then 
@@ -14,13 +14,14 @@ if [ ! -e certs/999 ]; then
     echo "Generating certificates"
     ../../simpleEcash/scripts/create_tls_certs.sh 1000
 fi
-if [ ! -e genesis_999 ]; then
+if [ ! -e genesis/genesis_999 ]; then
     echo "Generating UTT genesis files"
-    ../../../tools/GenerateUTTKeys -n 4 -f 1 -g 1000
+    mkdir -p genesis
+    ../../../tools/GenerateUTTKeys -n 4 -f 1 -g 1000 -o genesis
 fi
 
 REPLICA_PREFIX=replica_keys_
-UTT_PREFIX=utt_pvt_replica_
+UTT_PREFIX=genesis/utt_pvt_replica_
 
 echo "Running replica 1..."
 ../TesterReplica/skvbc_replica -k ${REPLICA_PREFIX} -i 0 -n comm_config -U ${UTT_PREFIX} &> logs1.txt &

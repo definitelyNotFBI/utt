@@ -426,7 +426,7 @@ bool InternalCommandsHandler::preExecuteMint(uint32_t requestSize,
   for(auto i=0u;i<requestSize;i++) {
     s.append(std::to_string(request[i]));
   }
-  LOG_INFO(m_logger, "Printing Request:" << s);
+  // LOG_DEBUG(m_logger, "Printing Request:" << s);
   
   if(writeReq->getSize() != requestSize) {
     LOG_ERROR(m_logger, "Got invalid size for UTT Mint");
@@ -434,13 +434,13 @@ bool InternalCommandsHandler::preExecuteMint(uint32_t requestSize,
     return false;
   }
   std::stringstream ss;
-  LOG_INFO(m_logger, "Trying to print debug information2");
+  // LOG_DEBUG(m_logger, "Trying to print debug information2");
   ss.write(reinterpret_cast<const char*>(writeReq->getMintBuffer()), writeReq->cc_buf_len);
-  LOG_INFO(m_logger, "Trying to print debug information3");
+  // LOG_INFO(m_logger, "Trying to print debug information3");
   libutt::EPK epk(ss);
-  LOG_INFO(m_logger, "Trying to print debug information");
-  LOG_INFO(m_logger, "Using params: " << mParams_->p);
-  LOG_INFO(m_logger, "Got EPK: " << epk);
+  // LOG_INFO(m_logger, "Trying to print debug information");
+  // LOG_INFO(m_logger, "Using params: " << mParams_->p);
+  // LOG_INFO(m_logger, "Got EPK: " << epk);
   if(!libutt::EpkProof::verify(mParams_->p, epk)) {
     LOG_ERROR(m_logger, "Mint transaction verification failed");
     return false;
@@ -482,14 +482,14 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
   libutt::Tx tx(ss);
   // LOG_INFO(m_logger, "Trying to print debug information");
-  LOG_INFO(m_logger, "Using params: " << mParams_->p);
-  LOG_INFO(m_logger, "Got tx: " << tx);
+  // LOG_INFO(m_logger, "Using params: " << mParams_->p);
+  // LOG_INFO(m_logger, "Got tx: " << tx);
   if(!tx.verify(mParams_->p, mParams_->main_pk)) {
     LOG_ERROR(m_logger, "Payment transaction verification failed");
     return false;
   }
   // So far, the transaction looks valid
-  // TODO: Check if we can reject early by checking the storage
+  // DONE: Check if we can reject early by checking the storage
   std::string value;
   // Now check if the nullifiers are already burnt
   for(auto& txin: tx.ins) {
@@ -614,7 +614,6 @@ bool InternalCommandsHandler::executeWriteCommand(uint32_t requestSize,
   if (writeReq->header.type == MINT ) {
     return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
   } else if (writeReq->header.type == PAY) {
-    // TODO: Change it to Pay
     return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
   }
 

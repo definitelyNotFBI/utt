@@ -26,6 +26,8 @@ public:
     // The main public key. This is the key that is threshold shared in bank_pks
     libutt::BankPK main_pk;
 
+    // TODO: Add RPK, IBE MPK
+
     // The number of nodes in the system
     size_t n;
 
