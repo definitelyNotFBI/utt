@@ -31,15 +31,15 @@ size_t number_of_coins_to_generate = 2;
 bool debug = false;
 
 static struct option longOptions[] = {
-    {"key-file-prefix", required_argument, 0, 'k'},
-    {"node-num", required_argument, 0, 'n'},
-    {"fault-num", required_argument, 0, 'f'},
-    {"output-dir", required_argument, 0, 'o'},
-    {"client-file-prefix", required_argument, 0, 'c'},
-    {"num-genesis-coins", required_argument, 0, 'g'},
-    {"genesis-prefix", required_argument, 0, 'p'},
-    {"debug", no_argument, 0, 'd'},
-    {"coins", no_argument, 0, 'C'},
+    {"key-file-prefix",     required_argument,  0, 'k'},
+    {"node-num",            required_argument,  0, 'n'},
+    {"fault-num",           required_argument,  0, 'f'},
+    {"output-dir",          required_argument,  0, 'o'},
+    {"client-file-prefix",  required_argument,  0, 'c'},
+    {"num-genesis-coins",   required_argument,  0, 'g'},
+    {"genesis-prefix",      required_argument,  0, 'p'},
+    {"debug",               no_argument,        0, 'd'},
+    {"coins",               no_argument,        0, 'C'},
 };
 
 int main(int argc, char **argv)
@@ -112,6 +112,7 @@ int main(int argc, char **argv)
 
     auto p = libutt::Params::Random();
 
+    // TODO: Change Threshold params to generate separate client params for different clients
     utt_bft::ThresholdParams tparams(p, n, f);
     auto replica_params = tparams.ReplicaParams();
     auto client_params = tparams.ClientParams();
