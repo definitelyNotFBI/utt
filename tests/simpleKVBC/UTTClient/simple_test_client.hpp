@@ -112,20 +112,21 @@ class SimpleTestClient {
              ", numOfClients: " << cp.numOfClients << 
              ", numOfIterations: " << cp.numOfOperations << 
              ", fVal: " << cp.numOfFaulty << 
-             ", cVal: " << cp.numOfSlow
+             ", cVal: " << cp.numOfSlow <<
+             ", utt_file_name: " << cp.utt_file_name
             );
 
     ICommunication* comm = bft::communication::CommFactory::create(conf);
 
     bft::client::ClientConfig adapter_config = make_adapter_config(cp);
-    std::ifstream ifile("utt_pub_client.dat");
+    std::ifstream ifile(cp.utt_file_name);
     ConcordAssert(!ifile.fail());
 
     // Load the params file (move it out)
     utt_bft::client::Params cParams(ifile);
 
     auto genesis_file_id = cp.clientId - cp.numOfReplicas;
-    auto genesis_file = "./genesis_" + std::to_string(genesis_file_id);
+    auto genesis_file = "genesis/genesis_" + std::to_string(genesis_file_id);
     std::cout << "Reading genesis file: " << genesis_file << std::endl;
 
     std::ifstream gen_file(genesis_file);

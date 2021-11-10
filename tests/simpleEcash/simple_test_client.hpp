@@ -127,7 +127,7 @@ class SimpleTestClient {
     ifile.close();
 
     auto genesis_file_id = cp.clientId - cp.numOfReplicas;
-    auto genesis_file = "./genesis_" + std::to_string(genesis_file_id);
+    auto genesis_file = "genesis/genesis_" + std::to_string(genesis_file_id);
     std::cout << "Reading genesis file: " << genesis_file << std::endl;
 
     std::ifstream gen_file(genesis_file);
