@@ -288,7 +288,7 @@ bft::client::Msg EcashClient::NewTestPaymentTx() {
   // printf("Tag %d\n", 4);
   // std::cout << tx << std::endl;
 
-  printf("Self test %d\n", tx.verify(cParamsPtr_->p, cParamsPtr_->main_pk));
+  // printf("Self test %d\n", tx.verify(cParamsPtr_->p, cParamsPtr_->main_pk));
   // std::cout << "Sending Tx: " << tx << std::endl;
 
   std::stringstream ss;

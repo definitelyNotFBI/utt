@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <string>
 
 #include "test_parameters.hpp"
 #include "simple_test_client.hpp"
@@ -47,7 +48,8 @@ ClientParams setupClientParams(int argc, char **argv) {
   clientParams.numOfOperations = UINT16_MAX;
   char argTempBuffer[PATH_MAX + 10];
   int o = 0;
-  while ((o = getopt(argc, argv, "i:f:c:p:n:U:")) != EOF) {
+  std::string logPropsFile = "logging.properties";
+  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:")) != EOF) {
     switch (o) {
       case 'i': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
@@ -86,15 +88,25 @@ ClientParams setupClientParams(int argc, char **argv) {
         argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
         clientParams.configFileName = argTempBuffer;
       } break;
+
       case 'U': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
         argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
         clientParams.utt_file_name = argTempBuffer;
       } break;
+
+      case 'l': {
+        strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
+        argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
+        logPropsFile = argTempBuffer;
+      } break;
+
       default:
         break;
     }
   }
+
+  logging::initLogger(logPropsFile);
   return clientParams;
 }
 
@@ -115,7 +127,7 @@ int main(int argc, char **argv) {
   ClientParams clientParams = setupClientParams(argc, argv);
   if (clientParams.clientId == UINT16_MAX || clientParams.numOfFaulty == UINT16_MAX ||
       clientParams.numOfSlow == UINT16_MAX || clientParams.numOfOperations == UINT32_MAX) {
-    LOG_ERROR(clientLogger, "Wrong usage! Required parameters: " << argv[0] << " -f F -c C -p NUM_OPS -i ID");
+    LOG_FATAL(clientLogger, "Wrong usage! Required parameters: " << argv[0] << " -f F -c C -p NUM_OPS -i ID");
     exit(-1);
   }
   

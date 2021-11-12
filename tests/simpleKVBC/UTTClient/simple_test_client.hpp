@@ -15,7 +15,7 @@
 
 #include "bftclient/base_types.h"
 #include "client/IClient.hpp"
-#define UTT_DEBUG
+// #define UTT_DEBUG
 
 #include <log4cplus/loglevel.h>
 #include <xassert/XAssert.h>
@@ -79,14 +79,6 @@ class SimpleTestClient {
   {}
 
   bool run() {
-    #ifdef UTT_DEBUG
-    // Enable all the logs (Use for debugging only)
-    for (auto &logger: logging::Logger::getCurrentLoggers()) {
-      logger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
-    }
-    clientLogger.setLogLevel(log4cplus::ALL_LOG_LEVEL);
-    #endif
-    
     // This client's index number. Must be larger than the largest replica index
     // number.
     const uint16_t id = cp.clientId;
@@ -210,10 +202,9 @@ class SimpleTestClient {
     }
 
     if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
+      std::cout << std::endl
                    << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
+                   << hist.ToString();
     }
 #endif
 
@@ -285,10 +276,9 @@ class SimpleTestClient {
     }
 
     if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
+      std::cout << std::endl
                    << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
+                   << hist.ToString();
     }
 #endif
 
@@ -334,10 +324,9 @@ class SimpleTestClient {
     }
 
     if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
+      std::cout << std::endl
                    << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
+                   << hist.ToString();
     }
 #endif
 
@@ -389,10 +378,9 @@ class SimpleTestClient {
     }
 
     if (cp.measurePerformance) {
-      LOG_INFO(clientLogger,
-               std::endl
+      std::cout << std::endl
                    << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString());
+                   << hist.ToString();
     }
 #endif
     // After all requests have been issued, stop communication and clean up.

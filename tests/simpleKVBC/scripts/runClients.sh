@@ -13,7 +13,9 @@ for((i=1;i<=$NumClients;i++)); do
                         -c 0 \
                         -p 400 \
                         -U genesis/utt_pub_client.dat \
-                        -i $id &> clients$i.log &
+                        -i $id \
+                        -l perf-logging.properties \
+                        &> clients$i.log &
 done
 
 wait

@@ -14,7 +14,7 @@
 #pragma once
 
 #include "bftclient/base_types.h"
-#define UTT_DEBUG
+// #define UTT_DEBUG
 
 #include <log4cplus/loglevel.h>
 #include <xassert/XAssert.h>
