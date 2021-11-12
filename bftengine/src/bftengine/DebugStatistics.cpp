@@ -10,6 +10,8 @@
 // terms and conditions of the subcomponent's license, as noted in the LICENSE
 // file.
 
+#include <iostream>
+
 #include "DebugStatistics.hpp"
 
 #include <iomanip>
@@ -59,8 +61,7 @@ void DebugStatistics::onCycleCheck() {
   // We use INFO logging instead of DEBUG logging since there is already a
   // separate switch to turn DebugStatistics on and off. It's likely we want
   // this data to appear when we do not want full debug logging.
-  LOG_INFO(GL,
-           " STAT:" << endl
+  std::cout << " STAT:" << endl
                     << "    ReadOnlyThroughput = " << fixed << setprecision(2) << readThroughput << endl
                     << "    WriteThroughput = " << fixed << setprecision(2) << writeThroughput << endl
                     << "    ReceivedMessages = " << d.receivedMessages << endl
@@ -72,7 +73,7 @@ void DebugStatistics::onCycleCheck() {
                     << "    PrePrepareMessages = " << d.prePrepareMessages << endl
                     << "    AvgBatchSize = " << fixed << setprecision(2) << avgBatchSize << endl
                     << "    RealThroughput = " << fixed << setprecision(2) << writeThroughput*avgBatchSize << endl
-                    << "    AvgPendingRequest = " << fixed << setprecision(2) << avgPendingRequests << endl);
+                    << "    AvgPendingRequest = " << fixed << setprecision(2) << avgPendingRequests << endl;
 
   d.lastCycleTime = currTime;
   clearCounters(d);
