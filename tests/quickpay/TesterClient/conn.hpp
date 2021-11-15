@@ -9,31 +9,26 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/system/system_error.hpp>
 #include <cstdint>
+#include <memory>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
+#include "quickpay/TesterClient/protocol.hpp"
+#include "common.hpp"
 
 namespace quickpay::client {
 
-namespace ba = asio;
-
-/*
- * On connecting to a new client, this is used to establish
- */
-class conn_handler;
-typedef boost::shared_ptr<conn_handler> conn_handler_ptr;
-
-class conn_handler : public boost::enable_shared_from_this<conn_handler> {
-    typedef ba::ip::tcp::socket sock_t;
-    typedef ba::io_context io_ctx_t;
+class conn_handler : public std::enable_shared_from_this<conn_handler> {
+    typedef asio::ip::tcp::socket sock_t;
+    typedef asio::io_context io_ctx_t;
 
 public:
     // constructor to create a connection
-    conn_handler(io_ctx_t& io_ctx, uint16_t id): mSock_(io_ctx), m_replica_id_(id) {}
+    conn_handler(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto): mSock_{io_ctx}, m_replica_id_{id}, m_proto_{proto} {}
 
     // creating a pointer
-    static conn_handler_ptr create(io_ctx_t& io_ctx, uint16_t id)
+    static conn_handler_ptr create(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto)
     {
-        return conn_handler_ptr(new conn_handler(io_ctx, id));
+        return conn_handler_ptr(new conn_handler(io_ctx, id, proto));
     }
 
     // things to do when we have a new connection
@@ -45,12 +40,13 @@ public:
 private:
     sock_t mSock_;
     uint16_t m_replica_id_;
+    std::shared_ptr<protocol> m_proto_;
 private:
     static logging::Logger logger;
 
 public:
     // Get the socket
-    ba::ip::tcp::socket& socket()
+    asio::ip::tcp::socket& socket()
     {
         return mSock_;
     }

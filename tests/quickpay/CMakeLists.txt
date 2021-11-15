@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.2)
 project(quickpay VERSION 0.1.0.0 LANGUAGES CXX)
 
+include_directories(${UTT_INCLUDES})
+
 add_executable(quickpay_replica 
     TesterReplica/main.cpp
     TesterReplica/options.cpp

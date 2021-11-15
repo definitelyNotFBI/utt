@@ -23,21 +23,15 @@ const struct option longOptions[] = {
 
 const auto shortOptions = "i:k:n:c:l:y:U:";
 
-extern int o;// = 0;
-extern int optionIndex;// = 0;
-extern ReplicaConfig replica_config;
-
 class TestSetup {
 public:
-    TestSetup(logging::Logger logger, 
-                std::string& logFile, 
+    TestSetup(std::string& logFile, 
                 const bft::communication::BaseCommConfig& conf, 
                 const std::string& utt_params_file,
                 std::shared_ptr<Cryptosystem> sys): 
-        m_logPropsFile_(logFile), m_logger_(logger), m_replicaId_(ReplicaConfig::Get()->getid()), m_conf_(conf), m_utt_params_file_(utt_params_file), m_crypsys(sys) {}
+        m_logPropsFile_(logFile), m_replicaId_(ReplicaConfig::Get()->getid()), m_conf_(conf), m_utt_params_file_(utt_params_file), m_crypsys(sys) {}
 public:
     static std::unique_ptr<TestSetup> ParseArgs(int argc, char* argv[]);
-    logging::Logger getLogger() { return m_logger_; }
     std::string getLogProperties() { return m_logPropsFile_; }
 
     // For quickpay, all I need for communication is my info
@@ -48,7 +42,6 @@ public:
     std::string UttParamsFile() { return m_utt_params_file_; }
 private:
     std::string m_logPropsFile_;
-    logging::Logger m_logger_;
     uint16_t m_replicaId_;
     bft::communication::BaseCommConfig m_conf_;
     std::string m_utt_params_file_;

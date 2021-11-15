@@ -9,8 +9,6 @@
 
 namespace quickpay::replica {
 
-#define GET_IO_SERVICE(s) ((ba::io_context&)(s).get_executor().context())
-
 logging::Logger protocol::logger = logging::getLogger("quickpay.bft.replica");
 
     protocol::protocol(ba::io_context& io_ctx, uint16_t port_num): m_io_ctx_(io_ctx),

@@ -92,6 +92,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
 
     if (utt_params_file.empty()) 
         throw std::runtime_error("missing --utt-pub-prefix (-U)");
+    client_config->set(utt_bft::UTT_PARAMS_CLIENT_KEY, utt_params_file);
 
     uint16_t numOfClients = 1;
     #ifdef USE_COMM_PLAIN_TCP

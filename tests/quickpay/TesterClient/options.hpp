@@ -1,3 +1,5 @@
+#pragma once
+
 #include <getopt.h>
 #include <unistd.h>
 #include <memory>
@@ -38,7 +40,6 @@ public:
         m_logPropsFile_(logFile), m_logger_(logger), m_conf_(conf), m_utt_params_file_(utt_params_file) {}
 public:
     static std::unique_ptr<TestSetup> ParseArgs(int argc, char* argv[]);
-    logging::Logger getLogger() { return m_logger_; }
     std::string getLogProperties() { return m_logPropsFile_; }
 
     // For quickpay, all I need for communication is my info

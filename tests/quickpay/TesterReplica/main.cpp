@@ -19,7 +19,8 @@ int main(int argc, char* argv[])
     using namespace quickpay::replica;
 
     auto setup = TestSetup::ParseArgs(argc, argv);
-    auto logger = setup->getLogger();
+    logging::initLogger(setup->getLogProperties());
+    auto logger = logging::getLogger("quickpay.replica");
 
     LOG_INFO(logger, "Namaskara!");
     LOG_INFO(logger, "Starting quickpay server!");

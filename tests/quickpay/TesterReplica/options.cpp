@@ -44,7 +44,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
     std::string utt_params_file;
     replica_config->numOfExternalClients = 80;
 
-    auto logger = logging::getLogger("quickpay.server");
+    auto logger = logging::getLogger("quickpay.setup");
     TestCommConfig testCommConfig(logger);
 
     while ((o = getopt_long(
@@ -98,6 +98,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
     auto sys = getKeyFile(key_file_name);
     assert(sys != nullptr);
     auto crypsys = std::shared_ptr<Cryptosystem>(sys);
+    // TODO: Use cryptomanager
     // if (sys) bftEngine::CryptoManager::instance(sys);
     // todo("Store cryptomanager instance"); // TODO
 
@@ -116,14 +117,8 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
         testCommConfig.GetUDPConfig(true, replica_config->id, numOfClients, numOfReplicas, commConfigFile);
     #endif
 
-    // auto my_info = conf.nodes[replica_config->getid()];
-    // LOG_INFO(logger, "My info[" << 
-    //                     "Host: " << my_info.host << 
-    //                     ", Port: " << my_info.port << "]");
-
-    return std::make_unique<TestSetup>(logger, 
-                                        logPropsFile, 
-                                        conf, utt_params_file, crypsys);
+    return std::make_unique<TestSetup>(logPropsFile, conf, 
+                                        utt_params_file, crypsys);
 }
 
 Cryptosystem* getKeyFile(const std::string& filename) {
