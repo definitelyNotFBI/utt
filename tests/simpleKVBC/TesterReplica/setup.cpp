@@ -62,15 +62,17 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     replicaConfig.numOfClientProxies = 0;
     replicaConfig.numOfExternalClients = 80;
     replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients)/71;
-    replicaConfig.concurrencyLevel = std::thread::hardware_concurrency();
+    replicaConfig.concurrencyLevel = 4;
     replicaConfig.debugStatisticsEnabled = true;
     replicaConfig.viewChangeTimerMillisec = 45 * 1000;
     replicaConfig.statusReportTimerMillisec = 10 * 1000;
     replicaConfig.preExecutionFeatureEnabled = true;
     replicaConfig.clientBatchingEnabled = true;
+    replicaConfig.clientBatchingMaxMsgsNbr = 10000;
     replicaConfig.pruningEnabled_ = true;
     replicaConfig.numBlocksToKeep_ = 10;
     replicaConfig.timeServiceEnabled = true;
+    // replicaConfig.blockAccumulation = false;
     replicaConfig.batchedPreProcessEnabled = true;
     replicaConfig.set("sourceReplicaReplacementTimeoutMilli", 6000);
     replicaConfig.set("concord.bft.st.runInSeparateThread", true);
