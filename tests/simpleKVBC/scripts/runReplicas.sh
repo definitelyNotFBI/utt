@@ -28,11 +28,11 @@ UTT_PREFIX=genesis/utt_pvt_replica_
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $i..."
     ../TesterReplica/skvbc_replica \
-        -k ${REPLICA_PREFIX} \
-        -i $i \
-        -n comm_config \
-        -l perf-logging.properties \
-        -U ${UTT_PREFIX} \
+        --key-file-prefix ${REPLICA_PREFIX} \
+        --replica-id $i \
+        --network-config-file comm_config \
+        --log-props-file perf-logging.properties \
+        --utt-prefix ${UTT_PREFIX} \
             &> logs"$((i+1))".txt &
 done
 
