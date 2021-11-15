@@ -12,6 +12,7 @@
 // file.
 
 #include <thread>
+#include <bits/getopt_ext.h>
 #include <sys/param.h>
 #include <string>
 #include <cstring>
@@ -97,6 +98,8 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
       {"time_service", optional_argument, 0, 'f'},
       {"replica-byzantine-strategies", optional_argument, 0, 'g'},
       {"replica-id", required_argument, 0, 'i'},
+      {"internal-thread-pool", required_argument, 0, 'j'},
+      {"rocksdb-thread-pool", required_argument, 0, 'J'},
       {"key-file-prefix", required_argument, 0, 'k'},
       {"log-props-file", required_argument, 0, 'l'},
       {"consensus-batching-max-reqs-size", required_argument, 0, 'm'},
@@ -121,7 +124,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     int optionIndex = 0;
     LOG_INFO(GL, "Command line options:");
     while ((o = getopt_long(
-                argc, argv, "3:a:b:c:de:f:g:i:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", longOptions, &optionIndex)) != -1) {
+                argc, argv, "3:a:b:c:de:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", longOptions, &optionIndex)) != -1) {
       switch (o) {
         case 'i': {
           replicaConfig.replicaId = concord::util::to<std::uint16_t>(std::string(optarg));
@@ -161,6 +164,25 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
             throw std::runtime_error{"invalid argument for --consensus-concurrency-level"};
           replicaConfig.concurrencyLevel = concurrencyLevel;
         } break;
+        case 'Y': {
+          const auto preExecConcurrencyLevel = concord::util::to<std::uint16_t>(std::string(optarg));
+          if (preExecConcurrencyLevel < 1)
+            throw std::runtime_error{"invalid argument for --preexecution-concurrency-level"};
+          replicaConfig.preExecConcurrencyLevel = preExecConcurrencyLevel;
+        } break;
+        case 'j': {
+          const auto internalThreadPool = concord::util::to<std::uint16_t>(std::string(optarg));
+          if (internalThreadPool < 1)
+            throw std::runtime_error{"invalid argument for --internal-thread-pool"};
+          replicaConfig.sizeOfInternalThreadPool = internalThreadPool;
+        } break;
+        case 'J': {
+          const auto rocksdbPool = concord::util::to<std::uint16_t>(std::string(optarg));
+          if (rocksdbPool < 1)
+            throw std::runtime_error{"invalid argument for --rocksdb-thread-pool"};
+          replicaConfig.numWorkerThreadsForBlockIO = rocksdbPool;
+        } break;
+
         case 'u': {
           replicaConfig.blockAccumulation = true;
           break;
