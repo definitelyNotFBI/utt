@@ -60,7 +60,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     bftEngine::ReplicaConfig& replicaConfig = bftEngine::ReplicaConfig::instance();
     replicaConfig.numOfClientProxies = 0;
     replicaConfig.numOfExternalClients = 80;
-    replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients);
+    replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients)/71;
     replicaConfig.concurrencyLevel = 4;
     replicaConfig.debugStatisticsEnabled = true;
     replicaConfig.viewChangeTimerMillisec = 45 * 1000;
