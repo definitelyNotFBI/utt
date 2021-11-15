@@ -47,9 +47,10 @@ ClientParams setupClientParams(int argc, char **argv) {
   clientParams.numOfSlow = UINT16_MAX;
   clientParams.numOfOperations = UINT16_MAX;
   char argTempBuffer[PATH_MAX + 10];
+  bool is_debug = false;
   int o = 0;
   std::string logPropsFile = "logging.properties";
-  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:")) != EOF) {
+  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:d")) != EOF) {
     switch (o) {
       case 'i': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
@@ -57,6 +58,10 @@ ClientParams setupClientParams(int argc, char **argv) {
         string idStr = argTempBuffer;
         int tempId = std::stoi(idStr);
         if (tempId >= 0 && tempId < UINT16_MAX) clientParams.clientId = (uint16_t)tempId;
+      } break;
+
+      case 'd': {
+        is_debug = true;
       } break;
 
       case 'f': {
@@ -107,6 +112,13 @@ ClientParams setupClientParams(int argc, char **argv) {
   }
 
   logging::initLogger(logPropsFile);
+  if (is_debug) {
+    // Enable all the logs (Use for debugging only)
+    for (auto &logger: logging::Logger::getCurrentLoggers()) {
+      logger.setLogLevel(log4cplus::DEBUG_LOG_LEVEL);
+    }
+    clientLogger.setLogLevel(log4cplus::ALL_LOG_LEVEL);
+  }
   return clientParams;
 }
 

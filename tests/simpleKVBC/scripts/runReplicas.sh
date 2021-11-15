@@ -33,6 +33,7 @@ for((i=0;i<$NUM_REPLICAS;i++)); do
         --network-config-file comm_config \
         --log-props-file perf-logging.properties \
         --utt-prefix ${UTT_PREFIX} \
+        ${EXTRA_REPLICA_FLAGS} \
             &> logs"$((i+1))".txt &
 done
 
