@@ -21,9 +21,12 @@ class conn_handler : public std::enable_shared_from_this<conn_handler> {
     typedef asio::ip::tcp::socket sock_t;
     typedef asio::io_context io_ctx_t;
 
+friend class protocol;
+
 public:
     // constructor to create a connection
-    conn_handler(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto): mSock_{io_ctx}, m_replica_id_{id}, m_proto_{proto} {}
+    conn_handler(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto): mSock_{io_ctx}, m_replica_id_{id}, m_proto_{proto}, out_ss(""), 
+        replica_msg_buf(REPLICA_MAX_MSG_SIZE) {}
 
     // creating a pointer
     static conn_handler_ptr create(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto)
@@ -37,10 +40,21 @@ public:
     // start the connection
     void start_conn();
 
+    // to call after sending a transaction
+    void on_tx_send(const asio::error_code& err, size_t sen);
+    // to call after receiving a response for a transaction
+    void on_tx_response(const asio::error_code& err, size_t sen);
+
+    // Perform reading
+    void do_read();
+
 private:
     sock_t mSock_;
     uint16_t m_replica_id_;
     std::shared_ptr<protocol> m_proto_;
+    std::stringstream out_ss;
+    std::vector<uint8_t> replica_msg_buf;
+
 private:
     static logging::Logger logger;
 
@@ -50,6 +64,9 @@ public:
     {
         return mSock_;
     }
+
+    // Get the id
+    decltype(m_replica_id_) getid() const { return m_replica_id_; }
 
 };
 

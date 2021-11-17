@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     // Make io_service
     asio::io_context io_ctx;
-    auto server = protocol(io_ctx, port_num);
+    auto server = std::make_shared<protocol>(io_ctx, port_num);
     
     // Start and make threads available to the io_service
     config->concurrencyLevel = std::thread::hardware_concurrency();
@@ -51,18 +51,7 @@ int main(int argc, char* argv[])
         });
     }
     
-    // Make the threads work
-    auto print_thread_id = []()
-    {
-        std::cout << "Current thread id: " << std::this_thread::get_id() << "\n";
-    };
-    
-    // Producer of tasks
-    for (auto i = 0; i < num_threads * 2; ++i)
-    {
-        asio::post(print_thread_id);
-    }
-    
+
     // Wait for completion
     for (auto & thread : threads)
     {

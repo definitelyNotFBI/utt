@@ -4,7 +4,7 @@ REPLICA_PREFIX=replica_keys_
 UTT_PREFIX=utt_pvt_replica_
 
 NumReplicas=4
-NumClients=16
+NumClients=${NUM_CLIENTS:-16}
 
 for((i=1;i<=$NumClients;i++)); do
     id=$((i+NumReplicas-1))

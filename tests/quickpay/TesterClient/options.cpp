@@ -12,6 +12,7 @@
 #include "communication/CommDefs.hpp"
 #include "config/test_comm_config.hpp"
 #include "options.hpp"
+#include "protocol.hpp"
 #include "quickpay/TesterClient/config.hpp"
 #include "quickpay/TesterReplica/config.hpp"
 #include "string.hpp"
@@ -93,6 +94,9 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
     if (utt_params_file.empty()) 
         throw std::runtime_error("missing --utt-pub-prefix (-U)");
     client_config->set(utt_bft::UTT_PARAMS_CLIENT_KEY, utt_params_file);
+
+    if (!genesis_file_prefix.empty())
+        client_config->set(utt_genesis_file_key, genesis_file_prefix);
 
     uint16_t numOfClients = 1;
     #ifdef USE_COMM_PLAIN_TCP
