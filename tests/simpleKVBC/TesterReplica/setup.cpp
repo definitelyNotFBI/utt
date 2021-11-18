@@ -67,6 +67,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     replicaConfig.statusReportTimerMillisec = 10 * 1000;
     replicaConfig.preExecutionFeatureEnabled = true;
     replicaConfig.clientBatchingEnabled = true;
+    replicaConfig.maxBatchSizeInBytes = replicaConfig.maxBatchSizeInBytes*10;
     // replicaConfig.clientBatchingMaxMsgsNbr = 10000;
     replicaConfig.pruningEnabled_ = true;
     replicaConfig.numBlocksToKeep_ = 10;
