@@ -480,12 +480,12 @@ ClientRequestMsg *ReplicaImp::addRequestToPrePrepareMessage(ClientRequestMsg *&n
       clientsManager->addPendingRequest(
           nextRequest->clientProxyId(), nextRequest->requestSeqNum(), nextRequest->getCid());
     }
+    primaryCombinedReqSize -= nextRequest->size();
   } else if (nextRequest->size() > maxStorageForRequests) {  // The message is too big
     LOG_ERROR(GL,
               "Request was dropped because it exceeds maximum allowed size" << KVLOG(
                   prePrepareMsg.seqNumber(), nextRequest->senderId(), nextRequest->size(), maxStorageForRequests));
   }
-  primaryCombinedReqSize -= nextRequest->size();
   delete nextRequest;
   requestsQueueOfPrimary.pop();
   primary_queue_size_.Get().Set(requestsQueueOfPrimary.size());
