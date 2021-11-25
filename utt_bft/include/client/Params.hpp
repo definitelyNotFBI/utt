@@ -1,6 +1,5 @@
 #pragma once
 
-#include <c++/7/optional>
 #include <istream>
 #include <ostream>
 #include <vector>
@@ -8,7 +7,9 @@
 #include <iostream>
 
 #include "utt/Params.h"
-#include "utt/Bank.h"
+#include "utt/RandSig.h"
+#include "utt/RegAuth.h"
+#include "utt/Wallet.h"
 
 namespace utt_bft::client {
 
@@ -20,13 +21,10 @@ public:
     libutt::Params p;
 
     // A vector of all the replica's bank public keys
-    std::vector<libutt::BankSharePK> bank_pks;
+    std::vector<libutt::RandSigSharePK> bank_pks;
 
     // The main public key. This is the key that is threshold shared in bank_pks
-    libutt::BankPK main_pk;
-
-    // TODO: Add/Replace with Wallet
-    // TODO: Add genesis coins
+    libutt::RandSigPK main_pk;
 
     // The number of nodes in the system
     size_t n;
@@ -34,10 +32,11 @@ public:
 public:
     Params(
         libutt::Params p, 
-        std::vector<libutt::BankSharePK> bank_pks, 
-        libutt::BankPK main_pk,
+        std::vector<libutt::RandSigSharePK> bank_pks, 
+        libutt::RandSigPK main_pk,
         size_t n)
-        : p(std::move(p)), bank_pks(std::move(bank_pks)), main_pk(main_pk), n(n) 
+        : p(std::move(p)), bank_pks(std::move(bank_pks)), 
+            main_pk(std::move(main_pk)), n(n) 
     {}
 
 public:
@@ -48,11 +47,14 @@ public:
     friend std::istream& operator>>(std::istream& in, Params& params);
 
     int operator==(const Params& params) {
-        if((this->p != params.p || this->n != params.n || this->main_pk.X != params.main_pk.X || this->bank_pks.size() != params.bank_pks.size())) {
+        if((this->p != params.p || 
+            this->n != params.n || 
+            this->main_pk != params.main_pk || 
+            this->bank_pks.size() != params.bank_pks.size())) {
             return 0;
         }
         for(size_t i=0; i<this->bank_pks.size();i++) {
-            if(this->bank_pks[i].X != params.bank_pks[i].X) {
+            if(this->bank_pks[i] != params.bank_pks[i]) {
                 return 0;
             }
         }
@@ -65,7 +67,7 @@ public:
 
 private:
     // Disable the implicit constructor for the public or inheritors, so that the only way we can build this object is via copy/move.
-    Params(): p(libutt::Params::FOR_DESERIALIZATION_ONLY()), main_pk(libutt::BankPK::FOR_DESERIALIZATION_ONLY()) {};
+    Params() {}
 };
 
 

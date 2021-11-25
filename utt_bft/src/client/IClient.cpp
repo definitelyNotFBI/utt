@@ -35,7 +35,7 @@ void IClient::wait_for_connections() {
   bool connectedToPrimary = false;
   while (true) {
       auto readyReplicas = 0ul;
-      this_thread::sleep_for(1s);
+      std::this_thread::sleep_for(1s);
       for (size_t i = 0; i < num_replicas_; ++i) {
         readyReplicas += (communication_->getCurrentConnectionStatus(i) == ConnectionStatus::Connected);
         if (i==0) {

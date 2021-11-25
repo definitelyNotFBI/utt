@@ -5,6 +5,10 @@
 
 #include "assertUtils.hpp"
 #include "replica/Params.hpp"
+#include "utt/Factory.h"
+#include "utt/Coin.h"
+#include "utt/RandSig.h"
+#include "utt/Wallet.h"
 
 namespace utt_bft {
 
@@ -14,21 +18,22 @@ typedef utt_bft::replica::Params ReplicaParam;
 typedef utt_bft::client::Params ClientParam;
 
 public:
-    ThresholdParams(const libutt::Params& p, size_t n, size_t f);
+    ThresholdParams(size_t n, size_t f);
     std::vector<ReplicaParam> ReplicaParams() const;
     ClientParam ClientParams() const;
-    libutt::BankSK getSK() const {
+
+    const libutt::RandSigSK& getSK() const {
         ConcordAssert(initalized_);
-        return kg.sk;
+        return factory.getBankSK();
     }
-    libutt::Fr getU() const {
-        ConcordAssert(initalized_);
-        return kg.u;
+
+    std::vector<libutt::Wallet> randomWallets(size_t numWallets, size_t numCoins, size_t maxDenom, size_t budget) {
+        return factory.randomWallets(numWallets, numCoins, maxDenom, budget);
     }
 private:
-    libutt::Params p;
-    libutt::BankThresholdKeygen kg;
-    std::vector<libutt::BankSharePK> bank_pks_;
+    libutt::Factory factory;
+    std::vector<libutt::RandSigSharePK> bank_pks_;
+    std::vector<libutt::RandSigShareSK> bank_sks_;
     size_t num_nodes_;
     bool initalized_ = false;
 };

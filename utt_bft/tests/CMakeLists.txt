@@ -1,6 +1,7 @@
 set(utt_bft_test_sources
     TestSerialization.cpp
-    TestMintFlow.cpp
+    # TestMintFlow.cpp
+    TestQuickPay.cpp
     TestPayFlow.cpp
 )
 
