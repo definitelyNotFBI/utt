@@ -13,33 +13,41 @@
 #include <tuple>
 
 #include "assertUtils.hpp"
-#include "utt/Bank.h"
 #include "utt/Coin.h"
-#include "utt/Utt.h"
 #include "ThresholdParamGen.hpp"
+#include "utt/Wallet.h"
 
 using namespace libutt;
 
 std::string dirname = ".";
 std::string fileNamePrefix = "utt_pvt_replica_";
 std::string clientFileName = "utt_pub_client.dat";
-std::string genesis_prefix = "genesis_";
+std::string wallet_prefix = "wallet_";
 size_t n = 4 ;
 size_t f = 1 ;
-size_t number_of_genesis_files = 0;
+size_t number_of_wallet_files = 0;
 size_t number_of_coins_to_generate = 2;
 bool debug = false;
 
 static struct option longOptions[] = {
-    {"key-file-prefix",     required_argument,  0, 'k'},
-    {"node-num",            required_argument,  0, 'n'},
-    {"fault-num",           required_argument,  0, 'f'},
-    {"output-dir",          required_argument,  0, 'o'},
-    {"client-file-prefix",  required_argument,  0, 'c'},
-    {"num-genesis-coins",   required_argument,  0, 'g'},
-    {"genesis-prefix",      required_argument,  0, 'p'},
+    // Prefix for utt_pub_client.dat
+    {"client-file",         required_argument,  0, 'c'},
+    // Number of coins per wallet
+    {"coins",               required_argument,  0, 'C'},
+    // Print debug info when generating the coins
     {"debug",               no_argument,        0, 'd'},
-    {"coins",               no_argument,        0, 'C'},
+    // Number of faults
+    {"fault-num",           required_argument,  0, 'f'},
+    // Prefix for utt_pvt_replica
+    {"replica-file-prefix", required_argument,  0, 'k'},
+    // Number of nodes
+    {"node-num",            required_argument,  0, 'n'},
+    // Folder to write the wallets and params
+    {"output-dir",          required_argument,  0, 'o'},
+    // Prefix for the wallet in the output folder: DEFAULT: wallet_
+    {"wallet-prefix",       required_argument,  0, 'p'},
+    // Number of wallets to generate
+    {"num-wallets",         required_argument,  0, 'w'},
 };
 
 int main(int argc, char **argv)
@@ -48,7 +56,9 @@ int main(int argc, char **argv)
 
     int o = 0;
     int optionIndex = 0;
-    while((o = getopt_long(argc, argv, "k:n:f:o:c:g:p:dC:", longOptions, &optionIndex)) != -1) {
+    while((o = getopt_long(argc, argv, "c:C:df:k:n:o:p:w:", 
+                                longOptions, &optionIndex)) != -1) 
+    {
         switch (o) {
             case 'k': {
                 fileNamePrefix = optarg;
@@ -65,12 +75,12 @@ int main(int argc, char **argv)
             case 'o': {
                 dirname = optarg;
             } break;
-            case 'g': {
-                number_of_genesis_files = atol(optarg);
+            case 'w': {
+                number_of_wallet_files = atol(optarg);
                 break;
             }
             case 'p': {
-                genesis_prefix = optarg;
+                wallet_prefix = optarg;
                 break;
             }
             case 'd': {
@@ -101,69 +111,57 @@ int main(int argc, char **argv)
     }
     if (debug)
     std::cout 
-        << "Output directory:" << dirname << std::endl
-        << "Key file prefix:" << fileNamePrefix << std::endl
-        << "Client prefix:" << clientFileName << std::endl
-        << "Number of nodes:" << n << std::endl
-        << "Number of faults:" << f << std::endl
-        << "Genesis:" << number_of_genesis_files << std::endl
-        << "Genesis Prefix:" << genesis_prefix << std::endl
+        << "Output directory: " << dirname << std::endl
+        << "Key file prefix: " << fileNamePrefix << std::endl
+        << "Client prefix: " << clientFileName << std::endl
+        << "Number of nodes: " << n << std::endl
+        << "Number of faults: " << f << std::endl
+        << "Wallet: " << number_of_wallet_files << std::endl
+        << "Wallet Prefix: " << wallet_prefix << std::endl
         ;
 
-    auto p = libutt::Params::Random();
-
-    // TODO: Change Threshold params to generate separate client params for different clients
-    utt_bft::ThresholdParams tparams(p, n, f);
+    utt_bft::ThresholdParams tparams{n, f};
     auto replica_params = tparams.ReplicaParams();
     auto client_params = tparams.ClientParams();
 
     for(size_t i=0; i<n;i++) {
         // Write replica config for all the replicas
-        std::ofstream rfile(dirname + "/" + fileNamePrefix + std::to_string(i));
-        ConcordAssert(!rfile.fail());
+        std::string replica_file_name("");
+        replica_file_name += dirname + "/";
+        replica_file_name += fileNamePrefix + std::to_string(i);
+        std::ofstream rfile(replica_file_name);
+        ConcordAssert(rfile.good());
         rfile << replica_params[i];
+        rfile.close();
     }
 
-    std::ofstream cliFile(dirname + "/"+ clientFileName);
+    std::string client_file_name("");
+    client_file_name += dirname + "/" + clientFileName;
+    std::ofstream cliFile(client_file_name);
+    ConcordAssert(cliFile.good());
     cliFile << client_params;
     cliFile.close();
 
     // Generate Genesis configs
-    for (auto i=0ul; i< number_of_genesis_files; i++) {
-        auto filename = dirname + "/" + genesis_prefix + std::to_string(i);
+    auto wallets = tparams.randomWallets(2*number_of_wallet_files, 
+                        number_of_coins_to_generate, 100, 100000000);
+    // WARNING: Ensure sufficient budget
+
+    for (auto i=0ul; i<number_of_wallet_files; i+=1) {
+        auto filename = dirname + "/" + wallet_prefix + std::to_string(i);
         // Make a new genesis file
-        std::ofstream genfile(filename);
-        if(!genfile.is_open()) {
-            printf("Failed to open genesis file\n");
+        std::ofstream walfile(filename);
+        if(!walfile.is_open()) {
+            printf("Failed to open wallet file\n");
             return 1;
         }
 
-        std::cout << "Writing Genesis " << filename << std::endl;
+        auto idx = 2*i;
+        std::cout << "Writing Wallet to file: " << filename << std::endl;
+        walfile << wallets[idx] << std::endl;
+        walfile << wallets[idx+1] << std::endl;
         
-        // Put 2 coins with value 1024 (default v for CoinSecrets constructor) each, so they can keep paying themselves for the benchmarking
-        // std::vector<std::tuple<CoinSecrets, CoinComm, CoinSig>> c;
-        // std::vector<std::tuple<LTPK, Fr>> recv;
-
-        libutt::CoinSecrets cs[2] = {
-            CoinSecrets{p, 1024},
-            CoinSecrets{p, 1024}
-        };
-
-        for(auto j=0ul; j<2;j++) {
-            auto cc = CoinComm(p, cs[j]);
-            auto csign = tparams.getSK().thresholdSignCoin(p, cc, tparams.getU());
-            // c.push_back(std::make_tuple(cs[j], cc, csign));
-
-            genfile << cs[j];
-            genfile << cc;
-            genfile << csign;
-        }
-        genfile.close();
-        // libutt::Tx::create(p, c, recv);
-    //     // TODO
-
-        // Close the file
-    //     genfile.close(); 
+        walfile.close();
     }
 
     std::cout << "Created replica files in "
