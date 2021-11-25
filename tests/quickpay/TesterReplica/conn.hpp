@@ -5,6 +5,7 @@
 #include <asio/io_context.hpp>
 #include <asio/io_service.hpp>
 #include <asio/ip/tcp.hpp>
+#include <atomic>
 #include <cstdint>
 #include <deque>
 #include <memory>
@@ -39,22 +40,27 @@ public:
                     long id, 
                     params_ptr_t params, 
                     db_ptr_t db,
+                    std::shared_ptr<std::atomic<uint64_t>> metrics,
                     const cryp_sys_ptr_t& cryp_sys_ptr
                 ): mSock_(io_ctx), 
                         incoming_msg_buf(client::REPLICA_MAX_MSG_SIZE), 
                         internal_msg_buf(0),
                         m_params_{std::move(params)}, 
                         m_db_{std::move(db)},
+                        metrics{metrics},
                         signer{std::shared_ptr<IThresholdSigner>(cryp_sys_ptr->createThresholdSigner())},
                         id{id}
                         {}
 
     // creating a pointer
-    static conn_handler_ptr create(io_ctx_t& io_ctx, long id, 
-                                    params_ptr_t params, db_ptr_t db, 
+    static conn_handler_ptr create(io_ctx_t& io_ctx, 
+                                    long id, 
+                                    params_ptr_t params, 
+                                    db_ptr_t db, 
+                                    std::shared_ptr<std::atomic<uint64_t>> metrics,
                                     const cryp_sys_ptr_t& cryp_sys_ptr)
     {
-        return conn_handler_ptr(new conn_handler(io_ctx, id, std::move(params), std::move(db), cryp_sys_ptr));
+        return conn_handler_ptr(new conn_handler(io_ctx, id, std::move(params), std::move(db), metrics, cryp_sys_ptr));
     }
 
     // things to do when we have a new connection
@@ -78,6 +84,7 @@ private:
 private:
     std::shared_ptr<utt_bft::replica::Params> m_params_ = nullptr;
     std::shared_ptr<concord::storage::rocksdb::NativeClient> m_db_ = nullptr;
+    std::shared_ptr<std::atomic<uint64_t>> metrics = nullptr;
     signer_t signer = nullptr;
 
 private:

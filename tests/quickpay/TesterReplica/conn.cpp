@@ -7,6 +7,7 @@
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
 #include "assertUtils.hpp"
+#include "misc.hpp"
 #include "msg/QuickPay.hpp"
 #include "quickpay/TesterReplica/conn.hpp"
 #include "config.hpp"
@@ -25,6 +26,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         return;
     }
     LOG_INFO(logger, "Got " << bytes << " data from client " << id);
+    auto perf_start = get_monotonic_time();
     internal_msg_buf.reserve(bytes + internal_msg_buf.size());
     internal_msg_buf.insert(internal_msg_buf.end(), 
                                 incoming_msg_buf.begin(), 
@@ -95,6 +97,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         std::memcpy(remaining.data(), internal_msg_buf.data()+qp_tx->get_size(), internal_msg_buf.size() - qp_tx->get_size());
         internal_msg_buf.swap(remaining);
         send_response();
+        metrics->fetch_add(1);
         if(internal_msg_buf.size() < sizeof(QuickPayTx)) {
             break;
         }
@@ -102,6 +105,9 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         qp_tx = (const QuickPayTx*)internal_msg_buf.data();
     }
     on_new_conn();
+    auto perf_end = get_monotonic_time();
+    LOG_INFO(logger, "Tx processing time: " << double(perf_end-perf_start));
+
 }
 
 void conn_handler::send_response() {

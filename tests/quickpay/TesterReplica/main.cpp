@@ -39,6 +39,7 @@ int main(int argc, char* argv[])
     asio::io_context io_ctx;
     auto server = std::make_shared<protocol>(io_ctx, port_num, 
                                                 setup->getCrypto());
+    server->start();
     
     // Start and make threads available to the io_service
     config->concurrencyLevel = std::thread::hardware_concurrency();
