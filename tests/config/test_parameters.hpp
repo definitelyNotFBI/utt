@@ -24,7 +24,7 @@ struct ClientParams {
   std::string configFileName;
   bool measurePerformance = true;
   uint32_t batch_size = 10;
-  std::string utt_file_name = "genesis/utt_pub_client.dat";
+  std::string utt_file_name = "wallets/utt_pub_client.dat";
 
   uint16_t get_numOfReplicas() { return (uint16_t)(3 * numOfFaulty + 2 * numOfSlow + 1); }
 };
@@ -61,7 +61,7 @@ struct ReplicaParams {
   PersistencyMode persistencyMode = PersistencyMode::Off;
   ReplicaBehavior replicaBehavior = ReplicaBehavior::Default;
   
-  std::string utt_filePrefix = "utt_pvt_replica_";
+  std::string utt_filePrefix = "wallets/utt_pvt_replica_";
 
   std::string get_utt_file_name() const { 
     return utt_filePrefix + std::to_string(replicaId);

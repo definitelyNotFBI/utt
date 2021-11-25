@@ -25,10 +25,11 @@
 
 using std::endl;
 
-bool Utils::fileExists(const std::string& file) {
-  std::ifstream fin(file);
-  return fin.good();
-}
+// TODO: Fix Alin's Autobuf as it messes this up
+// bool Utils::fileExists(const std::string& file) {
+//   std::ifstream fin(file);
+//   return fin.good();
+// }
 
 void Utils::bin2hex(const void* bin, int binLen, char* hexBuf, int hexBufCapacity) {
   int needed = binLen * 2 + 1;
