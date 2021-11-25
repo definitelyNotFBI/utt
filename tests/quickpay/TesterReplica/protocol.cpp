@@ -1,21 +1,46 @@
 #include <asio/error_code.hpp>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
+#include "bft.hpp"
+#include "quickpay/TesterReplica/config.hpp"
 #include "quickpay/TesterReplica/conn.hpp"
 #include "quickpay/TesterReplica/protocol.hpp"
+#include "replica/Params.hpp"
+#include "rocksdb/native_client.h"
 #include <asio.hpp>
 #include <functional>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <fstream>
 
 namespace quickpay::replica {
 
 logging::Logger protocol::logger = logging::getLogger("quickpay.bft.replica");
 
-    protocol::protocol(asio::io_context& io_ctx, uint16_t port_num): m_io_ctx_(io_ctx),
+    protocol::protocol(asio::io_context& io_ctx, uint16_t port_num, std::shared_ptr<Cryptosystem> crypsys): m_io_ctx_(io_ctx),
         m_acceptor_(io_ctx, 
                     asio::ip::tcp::endpoint(asio::ip::tcp::v4(), 
                                             port_num)
                     )
     {
+        auto replicaConfig = ReplicaConfig::Get();
+        using concord::storage::rocksdb::NativeClient;
+        auto db_file = "utt-db"+ std::to_string(replicaConfig->getid());
+        LOG_INFO(logger, "Using DB File: " << db_file);
+        db_ptr = NativeClient::newClient(db_file, 
+                                            false, 
+                                            NativeClient::DefaultOptions{});
+
+        auto params_file_name = replicaConfig->get(utt_bft::UTT_PARAMS_REPLICA_KEY,std::string("")) + std::to_string(replicaConfig->getid());
+        LOG_INFO(logger, "Using Params file: " << params_file_name);
+        std::ifstream params_file(params_file_name); 
+        if(!params_file.good()) {
+            LOG_FATAL(logger, "Failed to open params file: "<< params_file_name);
+            throw std::runtime_error("Error opening params file");
+        }
+        m_params_ = std::make_shared<utt_bft::replica::Params>(params_file);
+        m_cryp_sys_ = crypsys;
         LOG_INFO(logger, "Starting the connection at " << port_num);
         start_accept();
     }
@@ -23,7 +48,7 @@ logging::Logger protocol::logger = logging::getLogger("quickpay.bft.replica");
 
 void protocol::start_accept() 
 {
-    auto conn = conn_handler::create(m_io_ctx_, id++);
+    auto conn = conn_handler::create(m_io_ctx_, id++, m_params_, db_ptr, m_cryp_sys_);
     // asynchronous accept operation and wait for a new connection.
     m_acceptor_.async_accept(conn->socket(),
         std::bind(&protocol::on_new_client, this, conn,

@@ -6,8 +6,13 @@
 
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
+#include "assertUtils.hpp"
+#include "msg/QuickPay.hpp"
 #include "quickpay/TesterReplica/conn.hpp"
-#include "utt/Utt.h"
+#include "config.hpp"
+
+#include "threshsign/IThresholdSigner.h"
+#include "utt/Tx.h"
 
 namespace quickpay::replica {
 
@@ -19,18 +24,83 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         LOG_ERROR(logger, "Got error " << err.message());
         return;
     }
-    std::cout << "got " << bytes << std::endl;
-    // Handle tx
-    std::stringstream ss;
-    ss.write(reinterpret_cast<const char*>(incoming_msg_buf.data()), bytes);
-    
-    libutt::Tx tx(ss);
-    // tx.verify(mPrams)
-    LOG_INFO(logger, "Got a new valid transaction");
-    // TODO: Check validity, and egenerate and send signature
-    out_ss.str("");
-    out_ss << "Hello world";
-    send_response();
+    LOG_INFO(logger, "Got " << bytes << " data from client " << id);
+    internal_msg_buf.reserve(bytes + internal_msg_buf.size());
+    internal_msg_buf.insert(internal_msg_buf.end(), 
+                                incoming_msg_buf.begin(), 
+                                incoming_msg_buf.begin() + bytes);
+    auto* qp_tx = (const QuickPayTx*)internal_msg_buf.data();
+    while(qp_tx->get_size() <= internal_msg_buf.size()) {
+        // Handle tx
+        auto* qp_msg = qp_tx->getQPMsg();
+        LOG_DEBUG(logger, "QP Tx: " << std::endl 
+                            << "target_shard_id: " << qp_msg->target_shard_id << std::endl 
+                            << "hash len: " << qp_msg->hash_len << std::endl
+                            << "qp msg len: " << qp_tx->qp_msg_len << std::endl
+                            << "tx len:" << qp_tx->tx_len << std::endl
+                            );
+
+        std::stringstream ss;
+        ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), qp_tx->tx_len);
+        
+        libutt::Tx tx(ss);
+        if(!tx.quickPayValidate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) {
+            LOG_ERROR(logger, "Quick pay validation failed");
+        }
+        LOG_INFO(logger, "Got a new valid quick pay transaction");
+        // Check DB
+        bool is_already_spent = false;
+        for(auto& null: tx.getNullifiers()) {
+            bool key_may_exist = m_db_->rawDB().KeyMayExist(
+                                        rocksdb::ReadOptions{},
+                                        m_db_->defaultColumnFamily(), 
+                                        &null, 
+                                        nullptr);
+            if(!key_may_exist) {
+                continue;
+            }
+            // The key may exist, query the DB to check
+            std::string value;
+            auto status = m_db_->rawDB().Get(rocksdb::ReadOptions{}, 
+                                                m_db_->defaultColumnFamilyHandle(),
+                                                null, &value);
+            if (!status.IsNotFound()) {
+                // The key exists, abort
+                is_already_spent = true;
+                break;
+            }
+        }
+        if(is_already_spent) {
+            LOG_ERROR(logger, "The nullifier already exists in the database");
+            return;
+        }
+        // Burn the coin
+        for(auto& nullif: tx.getNullifiers()) {
+            m_db_->rawDB().Put(rocksdb::WriteOptions{}, nullif, nullif);
+        }
+        // generate and send signature
+        out_ss.str("");
+        auto txhash = tx.getHashHex();
+        auto qp_len = QuickPayMsg::get_size(txhash.size());
+        auto sig_len = signer->requiredLengthForSignedData();
+        auto* qp_resp = QuickPayResponse::alloc(qp_len, sig_len);
+        auto* qp = qp_resp->getQPMsg();
+        qp->target_shard_id = 0;
+        qp->hash_len = txhash.size();
+        std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
+        signer->signData(txhash.c_str(), txhash.size(), (char*)qp_resp->getSigBuf(), sig_len);
+        out_ss.write((const char*)qp_resp, qp_resp->get_size());
+
+        std::vector<uint8_t> remaining(internal_msg_buf.size()-qp_tx->get_size());
+        std::memcpy(remaining.data(), internal_msg_buf.data()+qp_tx->get_size(), internal_msg_buf.size() - qp_tx->get_size());
+        internal_msg_buf.swap(remaining);
+        send_response();
+        if(internal_msg_buf.size() < sizeof(QuickPayTx)) {
+            break;
+        }
+        LOG_INFO(logger, "internal msg buf size: " << internal_msg_buf.size());
+        qp_tx = (const QuickPayTx*)internal_msg_buf.data();
+    }
     on_new_conn();
 }
 

@@ -33,9 +33,10 @@ void conn_handler::on_tx_send(const asio::error_code& err, size_t sent) {
 
 void conn_handler::on_tx_response(const asio::error_code& err, size_t got) {
     if (err) {
-        LOG_ERROR(logger, "Failed to receive message to replica" << getid());
+        LOG_ERROR(logger, "Failed to receive message from replica " << getid() << " with error: " << err.message());
+        return;
     } else {
-        LOG_INFO(logger, "Successfully received " << got << "message from replica" << getid());
+        LOG_INFO(logger, "Successfully received " << got << " message from replica " << getid());
     }
     LOG_INFO(logger, "Got " << got << 
                         " from replica " << getid());

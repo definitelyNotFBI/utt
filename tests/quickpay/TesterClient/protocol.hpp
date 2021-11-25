@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -25,6 +26,8 @@
 #include "histogram.hpp"
 #include "quickpay/TesterClient/conn.hpp"
 #include "client/Params.hpp"
+#include "utt/Wallet.h"
+#include "utt/Tx.h"
 
 namespace quickpay::client {
 
@@ -46,14 +49,15 @@ struct MatchedResponse {
         ids.push_back(id);
     }
 
-    void clear() {
+    // Extract and reset the responses
+    void clear(std::vector<uint16_t>& id_collection, std::vector<std::vector<uint8_t>>& data_collection) {
         responses_from.clear();
-        ids.clear();
-        responses.clear();
+        ids.swap(id_collection);
+        responses.swap(data_collection);
     }
 
     size_t size() const {
-        return ids.size();
+        return responses_from.size();
     }
 };
 
@@ -91,13 +95,15 @@ private:
 private:
     std::unordered_map<uint16_t, asio::ip::tcp::endpoint> m_node_map_;
     std::unique_ptr<utt_bft::client::Params> m_params_ = nullptr;
-    std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
-    libutt::LTSK my_ltsk;
-    libutt::LTPK my_ltpk;
+    std::unique_ptr<libutt::Wallet> m_wallet_send_ = nullptr;
+    std::unique_ptr<libutt::Wallet> m_wallet_recv_ = nullptr;
+    std::shared_ptr<PublicKeyMap> pk_map = nullptr;
 
 // Other data
 private:
     uint16_t experiment_idx;
+    std::unordered_map<decltype(experiment_idx), libutt::Tx> tx_map;
+    // std::optional<libutt::Tx> current_tx;
 
 // Metrics
 private:

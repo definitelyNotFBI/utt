@@ -13,19 +13,21 @@
 namespace quickpay::client {
 
 const struct option longOptions[] = {
-    {"replica-id",                  required_argument, 0, 'i'},
-    {"network-config-file",         required_argument, 0, 'n'},
     {"num-slow",                    required_argument, 0, 'c'},
+    {"cert-root-dir",               required_argument, 0, 'C'},
     {"num-faults",                  required_argument, 0, 'f'},
+    {"replica-id",                  required_argument, 0, 'i'},
+    {"keys-file-prefix",            required_argument, 0, 'k'},
     {"log-props-file",              required_argument, 0, 'l'},
-    {"consensus-concurrency-level", required_argument, 0, 'y'},
-    {"utt-pub-prefix",              required_argument, 0, 'U'},
-    {"genesis-prefix",              required_argument, 0, 'g'},
+    {"network-config-file",         required_argument, 0, 'n'},
     {"numOps",                      required_argument, 0, 'p'},
+    {"utt-pub-prefix",              required_argument, 0, 'U'},
+    {"wallet-prefix",               required_argument, 0, 'w'},
+    {"consensus-concurrency-level", required_argument, 0, 'y'},
     {0, 0, 0, 0}
 };
 
-const auto shortOptions = "i:n:c:f:l:y:U:g:p:";
+const auto shortOptions = "c:C:f:i:k:l:n:p:U:w:y:";
 
 extern int o;
 extern int optionIndex;

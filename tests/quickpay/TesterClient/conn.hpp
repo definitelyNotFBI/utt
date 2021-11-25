@@ -25,13 +25,27 @@ friend class protocol;
 
 public:
     // constructor to create a connection
-    conn_handler(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto): mSock_{io_ctx}, m_replica_id_{id}, m_proto_{proto}, out_ss(""), 
-        replica_msg_buf(REPLICA_MAX_MSG_SIZE) {}
+    conn_handler(io_ctx_t& io_ctx, 
+                    uint16_t id, 
+                    std::shared_ptr<PublicKeyMap> pk_map,
+                    std::shared_ptr<protocol> proto)
+                : 
+                    mSock_{io_ctx}, 
+                    m_replica_id_{id}, 
+                    m_proto_{proto}, 
+                    out_ss(""), 
+                    replica_msg_buf(REPLICA_MAX_MSG_SIZE),
+                    pk_map{pk_map} 
+            {}
 
     // creating a pointer
-    static conn_handler_ptr create(io_ctx_t& io_ctx, uint16_t id, std::shared_ptr<protocol> proto)
+    static conn_handler_ptr create(io_ctx_t& io_ctx, 
+                    uint16_t id, 
+                    std::shared_ptr<PublicKeyMap> pk_map,
+                    std::shared_ptr<protocol> proto
+                )
     {
-        return conn_handler_ptr(new conn_handler(io_ctx, id, proto));
+        return conn_handler_ptr(new conn_handler(io_ctx, id, pk_map, proto));
     }
 
     // things to do when we have a new connection
@@ -54,6 +68,7 @@ private:
     std::shared_ptr<protocol> m_proto_;
     std::stringstream out_ss;
     std::vector<uint8_t> replica_msg_buf;
+    std::shared_ptr<PublicKeyMap> pk_map;
 
 private:
     static logging::Logger logger;

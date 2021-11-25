@@ -28,11 +28,6 @@ struct ReplicaConfig {
                "The number of replicas in the system should be N = 3*fVal + 2*cVal + 1. "
                "In the current version, replicaId should be a number between 0 and  N-1. "
                "replicaId should also represent this replica in ICommunication.");
-  CONFIG_PARAM(isReadOnly, bool, false, "Am I a read-only replica?");
-  CONFIG_PARAM(numReplicas, uint16_t, 0, "number of regular replicas");
-  CONFIG_PARAM(numRoReplicas, uint16_t, 0, "number of read-only replicas");
-  CONFIG_PARAM(fVal, uint16_t, 0, "F value - max number of faulty/malicious replicas. fVal >= 1");
-  CONFIG_PARAM(cVal, uint16_t, 0, "C value. cVal >=0");
   CONFIG_PARAM(numOfExternalClients, uint16_t, 0, "number of objects that represent external clients");
 
   CONFIG_PARAM(concurrencyLevel,
@@ -40,6 +35,11 @@ struct ReplicaConfig {
                0,
                "number of consensus operations that can be executed in parallel "
                "1 <= concurrencyLevel <= 30");
+  CONFIG_PARAM(numReplicas, uint16_t, 0, "number of regular replicas");
+  CONFIG_PARAM(isReadOnly, bool, false, "Am I a read-only replica?");
+  CONFIG_PARAM(numRoReplicas, uint16_t, 0, "number of read-only replicas");
+  CONFIG_PARAM(fVal, uint16_t, 0, "F value - max number of faulty/malicious replicas. fVal >= 1");
+  CONFIG_PARAM(cVal, uint16_t, 0, "C value. cVal >=0");
   CONFIG_PARAM(replicaPrivateKey, std::string, "", "RSA private key of the current replica");
   // Threshold crypto system
   CONFIG_PARAM(thresholdSystemType_, std::string, "", "type of threshold crypto system, [multisig-bls|threshold-bls]");

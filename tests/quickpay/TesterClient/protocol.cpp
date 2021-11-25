@@ -1,13 +1,17 @@
+#include <xutils/AutoBuf.h>
 #include <asio/streambuf.hpp>
 #include <cstring>
 #include <functional>
 #include <iostream>
 #include <fstream>
 #include <iterator>
+#include <libff/common/serialization.hpp>
 #include <memory>
+#include <ostream>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <asio.hpp>
@@ -22,11 +26,17 @@
 #include "common.hpp"
 #include "histogram.hpp"
 #include "misc.hpp"
+#include "msg/QuickPay.hpp"
 #include "quickpay/TesterClient/config.hpp"
 #include "quickpay/TesterClient/conn.hpp"
 #include "quickpay/TesterClient/protocol.hpp"
 #include "bft.hpp"
-#include "utt/Utt.h"
+#include "threshsign/ThresholdSignaturesTypes.h"
+#include "utt/Comm.h"
+#include "utt/RandSig.h"
+#include "utt/Serialization.h"
+#include "utt/Tx.h"
+#include "utt/Wallet.h"
 
 namespace quickpay::client {
 
@@ -35,9 +45,7 @@ logging::Logger protocol::logger = logging::getLogger("quickpay.bft.client");
 protocol::protocol(io_ctx_t& io_ctx, 
                    bft::communication::NodeMap& node_map, 
                    utt_bft::client::Params &&params)
-    : m_io_ctx_(io_ctx), timer(io_ctx), tx_timer(io_ctx),
-        my_ltsk(libutt::LTSK::random()), 
-        my_ltpk(libutt::LTPK(params.p, my_ltsk))
+    : m_io_ctx_(io_ctx), timer(io_ctx), tx_timer(io_ctx)
 {
     // Setup params
     m_params_ = std::make_unique<utt_bft::client::Params>(params);
@@ -45,25 +53,27 @@ protocol::protocol(io_ctx_t& io_ctx,
     auto config = ClientConfig::Get();
 
     // Read genesis files
-    auto genesis_filename = config->get(utt_genesis_file_key, std::string("genesis/genesis_")) 
+    auto wallet_filename = config->get(utt_wallet_file_key, 
+                                            std::string("wallets/wallet_")) 
                                 + std::to_string(config->getid());
-    LOG_INFO(logger, "Opening genesis file: " << genesis_filename);
+    LOG_INFO(logger, "Opening wallet file: " << wallet_filename);
 
-    std::ifstream utt_genesis_file(genesis_filename);
-    if (utt_genesis_file.fail()) {
-        LOG_FATAL(logger, "Failed to open " << genesis_filename);
-        throw std::runtime_error("Error opening utt genesis file");
+    std::ifstream utt_wallet_file(wallet_filename);
+    if (utt_wallet_file.fail()) {
+        LOG_FATAL(logger, "Failed to open " << wallet_filename);
+        throw std::runtime_error("Error opening utt wallet file");
     }
 
-    for(auto j=0; j<2;j++) {
-      libutt::CoinSecrets cs_temp(utt_genesis_file);
-      libutt::CoinComm cc_temp(utt_genesis_file);
-      libutt::CoinSig csign_temp(utt_genesis_file);
-
-      my_initial_coins.push_back(std::make_tuple(cs_temp, cc_temp, csign_temp));
-    }
-
-    utt_genesis_file.close();
+    auto wal1 = new libutt::Wallet();
+    auto wal2 = new libutt::Wallet();
+    utt_wallet_file >> *wal1;
+    libff::consume_OUTPUT_NEWLINE(utt_wallet_file);
+    utt_wallet_file >> *wal2;
+    libff::consume_OUTPUT_NEWLINE(utt_wallet_file);
+    m_wallet_send_ = std::unique_ptr<libutt::Wallet>(wal1);
+    m_wallet_recv_ = std::unique_ptr<libutt::Wallet>(wal2);
+    
+    utt_wallet_file.close();
 
     // Setup connections
     for(auto& [replica_id,node_info]: node_map) {
@@ -78,6 +88,14 @@ protocol::protocol(io_ctx_t& io_ctx,
                                             << " as replica " << replica_id);
     }
 
+    // Setup BFT keys
+    auto* map = new PublicKeyMap();
+    pk_map = std::shared_ptr<PublicKeyMap>(map);
+    for(auto& [id, key]: ClientConfig::Get()->publicKeysOfReplicas) {
+        auto pubkey = std::shared_ptr<PublicKey>(
+                            new PublicKey(key.c_str()));
+        pk_map->emplace(id, pubkey);
+    }
 }
 
 void protocol::on_timeout(const asio::error_code& err) {
@@ -115,7 +133,7 @@ void protocol::on_tx_timeout(const asio::error_code err) {
 void protocol::start() {
     // Start connecting to all the nodes
     for(auto& [node_id, end_point]: m_node_map_) {
-        auto conn = conn_handler::create(m_io_ctx_, node_id, shared_from_this());
+        auto conn = conn_handler::create(m_io_ctx_, node_id, pk_map, shared_from_this());
         auto& sock = conn->socket();
         sock.async_connect(end_point, std::bind(
             &conn_handler::on_new_conn, conn, std::placeholders::_1));
@@ -149,9 +167,20 @@ void protocol::add_connection(conn_handler_ptr conn_ptr) {
 
 // Run the quickpay client experiments
 void protocol::start_experiments() {
+    std::vector<uint16_t> ids(0);
+    std::vector<std::vector<uint8_t>> data(0);
+    matched_response.clear(ids, data);
+
     auto config = ClientConfig::Get();
 
     auto num_ops = config->getnumOfOperations();
+
+    auto& recip = m_wallet_recv_->getUserPid();
+    for(size_t i=0; i< num_ops; i++) {
+        auto current_tx = m_wallet_send_->spendTwoRandomCoins(recip, false);
+        tx_map.emplace(i, current_tx);
+    }
+
     std::cout << "Starting " << num_ops
                 << " iterations" << std::endl;
 
@@ -172,7 +201,8 @@ void protocol::send_tx() {
                             << std::endl
                             << hist.ToString() << std::endl;
         m_metric_mtx_.unlock();
-        double throughput = (400*1000000)/double(throughput_end - throughput_begin);
+        auto num_ops = ClientConfig::Get()->getnumOfOperations();
+        double throughput = (num_ops*1000000)/double(throughput_end - throughput_begin);
         std::cout << "Throughput info from client "
                             << ClientConfig::Get()->id
                             << throughput
@@ -181,15 +211,6 @@ void protocol::send_tx() {
     }
     experiment_idx--;
     LOG_INFO(logger, "Transaction #" << experiment_idx);
-
-    std::vector<std::tuple<libutt::LTPK, libutt::Fr>> recv;
-    recv.reserve(2);
-    for(auto j=0; j<2;j++) {
-        auto r = libutt::Fr(std::get<0>(my_initial_coins[j]).val);
-        recv.push_back(std::make_tuple(my_ltpk, r));
-    }
-
-    libutt::Tx tx = libutt::Tx::create(m_params_->p, my_initial_coins, recv);
 
     for(auto& conn: m_conn_) {
         auto& sock = conn->socket();
@@ -206,10 +227,28 @@ void protocol::send_tx() {
         m_metric_mtx_.unlock();
     }
 
+    auto& current_tx = tx_map[experiment_idx];
+    std::stringstream ss;
+    ss << current_tx;
+
+    auto txhash = current_tx.getHashHex();
+    auto qp_len = QuickPayMsg::get_size(txhash.size());
+    auto qp_tx = QuickPayTx::alloc(qp_len, ss.str().size());
+    auto qp = qp_tx->getQPMsg();
+    qp->target_shard_id = 0;
+    qp->hash_len = txhash.size();
+    std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
+    std::memcpy(qp_tx->getTxBuf(), ss.str().data(), ss.str().size());
+
+    LOG_DEBUG(logger, "Sending QP Tx:" << std::endl
+                        << "target shard id: " << qp->target_shard_id << std::endl
+                        << "hash len: " << qp->hash_len << std::endl 
+    );
+
     for(auto& conn: m_conn_) {
         // Reset the stream
         conn->out_ss.str("");
-        conn->out_ss << tx;
+        conn->out_ss.write((const char*)qp_tx, qp_tx->get_size());
         auto& sock = conn->socket();
         sock.async_send(
             asio::buffer(conn->out_ss.str(), conn->out_ss.str().size()),
@@ -229,7 +268,7 @@ void protocol::send_tx() {
 void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id)
 {
     auto end = get_monotonic_time();
-
+    LOG_INFO(logger, "Adding " << num_bytes << " of response from " << id);
     size_t num_responses = 0;
     {
         m_resp_mtx_.lock();
@@ -244,11 +283,15 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id)
     LOG_INFO(logger, "Cancelling the tx timer");
     tx_timer.cancel();
 
+    std::vector<uint16_t> ids;
+    std::vector<std::vector<uint8_t>> responses;
     {
         m_resp_mtx_.lock();
-        matched_response.clear();
+        // swap the responses with empty responses
+        matched_response.clear(ids, responses);
         m_resp_mtx_.unlock();
     }
+
     auto elapsed = end - begin;
 
     {
@@ -257,7 +300,6 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id)
         m_metric_mtx_.unlock();
     }
     LOG_INFO(logger, "Finished a transaction");
-    // return double(elapsed);
     send_tx();
 }
 

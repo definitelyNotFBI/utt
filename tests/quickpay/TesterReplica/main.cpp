@@ -9,8 +9,10 @@
 #include "Logging4cplus.hpp"
 #include "config/test_comm_config.hpp"
 #include "options.hpp"
+#include "quickpay/TesterClient/config.hpp"
 #include "quickpay/TesterReplica/config.hpp"
 #include "quickpay/TesterReplica/protocol.hpp"
+#include "threshsign/ThresholdSignaturesTypes.h"
 
 int main(int argc, char* argv[])
 {
@@ -35,7 +37,8 @@ int main(int argc, char* argv[])
 
     // Make io_service
     asio::io_context io_ctx;
-    auto server = std::make_shared<protocol>(io_ctx, port_num);
+    auto server = std::make_shared<protocol>(io_ctx, port_num, 
+                                                setup->getCrypto());
     
     // Start and make threads available to the io_service
     config->concurrencyLevel = std::thread::hardware_concurrency();

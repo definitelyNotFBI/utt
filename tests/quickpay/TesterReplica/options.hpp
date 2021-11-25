@@ -27,9 +27,8 @@ class TestSetup {
 public:
     TestSetup(std::string& logFile, 
                 const bft::communication::BaseCommConfig& conf, 
-                const std::string& utt_params_file,
                 std::shared_ptr<Cryptosystem> sys): 
-        m_logPropsFile_(logFile), m_replicaId_(ReplicaConfig::Get()->getid()), m_conf_(conf), m_utt_params_file_(utt_params_file), m_crypsys(sys) {}
+        m_logPropsFile_(logFile), m_replicaId_(ReplicaConfig::Get()->getid()), m_conf_(conf), m_crypsys(sys) {}
 public:
     static std::unique_ptr<TestSetup> ParseArgs(int argc, char* argv[]);
     std::string getLogProperties() { return m_logPropsFile_; }
@@ -37,14 +36,12 @@ public:
     // For quickpay, all I need for communication is my info
     typedef bft::communication::NodeInfo NodeInfo;
     NodeInfo getMyInfo() { return m_conf_.nodes[m_replicaId_]; }
+    std::shared_ptr<Cryptosystem> getCrypto() { return m_crypsys; }
 
-    // Get UTT Info
-    std::string UttParamsFile() { return m_utt_params_file_; }
 private:
     std::string m_logPropsFile_;
     uint16_t m_replicaId_;
     bft::communication::BaseCommConfig m_conf_;
-    std::string m_utt_params_file_;
     std::shared_ptr<Cryptosystem> m_crypsys = nullptr;
 };
 

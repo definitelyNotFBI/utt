@@ -1,6 +1,8 @@
 #pragma once 
 
 #include <asio.hpp>
+#include <unordered_map>
+#include "Crypto.hpp"
 
 namespace quickpay::client {
 
@@ -11,9 +13,11 @@ class protocol;
  */
 class conn_handler;
 typedef std::shared_ptr<conn_handler> conn_handler_ptr;
+typedef bftEngine::impl::RSAVerifier PublicKey;
+typedef std::unordered_map<uint16_t, std::shared_ptr<PublicKey>> PublicKeyMap;
 
-const std::string utt_genesis_file_key = "utt.quickpay.genesis";
+const std::string utt_wallet_file_key = "utt.quickpay.wallet";
 
-const size_t REPLICA_MAX_MSG_SIZE = 65999;
+const size_t REPLICA_MAX_MSG_SIZE = 20000;
 
 } // namespace quickpay::client

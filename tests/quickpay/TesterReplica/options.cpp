@@ -93,6 +93,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
         throw std::runtime_error("missing --key-file-prefix");
     if (utt_params_file.empty()) 
         throw std::runtime_error("missing --utt-prefix");
+    replica_config->set(utt_bft::UTT_PARAMS_REPLICA_KEY, utt_params_file);
 
     std::string key_file_name = keysFilePrefix + std::to_string(replica_config->id);
     auto sys = getKeyFile(key_file_name);
@@ -117,8 +118,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
         testCommConfig.GetUDPConfig(true, replica_config->id, numOfClients, numOfReplicas, commConfigFile);
     #endif
 
-    return std::make_unique<TestSetup>(logPropsFile, conf, 
-                                        utt_params_file, crypsys);
+    return std::make_unique<TestSetup>(logPropsFile, conf, crypsys);
 }
 
 Cryptosystem* getKeyFile(const std::string& filename) {

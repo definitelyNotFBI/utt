@@ -28,9 +28,6 @@ struct ClientConfig {
                "The number of replicas in the system should be N = 3*fVal + 2*cVal + 1. "
                "In the current version, replicaId should be a number between 0 and  N-1. "
                "replicaId should also represent this replica in ICommunication.");
-  CONFIG_PARAM(numReplicas, uint16_t, 4, "number of regular replicas");
-  CONFIG_PARAM(fVal, uint16_t, 1, "F value - max number of faulty/malicious replicas. fVal >= 1");
-  CONFIG_PARAM(cVal, uint16_t, 0, "C value. cVal >=0");
   CONFIG_PARAM(concurrencyLevel,
                uint16_t,
                0,
@@ -40,9 +37,23 @@ struct ClientConfig {
                "the number of transactions to be sent by the client");
   CONFIG_PARAM(measurePerformance, bool, true, 
                "whether or not to measure performance metrics");
+  CONFIG_PARAM(numReplicas, uint16_t, 0, "number of regular replicas");
+  CONFIG_PARAM(isReadOnly, bool, false, "Am I a read-only replica?");
+  CONFIG_PARAM(numRoReplicas, uint16_t, 0, "number of read-only replicas");
+  CONFIG_PARAM(fVal, uint16_t, 0, "F value - max number of faulty/malicious replicas. fVal >= 1");
+  CONFIG_PARAM(cVal, uint16_t, 0, "C value. cVal >=0");
+  CONFIG_PARAM(replicaPrivateKey, std::string, "", "RSA private key of the current replica");
+  // Threshold crypto system
+  CONFIG_PARAM(thresholdSystemType_, std::string, "", "type of threshold crypto system, [multisig-bls|threshold-bls]");
+  CONFIG_PARAM(thresholdSystemSubType_, std::string, "", "sub-type of threshold crypto system [BN-254]");
+  CONFIG_PARAM(thresholdPrivateKey_, std::string, "", "threshold crypto system bootstrap private key");
+  CONFIG_PARAM(thresholdPublicKey_, std::string, "", "threshold crypto system bootstrap public key");
+  std::vector<std::string> thresholdVerificationKeys_;
+
   // Crypto system
   // RSA public keys of all replicas. map from replica identifier to a public key
   std::set<std::pair<uint16_t, const std::string>> publicKeysOfReplicas;
+
 
  public:
   /**
