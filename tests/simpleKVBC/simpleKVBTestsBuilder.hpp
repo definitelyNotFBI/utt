@@ -67,7 +67,6 @@ enum RequestType : char {
   GET_LAST_BLOCK = 3,
   GET_BLOCK_DATA = 4,
   LONG_EXEC_COND_WRITE = 5,
-  MINT = 6,
   PAY = 7,
 };
 
@@ -153,37 +152,6 @@ struct SimpleReadRequest {
   concord::kvbc::BlockId readVersion = 0;  // If 0, read from the latest version
   size_t numberOfKeysToRead = 0;
   SimpleKey keys[1];
-};
-
-// Adding Mint Request to KVBC Replica
-struct SimpleMintRequest {
-  static SimpleMintRequest* alloc(const size_t coin_len) {
-    auto *req = (SimpleMintRequest*)malloc(sizeof(SimpleMintRequest)+coin_len);
-    req->header.type = MINT;
-    req->cc_buf_len = coin_len;
-    return req;
-  }
-
-  size_t getSize() const {
-    size_t size = sizeof(SimpleMintRequest) + cc_buf_len;
-    return size;
-  }
-
-  static size_t getSize(const size_t coin_len) {
-    return sizeof(SimpleMintRequest) + coin_len;
-  }
-
-  // Use this to load up the stringstream to obtain the libutt::EPK from the Mint message
-  uint8_t* getMintBuffer() { 
-    return (uint8_t*)this + sizeof(SimpleMintRequest); 
-  }
-  
-  static void free(SimpleMintRequest* buf) {delete buf;}
-
-  SimpleRequest header;
-  size_t val;
-  size_t coinId;
-  size_t cc_buf_len = 0;
 };
 
 struct SimplePayRequest {

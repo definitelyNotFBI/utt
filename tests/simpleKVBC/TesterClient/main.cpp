@@ -25,8 +25,6 @@
 #include "config/test_parameters.hpp"
 #include "communication/CommFactory.hpp"
 
-#include "utt/Keys.h"
-
 using namespace bftEngine;
 using namespace bft::communication;
 using namespace BasicRandomTests;

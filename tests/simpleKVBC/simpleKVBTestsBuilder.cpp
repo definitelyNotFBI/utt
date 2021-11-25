@@ -136,7 +136,6 @@ void TestsBuilder::create(size_t numOfRequests, size_t seed) {
     // else
     //   ConcordAssert(0);
     // For this test, just insert Mints
-    createAndInsertMint();
   }
 
   for (__attribute__((unused)) auto elem : internalBlockchain_) {
@@ -250,19 +249,6 @@ void TestsBuilder::createAndInsertRandomConditionalWrite() {
   }
 }
 
-// Random UTT Mint Transaction
-void TestsBuilder::createAndInsertMint() {
-  auto *request = new SimpleMintRequest{{MINT}};
-  request->coinId = 1;
-  request->val = 1000;
-
-  requests_.push_back((SimpleRequest*) request);
-
-  // Write the expected reply
-  auto* reply = new SimpleReply_Mint{{MINT}};
-  replies_.push_back((SimpleReply*) reply);
-}
-
 // Random UTT Pay Transaction
 void TestsBuilder::createAndInsertPay() {
 
@@ -342,10 +328,8 @@ size_t TestsBuilder::sizeOfRequest(SimpleRequest *request) {
       return ((SimpleReadRequest *)request)->getSize();
     case GET_LAST_BLOCK:
       return sizeof(SimpleRequest);
-    case MINT:
-      return sizeof(SimpleMintRequest);
-    // case PAY:
-      // return sizeof(SimplePayRequest);
+    case PAY:
+      return sizeof(SimplePayRequest);
     default:
       ConcordAssert(0);
   }
@@ -360,10 +344,10 @@ size_t TestsBuilder::sizeOfReply(SimpleReply *reply) {
       return ((SimpleReply_Read *)reply)->getSize();
     case GET_LAST_BLOCK:
       return sizeof(SimpleReply_GetLastBlock);
-    case MINT:
-      return sizeof(SimpleReply_Mint);
-    // case PAY:
-      // return sizeof(SimpleReply_Pay);
+    // case MINT:
+    //   return sizeof(SimpleReply_Mint);
+    case PAY:
+      return sizeof(SimpleReply_Pay);
     default:
       ConcordAssert(0);
   }

@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -23,10 +24,10 @@
 #include "bftclient/bft_client.h"
 #include "state.hpp"
 #include "test_parameters.hpp"
-#include "utt/Bank.h"
 #include "utt/Coin.h"
 #include "utt/Params.h"
 #include "client/Params.hpp"
+#include "utt/Wallet.h"
 
 #define DEFAULT_COIN_VALUE 1000
 
@@ -41,27 +42,24 @@ class EcashClient : public bft::client::Client {
             ICommunication* comm, 
             bft::client::ClientConfig &cp, 
             std::shared_ptr<utt_bft::client::Params> cParamsPtr_,
-            std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> &&my_initial_coins
+            std::shared_ptr<libutt::Wallet> wal_send,
+            std::shared_ptr<libutt::Wallet> wal_recv
         );
         void wait_for_connections();
         ~EcashClient();
-        static void Pool(size_t);
-        std::tuple<size_t, libutt::EPK> new_coin();
-        std::optional<libutt::CoinSig> verifyMintAckRSI(bft::client::Reply& reply);
         bool verifyPayAckRSI(bft::client::Reply& reply);
-        bft::client::Msg NewMintTx(long value = DEFAULT_COIN_VALUE);
         bft::client::Msg NewTestPaymentTx();
-        std::shared_ptr<utt_bft::client::Params> cParamsPtr_;
+
+    public:
+        std::shared_ptr<utt_bft::client::Params> cParamsPtr_ = nullptr;
+        std::shared_ptr<libutt::Wallet> m_wallet_send_ptr_ = nullptr;
+        std::shared_ptr<libutt::Wallet> m_wallet_recv_ptr_ = nullptr;
+
     private:
-    // TODO(Come from metadata storage)
-        libutt::LTSK my_ltsk;
-        libutt::LTPK my_ltpk;
-        size_t coinCounter = 1;
         logging::Logger logger_;
+
     protected:
         uint16_t num_replicas_;
-        std::unordered_map<size_t, libutt::ESK> my_coins;
-        std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
 };
 
 

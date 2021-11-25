@@ -109,9 +109,6 @@ bool BasicRandomTestsRunner::isReplyCorrect(RequestType requestType,
     case GET_LAST_BLOCK:
       if (((SimpleReply_GetLastBlock *)expectedReply)->isEquiv(*(SimpleReply_GetLastBlock *)reply, error)) return true;
       break;
-    case MINT: 
-      return true;
-      break;
     case PAY:
       return true;
       break;

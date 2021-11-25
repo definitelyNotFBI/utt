@@ -14,7 +14,7 @@ for((i=1;i<=$NumClients;i++)); do
                         -f 1 \
                         -c 0 \
                         -p 400 \
-                        -U genesis/utt_pub_client.dat \
+                        -U wallets/utt_pub_client.dat \
                         -i $id \
                         -l perf-logging.properties \
                         ${EXTRA_CLIENT_FLAGS} \

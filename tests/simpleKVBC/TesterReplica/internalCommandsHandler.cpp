@@ -28,7 +28,8 @@
 #include <string>
 #include <variant>
 #include "ReplicaConfig.hpp"
-#include "utt/Utt.h"
+
+#include "utt/Tx.h"
 
 using namespace BasicRandomTests;
 using namespace bftEngine;
@@ -100,17 +101,6 @@ void InternalCommandsHandler::execute(InternalCommandsHandler::ExecutionRequests
     
     if(req.flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) {
       switch(request->type) {
-        case MINT: {
-          res = postExecuteMint(req.requestSize,
-                                req.request, 
-                                req.executionSequenceNum,
-                                req.flags,
-                                req.maxReplySize,
-                                req.outReply,
-                                req.outActualReplySize,
-                                req.outReplicaSpecificInfoSize
-          );
-        } break;
         case PAY: {
           // TODO
           res = postExecutePay(req.requestSize,
@@ -134,17 +124,6 @@ void InternalCommandsHandler::execute(InternalCommandsHandler::ExecutionRequests
 
     if(req.flags & MsgFlag::PRE_PROCESS_FLAG) {
       switch(request->type) {
-        case MINT: {
-          res = preExecuteMint( req.requestSize,
-                                req.request, 
-                                req.executionSequenceNum,
-                                req.flags,
-                                req.maxReplySize,
-                                req.outReply,
-                                req.outActualReplySize,
-                                req.outReplicaSpecificInfoSize
-          );
-        } break;
         case PAY: {
           res = preExecutePay(  req.requestSize,
                                 req.request, 
@@ -371,88 +350,6 @@ bool InternalCommandsHandler::hasConflictInBlockAccumulatedRequests(
 
 // bool InternalCommandsHandler::executeUTT_Pay();
 
-bool InternalCommandsHandler::postExecuteMint(uint32_t requestSize, const char *request,
-                    uint64_t sequenceNum, uint8_t flags,
-                    size_t maxReplySize, char *outReply,
-                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize) {
-  auto *writeReq = (SimpleMintRequest *)request;
-  LOG_INFO(m_logger,
-           "PostExecuting UTT command:"
-               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
-               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
-               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
-               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
-               << " ReplicaSpecificInfo: " << outReplicaSpecificInfoSize
-               << " MAX_REPLY_SIZE=" << maxReplySize
-               );
-  std::stringstream ss;
-  ss.write(reinterpret_cast<const char*>(writeReq->getMintBuffer()), writeReq->cc_buf_len);
-  libutt::EPK epk(ss);
-  ss.str(std::string());
-  libutt::CoinComm cc(mParams_->p, epk, writeReq->val);
-  libutt::CoinSigShare coin = mParams_->my_sk.sign(mParams_->p, cc);
-  ss << coin;
-  auto cc_buf = ss.str().size();
-  auto *response = (SimpleReply_Mint*)outReply;
-  response->header.type = MINT;
-  response->coinId = writeReq->coinId;
-  response->coin_sig_share_len = cc_buf;
-  std::memcpy(response->getCoinSigShareBuffer(), ss.str().data(), cc_buf);
-  outReplicaSpecificInfoSize = response->getRSISize();
-  outReplySize = response->getSize();
-  return true;
-}
-
-bool InternalCommandsHandler::preExecuteMint(uint32_t requestSize, 
-                    const char *request,
-                    uint64_t sequenceNum, 
-                    uint8_t flags,
-                    size_t maxReplySize, 
-                    char *outReply,
-                    uint32_t &outReplySize, 
-                    uint32_t &outReplicaSpecificInfoSize) {
-  auto *writeReq = (SimpleMintRequest *)request;
-  LOG_INFO(m_logger,
-           "PreExecuting UTT command:"
-               << " type=" << writeReq->header.type << " seqNum=" << sequenceNum
-               << " READ_ONLY_FLAG=" << ((flags & MsgFlag::READ_ONLY_FLAG) != 0 ? "true" : "false")
-               << " PRE_PROCESS_FLAG=" << ((flags & MsgFlag::PRE_PROCESS_FLAG) != 0 ? "true" : "false")
-               << " HAS_PRE_PROCESSED_FLAG=" << ((flags & MsgFlag::HAS_PRE_PROCESSED_FLAG) != 0 ? "true" : "false")
-               << " ReplicaSpecificInfo=" << outReplicaSpecificInfoSize
-               << " maxReplySize=" << maxReplySize 
-               << " requestSize=" << requestSize
-               );
-  std::string s = "0x";
-  for(auto i=0u;i<requestSize;i++) {
-    s.append(std::to_string(request[i]));
-  }
-  // LOG_DEBUG(m_logger, "Printing Request:" << s);
-  
-  if(writeReq->getSize() != requestSize) {
-    LOG_ERROR(m_logger, "Got invalid size for UTT Mint");
-    LOG_ERROR(m_logger, "Tx says: " << writeReq->getSize() << " , but I got only " << requestSize);
-    return false;
-  }
-  std::stringstream ss;
-  // LOG_DEBUG(m_logger, "Trying to print debug information2");
-  ss.write(reinterpret_cast<const char*>(writeReq->getMintBuffer()), writeReq->cc_buf_len);
-  // LOG_INFO(m_logger, "Trying to print debug information3");
-  libutt::EPK epk(ss);
-  // LOG_INFO(m_logger, "Trying to print debug information");
-  // LOG_INFO(m_logger, "Using params: " << mParams_->p);
-  // LOG_INFO(m_logger, "Got EPK: " << epk);
-  if(!libutt::EpkProof::verify(mParams_->p, epk)) {
-    LOG_ERROR(m_logger, "Mint transaction verification failed");
-    return false;
-  }
-  // Copy the request into response 
-  outReplicaSpecificInfoSize = 0;
-  outReplySize = requestSize;
-  std::memcpy(outReply, request, requestSize);
-  
-  return true;
-}
-
 bool InternalCommandsHandler::preExecutePay(uint32_t requestSize, 
                     const char *request,
                     uint64_t sequenceNum, 
@@ -481,10 +378,7 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   std::stringstream ss;
   ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
   libutt::Tx tx(ss);
-  // LOG_INFO(m_logger, "Trying to print debug information");
-  // LOG_INFO(m_logger, "Using params: " << mParams_->p);
-  // LOG_INFO(m_logger, "Got tx: " << tx);
-  if(!tx.verify(mParams_->p, mParams_->main_pk)) {
+  if(!tx.validate(mParams_->p, mParams_->main_pk, mParams_->reg_pk)) {
     LOG_ERROR(m_logger, "Payment transaction verification failed");
     return false;
   }
@@ -492,8 +386,8 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   // DONE: Check if we can reject early by checking the storage
   std::string value;
   // Now check if the nullifiers are already burnt
-  for(auto& txin: tx.ins) {
-    auto str = txin.null.toString();
+  for(auto& null: tx.getNullifiers()) {
+    auto str = null;
     bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
     // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
     if(key_may_exist) {
@@ -540,8 +434,8 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   // The transaction was validated during pre-execution
   // TODO: Check again if the nullifier was updated
   std::string value;
-  for(auto& txin: tx.ins) {
-    auto str = txin.null.toString();
+  for(auto& null: tx.getNullifiers()) {
+    auto str = null;
     bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
     if(key_may_exist) {
       // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
@@ -554,21 +448,23 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
     }
   }
 
-  // Process the tx (The coins are still unspent)
-  tx.process(mParams_->p, mParams_->my_sk);
+  // Clear and serialize the new tx
+  ss.str(std::string());
+
+  // TODO: Process the tx (The coins are still unspent)
+  for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
+    auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
+    ss << sig << std::endl;
+  }
 
   // Add nullifiers to the DB
-  for(auto& txin: tx.ins) {
+  for(auto& null: tx.getNullifiers()) {
     // HACK so that the client can re-use the same coin for testing
     auto num = val.fetch_add(1);
-    auto str = txin.null.toString() + std::to_string(num);
+    auto str = null + std::to_string(num);
     LOG_DEBUG(m_logger, "Atomic Pointer Str: "<<str);
     client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
   }
-
-  // Clear and serialize the new tx
-  ss.str(std::string());
-  ss << tx;
 
   // Setup the response
   auto response = (SimpleReply_Pay*)outReply;
@@ -580,10 +476,10 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   outReplicaSpecificInfoSize = response->getRSISize();
   outReplySize = response->getSize();
 
-  // To delete after fixing
-  outReplicaSpecificInfoSize = 0;
-  outReplySize = requestSize;
-  std::memcpy(outReply, request, requestSize);
+  // // To delete after fixing
+  // outReplicaSpecificInfoSize = 0;
+  // outReplySize = requestSize;
+  // std::memcpy(outReply, request, requestSize);
   
   return true;
 }
@@ -611,10 +507,8 @@ bool InternalCommandsHandler::executeWriteCommand(uint32_t requestSize,
                << " BLOCK_ACCUMULATION_ENABLED=" << isBlockAccumulationEnabled);
 
   // Insert hook to execute UTT Messages
-  if (writeReq->header.type == MINT ) {
-    return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
-  } else if (writeReq->header.type == PAY) {
-    return postExecuteMint(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
+  if (writeReq->header.type == PAY) {
+    return postExecutePay(requestSize, request, sequenceNum, flags, maxReplySize, outReply, outReplySize, outReplicaSpecificInfoSize);
   }
 
   if (!(flags & MsgFlag::HAS_PRE_PROCESSED_FLAG)) {

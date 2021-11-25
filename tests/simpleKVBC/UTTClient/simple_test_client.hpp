@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <deque>
 #include <fstream>
+#include <libff/common/serialization.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,19 +46,17 @@
 #include "bftclient/bft_client.h"
 #include "bftclient/seq_num_generator.h"
 
-#include "utt/Bank.h"
 #include "client/Params.hpp"
 #include "basicRandomTestsRunner.hpp"
+#include "utt/Wallet.h"
 
 using namespace bftEngine;
 using namespace bft::communication;
 using namespace std;
 
 #define PRE_EXEC_ENABLED true
-// #define TEST_NORMAL_MINT
-// #define TEST_BATCH_MINT
-// #define TEST_NORMAL_PAY
-#define TEST_BATCH_PAY
+#define TEST_NORMAL_PAY
+// #define TEST_BATCH_PAY
 
 #define test_assert(statement, message)                                                                          \
   {                                                                                                              \
@@ -112,29 +111,26 @@ class SimpleTestClient {
 
     bft::client::ClientConfig adapter_config = make_adapter_config(cp);
     std::ifstream ifile(cp.utt_file_name);
-    ConcordAssert(!ifile.fail());
+    ConcordAssert(ifile.good());
 
     // Load the params file (move it out)
     utt_bft::client::Params cParams(ifile);
 
-    auto genesis_file_id = cp.clientId - cp.numOfReplicas;
-    auto genesis_file = "genesis/genesis_" + std::to_string(genesis_file_id);
-    std::cout << "Reading genesis file: " << genesis_file << std::endl;
+    auto wallet_file_id = cp.clientId - cp.numOfReplicas;
+    auto wallet_file = "wallets/wallet_" + std::to_string(wallet_file_id);
+    std::cout << "Reading wallet file: " << wallet_file << std::endl;
 
-    std::ifstream gen_file(genesis_file);
-    ConcordAssert(!gen_file.fail());
+    std::ifstream wal_file(wallet_file);
+    ConcordAssert(wal_file.good());
 
-    std::vector<std::tuple<libutt::CoinSecrets, libutt::CoinComm, libutt::CoinSig>> my_initial_coins;
+    libutt::Wallet *wal1 = new libutt::Wallet;
+    libutt::Wallet *wal2 = new libutt::Wallet;
+    wal_file >> *wal1;
+    libff::consume_OUTPUT_NEWLINE(wal_file);
+    wal_file >> *wal2;
+    libff::consume_OUTPUT_NEWLINE(wal_file);
 
-    for(auto j=0; j<2;j++) {
-      libutt::CoinSecrets cs_temp(gen_file);
-      libutt::CoinComm cc_temp(gen_file);
-      libutt::CoinSig csign_temp(gen_file);
-
-      my_initial_coins.push_back(std::make_tuple(cs_temp, cc_temp, csign_temp));
-    }
-
-    gen_file.close();
+    wal_file.close();
 
     assertEqual(cParams.bank_pks.size(), cp.numOfReplicas);
 
@@ -143,7 +139,8 @@ class SimpleTestClient {
       comm, 
       adapter_config, 
       std::make_shared<utt_bft::client::Params>(cParams),
-      std::move(my_initial_coins)
+      std::shared_ptr<libutt::Wallet>(wal1),
+      std::shared_ptr<libutt::Wallet>(wal2)
     );
 
     client.wait_for_connections();
@@ -161,127 +158,6 @@ class SimpleTestClient {
     }
 
     concordUtils::Histogram hist;
-#ifdef TEST_NORMAL_MINT
-    hist.Clear();
-
-    for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
-      // the python script that runs the client needs to know how many
-      // iterations has been done - that's the reason we use printf and not
-      // logging module - to keep the output exactly as we expect.
-      if (i > 0 && i % 100 == 0) {
-        printf("Iterations count: 100\n");
-        printf("Total iterations count: %i\n", i);
-      }
-
-      LOG_DEBUG(clientLogger, "Starting Tx: " << i);
-
-      // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
-      uint64_t start = get_monotonic_time();
-      bft::client::WriteRequest req;
-      req.config.request.timeout = 100s;
-      req.config.request.pre_execute = PRE_EXEC_ENABLED;
-      req.config.quorum = client::LinearizableQuorum{};
-      req.request = client.NewMintTx();
-      req.config.request.sequence_number = pSeqGen.unique();
-      auto x = client.send(req.config, std::move(req.request));
-      
-      uint64_t end = get_monotonic_time();
-      uint64_t elapsedMicro = end - start;
-
-      if (cp.measurePerformance) {
-        hist.Add(double(elapsedMicro));
-      }
-
-      LOG_DEBUG(clientLogger, "Got Tx: " << i);
-
-      LOG_DEBUG(clientLogger, "(Matched) Response Size: " << x.matched_data.size());
-      auto status = client.verifyMintAckRSI(x);
-      if(!status.has_value()) {
-        printf("Got invalid transactions from the replicas\n");
-      }
-    }
-
-    if (cp.measurePerformance) {
-      std::cout << std::endl
-                   << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString();
-    }
-#endif
-
-#ifdef TEST_BATCH_MINT
-    // Start the second set of experiments for Payments
-    hist.Clear();
-
-    std::vector<std::deque<bft::client::WriteRequest>> write_requests(cp.numOfOperations);
-
-    for(uint32_t i = 0; i < cp.numOfOperations; i++) {
-      for(uint32_t j = 0; j < cp.batch_size; j++) {
-        auto& batch_req = write_requests[i];
-        bft::client::WriteRequest req;
-        req.config.request.timeout = 100s;
-        req.config.request.pre_execute = PRE_EXEC_ENABLED;
-        req.config.quorum = client::LinearizableQuorum{};
-        req.request = client.NewMintTx();
-        req.config.request.sequence_number = pSeqGen.unique();
-        batch_req.push_back(req);
-      }
-    }
-
-    LOG_INFO(clientLogger, "Finished preparing batches");
-
-    for (uint32_t i = 1; i <= cp.numOfOperations; i++) {
-      // the python script that runs the client needs to know how many
-      // iterations has been done - that's the reason we use printf and not
-      // logging module - to keep the output exactly as we expect.
-      if (i > 0 && i % 100 == 0) {
-        printf("Iterations count: 100\n");
-        printf("Total iterations count: %i\n", i);
-      }
-
-      LOG_DEBUG(clientLogger, "Starting Tx: " << i);
-
-      // const uint64_t timeout = SimpleClient::INFINITE_TIMEOUT;
-      uint64_t start = get_monotonic_time();
-      for(size_t j=0;j<cp.batch_size;j++) {
-        auto* req = (BasicRandomTests::SimpleMintRequest*)write_requests[i-1][j].request.data();
-        std::stringstream ss;
-        ss.write(reinterpret_cast<const char*>(req->getMintBuffer()), req->cc_buf_len);
-        libutt::EPK epk;
-        ss >> epk;
-        LOG_DEBUG(clientLogger, "Self verify:" );
-        std::cout << "sending EPK:" << epk;
-      }
-      auto x = client.sendBatch(write_requests[i-1], std::string());
-      
-      uint64_t end = get_monotonic_time();
-      uint64_t elapsedMicro = end - start;
-
-      if (cp.measurePerformance) {
-        hist.Add(double(elapsedMicro));
-      }
-
-      LOG_DEBUG(clientLogger, "Got Tx: " << i);
-      LOG_DEBUG(clientLogger, 
-        "Got " << x.size() << " responses for the batch");
-
-      for(auto& [seq, resp]: x) {
-        LOG_DEBUG(clientLogger, "Sequence#: " << seq);
-        LOG_DEBUG(clientLogger, "(Matched) Response Size: " << resp.matched_data.size());
-        auto status = client.verifyMintAckRSI(resp);
-        if(!status.has_value()) {
-          printf("Got invalid transactions from the replicas\n");
-          // return false;
-        }
-      }
-    }
-
-    if (cp.measurePerformance) {
-      std::cout << std::endl
-                   << "Performance info from client " << cp.clientId << std::endl
-                   << hist.ToString();
-    }
-#endif
-
 #ifdef TEST_NORMAL_PAY
     // Third set of experiments for Payments
     hist.Clear();
@@ -317,10 +193,10 @@ class SimpleTestClient {
       LOG_DEBUG(clientLogger, "Got Pay Tx: " << i);
 
       LOG_DEBUG(clientLogger, "(Matched) Response Size: " << x.matched_data.size());
-      // auto status = client.verifyMintAckRSI(x);
-      // if(!status.has_value()) {
-        // printf("Got invalid transactions from the replicas\n");
-      // }
+      auto status = client.verifyPayAckRSI(x);
+      if(!status) {
+        LOG_INFO(clientLogger, "Got invalid pay ack from the replicas");
+      }
     }
 
     if (cp.measurePerformance) {

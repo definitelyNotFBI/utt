@@ -55,15 +55,13 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
             
             // Setup libutt config here
             auto utt_params = replicaConfig.get(utt_bft::UTT_PARAMS_REPLICA_KEY, std::string());
-            if (utt_params.empty()) {
-                return;
-            }
+            ConcordAssert(!utt_params.empty());
             std::string configFile = utt_params.append(std::to_string(replicaConfig.replicaId));
             LOG_INFO(m_logger, "Using UTT config:" << configFile);
             std::ifstream pfile(configFile);
-            ConcordAssert(!pfile.fail());
+            ConcordAssert(pfile.good());
 
-            mParams_ = utt_bft::replica::Params(pfile);
+            mParams_ = std::make_unique<utt_bft::replica::Params>(pfile);
         }
 
   virtual void execute(ExecutionRequestsQueue &requests,
@@ -107,14 +105,6 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
   bool executeGetLastBlockCommand(uint32_t requestSize, size_t maxReplySize, char *outReply, uint32_t &outReplySize);
 
   void addMetadataKeyValue(concord::kvbc::categorization::VersionedUpdates &updates, uint64_t sequenceNum) const;
-  bool preExecuteMint(uint32_t requestSize, const char *request,
-                    uint64_t sequenceNum, uint8_t flags,
-                    size_t maxReplySize, char *outReply,
-                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
-  bool postExecuteMint(uint32_t requestSize, const char *request,
-                    uint64_t sequenceNum, uint8_t flags,
-                    size_t maxReplySize, char *outReply,
-                    uint32_t &outReplySize, uint32_t &outReplicaSpecificInfoSize);
   bool preExecutePay(uint32_t requestSize, const char *request,
                     uint64_t sequenceNum, uint8_t flags,
                     size_t maxReplySize, char *outReply,
@@ -155,6 +145,6 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
   size_t m_getLastBlockCounter = 0;
   std::atomic_uint64_t val = 0;
   std::shared_ptr<concord::performance::PerformanceManager> perfManager_;
-  std::optional<utt_bft::replica::Params> mParams_ = nullopt;
+  std::shared_ptr<utt_bft::replica::Params> mParams_ = nullptr;
   std::shared_ptr<concord::storage::rocksdb::NativeClient> client = nullptr;
 };

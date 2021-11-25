@@ -36,8 +36,6 @@
 #include "simple_test_client.hpp"
 #include "Logger.hpp"
 
-#include "utt/Utt.h"
-
 logging::Logger clientLogger = logging::getLogger("utt.bft.client");
 
 ClientParams setupClientParams(int argc, char **argv) {
