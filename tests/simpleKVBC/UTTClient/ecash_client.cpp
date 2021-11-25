@@ -118,13 +118,13 @@ EcashClient::~EcashClient() {
 
 bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
   // Check size for matched data
-  if (reply.matched_data.size() < sizeof(UTT_Msg)) {
+  if (reply.matched_data.size() < sizeof(BasicRandomTests::SimpleReply)) {
     LOG_ERROR(logger_, "Invalid matched data");
     return false;
   }
   // Check correct response format
-  auto utt_msg = UTT_MSG_PTR(reply.matched_data.data());
-  if(utt_msg->type != OpType::PayAck) {
+  auto utt_msg = (BasicRandomTests::SimpleReply*)reply.matched_data.data();
+  if(utt_msg->type != BasicRandomTests::PAY) {
     LOG_ERROR(logger_, "Invalid OpType");
     return false;
   }
