@@ -481,10 +481,11 @@ ClientRequestMsg *ReplicaImp::addRequestToPrePrepareMessage(ClientRequestMsg *&n
           nextRequest->clientProxyId(), nextRequest->requestSeqNum(), nextRequest->getCid());
     }
     primaryCombinedReqSize -= nextRequest->size();
-  } else if (nextRequest->size() > maxStorageForRequests) {  // The message is too big
-    LOG_ERROR(GL,
+  } else {  // The message is too big
+    LOG_DEBUG(GL,
               "Request was dropped because it exceeds maximum allowed size" << KVLOG(
                   prePrepareMsg.seqNumber(), nextRequest->senderId(), nextRequest->size(), maxStorageForRequests));
+    return nullptr;
   }
   delete nextRequest;
   requestsQueueOfPrimary.pop();
