@@ -84,6 +84,7 @@ private:
 private:
     std::shared_ptr<utt_bft::replica::Params> m_params_ = nullptr;
     std::shared_ptr<concord::storage::rocksdb::NativeClient> m_db_ = nullptr;
+    uint64_t nullif_ctr = 0;
     std::shared_ptr<std::atomic<uint64_t>> metrics = nullptr;
     signer_t signer = nullptr;
 
