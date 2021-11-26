@@ -64,14 +64,13 @@ protocol::protocol(io_ctx_t& io_ctx,
         throw std::runtime_error("Error opening utt wallet file");
     }
 
-    auto wal1 = new libutt::Wallet();
-    auto wal2 = new libutt::Wallet();
-    utt_wallet_file >> *wal1;
+    libutt::Wallet wal1, wal2;
+    utt_wallet_file >> wal1;
     libff::consume_OUTPUT_NEWLINE(utt_wallet_file);
-    utt_wallet_file >> *wal2;
+    utt_wallet_file >> wal2;
     libff::consume_OUTPUT_NEWLINE(utt_wallet_file);
-    m_wallet_send_ = std::unique_ptr<libutt::Wallet>(wal1);
-    m_wallet_recv_ = std::unique_ptr<libutt::Wallet>(wal2);
+    m_wallet_send_ = std::make_unique<libutt::Wallet>(std::move(wal1));
+    m_wallet_recv_ = std::make_unique<libutt::Wallet>(std::move(wal2));
     
     utt_wallet_file.close();
 

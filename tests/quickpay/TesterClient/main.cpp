@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     auto logger = logging::getLogger("quickpay.client");
 
     LOG_INFO(logger, "Namaskara!");
-    LOG_INFO(logger, "Starting quickpay server!");
+    LOG_INFO(logger, "Starting quickpay client!");
 
     // Construct libutt params
     auto config = ClientConfig::Get();

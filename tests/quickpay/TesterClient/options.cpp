@@ -64,7 +64,7 @@ Cryptosystem* getKeyFile(const std::string& filename) {
   config->numRoReplicas = yaml::readValue<std::uint16_t>(input, "num_ro_replicas");
   config->fVal = yaml::readValue<std::uint16_t>(input, "f_val");
   config->cVal = yaml::readValue<std::uint16_t>(input, "c_val");
-  config->id = yaml::readValue<std::uint16_t>(input, "replica_id");
+  auto id = yaml::readValue<std::uint16_t>(input, "replica_id");
   config->isReadOnly = yaml::readValue<bool>(input, "read-only");
 
   // Note we validate the number of replicas using 32-bit integers in case
@@ -73,7 +73,7 @@ Cryptosystem* getKeyFile(const std::string& filename) {
   if (predictedNumReplicas != (uint32_t)config->numReplicas)
     throw std::runtime_error("num_replicas must be equal to (3 * f_val + 2 * c_val + 1)");
 
-  if (config->id >= config->numReplicas + config->numRoReplicas)
+  if (id >= config->numReplicas + config->numRoReplicas)
     throw std::runtime_error("replica IDs must be in the range [0, num_replicas + num_ro_replicas]");
 
   std::vector<std::string> rsaPublicKeys = yaml::readCollection<std::string>(input, "rsa_public_keys");
@@ -94,7 +94,7 @@ Cryptosystem* getKeyFile(const std::string& filename) {
 
   return Cryptosystem::fromConfiguration(input,
                                          "common",
-                                         config->id + 1,
+                                         id + 1,
                                          config->thresholdSystemType_,
                                          config->thresholdSystemSubType_,
                                          config->thresholdPrivateKey_,
