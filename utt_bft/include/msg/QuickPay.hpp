@@ -100,3 +100,48 @@ struct QuickPayResponse {
         delete[] buf;
     }
 };
+
+struct MintTx {
+    size_t qp_msg_len;
+    size_t sig_len;
+    size_t num_sigs;
+    // unsigned char[qp_msg_len]
+    // unsigned char[sig_len][num_sigs]
+
+    static size_t get_size(size_t qp_msg_len, size_t sig_len, size_t num_sigs) {
+        return sizeof(MintTx) + 
+                    qp_msg_len + 
+                    (sig_len*num_sigs);
+    }
+
+    size_t get_size() const {
+        return get_size(qp_msg_len, sig_len, num_sigs);
+    }
+
+    static void free(MintTx* buf) {
+        delete [] buf;
+    }
+
+    static MintTx* alloc(size_t msg_len, size_t sig_len, size_t num_sigs) {
+        auto size = get_size(msg_len, sig_len, num_sigs);
+        auto data_ptr = (uint8_t*) malloc(size);
+        memset(data_ptr, 0, size);
+        auto mtx = (MintTx*)data_ptr;
+        mtx->qp_msg_len = msg_len;
+        mtx->sig_len = sig_len;
+        mtx->num_sigs = num_sigs;
+        return mtx;
+    }
+
+    QuickPayMsg* getQPMsg() const {
+        return (QuickPayMsg*)((uint8_t*)this + sizeof(MintTx));
+    }
+
+    // TODO: Test this
+    unsigned char* getSig(size_t idx) const {
+        if(idx >= num_sigs) {
+            return nullptr;
+        }
+        return (unsigned char*)((uint8_t*)this + sizeof(MintTx) + qp_msg_len + (idx*sig_len));
+    }
+};

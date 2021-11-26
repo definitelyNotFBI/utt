@@ -12,6 +12,11 @@ add_executable(quickpay_replica
     ${concord_bft_tools_SOURCE_DIR}/KeyfileIOUtils.cpp
 )
 
+add_executable(tx_generator
+    Tx/main.cpp
+    Tx/setup.cpp
+)
+
 add_executable(quickpay_client
     TesterClient/main.cpp
     TesterClient/options.cpp
@@ -47,6 +52,10 @@ target_link_libraries(quickpay_replica PUBLIC
 )
 
 target_link_libraries(quickpay_client PUBLIC 
+    ${quickpay_libs}
+)
+
+target_link_libraries(tx_generator PUBLIC 
     ${quickpay_libs}
 )
 
