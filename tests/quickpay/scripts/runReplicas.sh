@@ -40,6 +40,7 @@ for((i=0;i<$NUM_REPLICAS;i++)); do
                         --replica-id "$i" \
                         --network-config-file comm_config \
                         --utt-prefix ${UTT_PREFIX} \
+                        ${EXTRA_REPLICA_FLAGS} \
                         &> logs"$((i+1))".txt &
 done
 

@@ -58,10 +58,11 @@ void protocol::on_performance_timeout(const asio::error_code& err)
     auto time = get_monotonic_time();
     auto diff = time - last_logged_time;
     uint64_t num_tx = *num_tx_processed;
+    auto tput = (double(num_tx)*1000000.0)/double(diff);
     std::cout << "Performance Info: " << std::endl <<
-                        "Transactions: " <<  num_tx << std::endl << 
-                        "Time: " << double(diff) << std::endl << 
-                        "Throughput: " << (double(num_tx)*1000000.0)/double(diff)
+                        "Transactions: "    <<  num_tx      << std::endl << 
+                        "Time: "            << double(diff) << std::endl << 
+                        "Throughput: "      << tput         << std::endl
             ;
     last_logged_time = time;
     *num_tx_processed = 0;
