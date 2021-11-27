@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include "Logging4cplus.hpp"
+#include "msg/QuickPay.hpp"
 #include "quickpay/TesterClient/common.hpp"
 #include "replica/Params.hpp"
 #include "rocksdb/native_client.h"
@@ -73,6 +74,9 @@ public:
 
     // Send the replica of the response
     void send_response(size_t);
+
+private:
+    bool check_tx(const QuickPayTx* qp_tx, const libutt::Tx& tx);
 
 private:
     sock_t mSock_;

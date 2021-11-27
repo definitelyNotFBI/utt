@@ -20,6 +20,51 @@ namespace quickpay::replica {
 
 logging::Logger conn_handler::logger = logging::getLogger("quickpay.replica.conn");
 
+bool conn_handler::check_tx(const QuickPayTx* qp_tx, const libutt::Tx& tx)
+{
+    auto* qp_msg = qp_tx->getQPMsg();
+    LOG_DEBUG(logger, "QP Tx: " << std::endl 
+                        << "target_shard_id: " << qp_msg->target_shard_id << std::endl 
+                        << "hash len: " << qp_msg->hash_len << std::endl
+                        << "qp msg len: " << qp_tx->qp_msg_len << std::endl
+                        << "tx len:" << qp_tx->tx_len << std::endl
+                        );
+
+    if(!tx.quickPayValidate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) {
+        LOG_ERROR(logger, "Quick pay validation failed");
+        return false;
+    }
+    LOG_INFO(logger, "Got a new valid quick pay transaction");
+    // Check DB
+    std::string value;
+    for(auto& null: tx.getNullifiers()) {
+        // bool found;
+        bool found;
+        bool key_may_exist = m_db_->rawDB().KeyMayExist(
+                                        rocksdb::ReadOptions{},
+                                        m_db_->defaultColumnFamilyHandle(), 
+                                        null,
+                                        &value, 
+                                        &found);
+        if(!key_may_exist) {
+            continue;
+        }
+        if (found) {
+            return false;
+        }
+        // The key may exist, query the DB to check
+        auto status = m_db_->rawDB().Get(rocksdb::ReadOptions{}, 
+                                            m_db_->defaultColumnFamilyHandle(),
+                                            null, &value);
+        if (!status.IsNotFound()) {
+            // The key exists, abort
+            return false;
+            break;
+        }
+    }
+    return true;
+}
+
 void conn_handler::do_read(const asio::error_code& err, size_t bytes)
 {
     if (err) {
@@ -42,6 +87,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         LOG_WARN(logger, "Did not receive sufficient bytes [" 
                             << received_bytes << "] for a QP TX header[" 
                             << sizeof(QuickPayTx) << "], will try again");
+        on_new_conn();
         return;
     }
     // Handle tx
@@ -50,64 +96,27 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         LOG_WARN(logger, "Did not receive sufficient bytes [" 
                             << received_bytes << "] for a full tx"
                             << qp_tx->get_size() <<", will try again");
+        on_new_conn();
         return;
     }
-    auto* qp_msg = qp_tx->getQPMsg();
-    LOG_DEBUG(logger, "QP Tx: " << std::endl 
-                        << "target_shard_id: " << qp_msg->target_shard_id << std::endl 
-                        << "hash len: " << qp_msg->hash_len << std::endl
-                        << "qp msg len: " << qp_tx->qp_msg_len << std::endl
-                        << "tx len:" << qp_tx->tx_len << std::endl
-                        );
+    
     received_bytes = 0;
-
+    on_new_conn();
     std::stringstream ss;
     ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), qp_tx->tx_len);
         
     libutt::Tx tx(ss);
-    if(!tx.quickPayValidate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) {
-        LOG_ERROR(logger, "Quick pay validation failed");
-    }
-    LOG_INFO(logger, "Got a new valid quick pay transaction");
-    // Check DB
-    bool is_already_spent = false;
-    std::string value;
-    for(auto& null: tx.getNullifiers()) {
-        // bool found;
-        bool found;
-        bool key_may_exist = m_db_->rawDB().KeyMayExist(
-                                        rocksdb::ReadOptions{},
-                                        m_db_->defaultColumnFamilyHandle(), 
-                                        null,
-                                        &value, 
-                                        &found);
-        if(!key_may_exist) {
-            continue;
-        }
-        if (found) {
-            is_already_spent = true;
-            break;
-        }
-        // The key may exist, query the DB to check
-        auto status = m_db_->rawDB().Get(rocksdb::ReadOptions{}, 
-                                            m_db_->defaultColumnFamilyHandle(),
-                                            null, &value);
-        if (!status.IsNotFound()) {
-            // The key exists, abort
-            is_already_spent = true;
-            break;
-        }
-    }
-    if(is_already_spent) {
-        LOG_ERROR(logger, "The nullifier already exists in the database");
+    if (!check_tx(qp_tx, tx)) {
         return;
     }
+
     // Burn the coin
     for(auto& nullif: tx.getNullifiers()) {
         m_db_->rawDB().Put(rocksdb::WriteOptions{}, 
                                 nullif + std::to_string(nullif_ctr++), 
                                 std::string());
     }
+
     // generate and send signature
     ss.str("");
     auto txhash = tx.getHashHex();
@@ -123,7 +132,6 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     qp->hash_len = txhash.size();
     std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
     signer->signData(txhash.c_str(), txhash.size(), (char*)qp_resp->getSigBuf(), sig_len);
-    on_new_conn();
     send_response(qp_resp->get_size());
     metrics->fetch_add(1);
     // Move the remaining buffers again
