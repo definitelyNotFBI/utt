@@ -73,11 +73,11 @@ public:
     void do_read(const asio::error_code& err, size_t bytes);
 
     // Send the replica of the response
-    void send_response();
+    void send_response(size_t);
 
 private:
     sock_t mSock_;
-    std::stringstream out_ss;
+    std::vector<uint8_t> outgoing_msg_buf;
     std::vector<uint8_t> incoming_msg_buf;
     std::vector<uint8_t> internal_msg_buf;
 

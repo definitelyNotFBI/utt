@@ -81,31 +81,37 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     }
     // Burn the coin
     for(auto& nullif: tx.getNullifiers()) {
-        m_db_->rawDB().Put(rocksdb::WriteOptions{}, nullif + std::to_string(nullif_ctr++), std::string());
+        m_db_->rawDB().Put(rocksdb::WriteOptions{}, 
+                                nullif + std::to_string(nullif_ctr++), 
+                                std::string());
     }
     // generate and send signature
-    out_ss.str("");
+    ss.str("");
     auto txhash = tx.getHashHex();
     auto qp_len = QuickPayMsg::get_size(txhash.size());
     auto sig_len = signer->requiredLengthForSignedData();
-    auto* qp_resp = QuickPayResponse::alloc(qp_len, sig_len);
+    auto resp_size = QuickPayResponse::get_size(qp_len, sig_len);
+    outgoing_msg_buf.reserve(resp_size);
+    auto qp_resp = (QuickPayResponse*)outgoing_msg_buf.data();
+    qp_resp->qp_msg_len = qp_len;
+    qp_resp->sig_len = sig_len;
     auto* qp = qp_resp->getQPMsg();
     qp->target_shard_id = 0;
     qp->hash_len = txhash.size();
     std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
     signer->signData(txhash.c_str(), txhash.size(), (char*)qp_resp->getSigBuf(), sig_len);
-    out_ss.write((const char*)qp_resp, qp_resp->get_size());
+    // out_ss.write((const char*)qp_resp, qp_resp->get_size());
 
-    send_response();
+    send_response(qp_resp->get_size());
     metrics->fetch_add(1);
     on_new_conn();
     auto perf_end = get_monotonic_time();
     LOG_INFO(logger, "Tx processing time: " << double(perf_end-perf_start));
 }
 
-void conn_handler::send_response() {
+void conn_handler::send_response(size_t bytes) {
     this->mSock_.async_send(
-        asio::buffer(out_ss.str(), out_ss.str().size()),
+        asio::buffer(outgoing_msg_buf.data(), bytes),
         [](const asio::error_code& err, size_t bytes) {
             if (err) {
                 LOG_ERROR(logger, err.message());
