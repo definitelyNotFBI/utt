@@ -100,11 +100,9 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     qp->hash_len = txhash.size();
     std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
     signer->signData(txhash.c_str(), txhash.size(), (char*)qp_resp->getSigBuf(), sig_len);
-    // out_ss.write((const char*)qp_resp, qp_resp->get_size());
-
+    on_new_conn();
     send_response(qp_resp->get_size());
     metrics->fetch_add(1);
-    on_new_conn();
     auto perf_end = get_monotonic_time();
     LOG_INFO(logger, "Tx processing time: " << double(perf_end-perf_start));
 }
@@ -115,6 +113,7 @@ void conn_handler::send_response(size_t bytes) {
         [](const asio::error_code& err, size_t bytes) {
             if (err) {
                 LOG_ERROR(logger, err.message());
+                return;
             }
             LOG_INFO(logger, "Sent " << bytes << " data");
         }
