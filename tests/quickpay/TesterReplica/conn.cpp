@@ -92,7 +92,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     }
     // Handle tx
     auto* qp_tx = (const QuickPayTx*)internal_msg_buf.data();
-    if (qp_tx->get_size() < received_bytes) {
+    if (received_bytes < qp_tx->get_size()) {
         LOG_WARN(logger, "Did not receive sufficient bytes [" 
                             << received_bytes << "] for a full tx"
                             << qp_tx->get_size() <<", will try again");
