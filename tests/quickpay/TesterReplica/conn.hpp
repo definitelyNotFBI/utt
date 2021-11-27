@@ -43,8 +43,7 @@ public:
                     std::shared_ptr<std::atomic<uint64_t>> metrics,
                     const cryp_sys_ptr_t& cryp_sys_ptr
                 ): mSock_(io_ctx), 
-                        incoming_msg_buf(client::REPLICA_MAX_MSG_SIZE), 
-                        internal_msg_buf(0),
+                        internal_msg_buf(20ul*1024),
                         m_params_{std::move(params)}, 
                         m_db_{std::move(db)},
                         metrics{metrics},
@@ -78,8 +77,9 @@ public:
 private:
     sock_t mSock_;
     std::vector<uint8_t> outgoing_msg_buf;
-    std::vector<uint8_t> incoming_msg_buf;
+    std::array<uint8_t, size_t(20*1024)> incoming_msg_buf;
     std::vector<uint8_t> internal_msg_buf;
+    size_t received_bytes = 0;
 
 private:
     std::shared_ptr<utt_bft::replica::Params> m_params_ = nullptr;
