@@ -24,7 +24,7 @@
 #include "communication/CommDefs.hpp"
 #include "common.hpp"
 #include "histogram.hpp"
-#include "quickpay/TesterClient/conn.hpp"
+#include "conn.hpp"
 #include "client/Params.hpp"
 #include "utt/Wallet.h"
 #include "utt/Tx.h"

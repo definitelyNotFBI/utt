@@ -27,9 +27,9 @@
 #include "histogram.hpp"
 #include "misc.hpp"
 #include "msg/QuickPay.hpp"
-#include "quickpay/TesterClient/config.hpp"
-#include "quickpay/TesterClient/conn.hpp"
-#include "quickpay/TesterClient/protocol.hpp"
+#include "config.hpp"
+#include "conn.hpp"
+#include "protocol.hpp"
 #include "bft.hpp"
 #include "threshsign/ThresholdSignaturesTypes.h"
 #include "utt/Comm.h"
@@ -150,7 +150,7 @@ void protocol::add_connection(conn_handler_ptr conn_ptr) {
     size_t num_conns;
     {
         m_conn_mutex_.lock();
-        m_conn_.push_back(conn_ptr);
+        m_conn_.emplace_back(std::move(conn_ptr));
         num_conns = m_conn_.size();
         m_conn_mutex_.unlock();
     }

@@ -3,9 +3,9 @@
 #include "Logging4cplus.hpp"
 #include "bft.hpp"
 #include "misc.hpp"
-#include "quickpay/TesterReplica/config.hpp"
-#include "quickpay/TesterReplica/conn.hpp"
-#include "quickpay/TesterReplica/protocol.hpp"
+#include "config.hpp"
+#include "conn.hpp"
+#include "protocol.hpp"
 #include "replica/Params.hpp"
 #include "rocksdb/native_client.h"
 #include <asio.hpp>
@@ -96,8 +96,8 @@ void protocol::on_new_client(conn_handler_ptr conn, const asio::error_code& err)
 {
     LOG_INFO(logger, "Got a new client connection");
     if (!err) {
-        m_conn_.emplace(conn->id, conn->shared_from_this());
         conn->on_new_conn();
+        m_conn_.emplace(conn->id, std::move(conn));
     } else {
         LOG_ERROR(logger, err.message());
     }

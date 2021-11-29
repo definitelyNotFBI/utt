@@ -11,7 +11,7 @@
 #include "communication/CommDefs.hpp"
 #include "config/test_comm_config.hpp"
 #include "options.hpp"
-#include "quickpay/TesterReplica/config.hpp"
+#include "config.hpp"
 #include "string.hpp"
 #include "KeyfileIOUtils.hpp"
 #include "yaml_utils.hpp"

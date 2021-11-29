@@ -9,9 +9,9 @@
 #include "Logging4cplus.hpp"
 #include "config/test_comm_config.hpp"
 #include "options.hpp"
-#include "quickpay/TesterClient/config.hpp"
-#include "quickpay/TesterReplica/config.hpp"
-#include "quickpay/TesterReplica/protocol.hpp"
+#include "TesterClient/config.hpp"
+#include "config.hpp"
+#include "protocol.hpp"
 #include "threshsign/ThresholdSignaturesTypes.h"
 
 int main(int argc, char* argv[])

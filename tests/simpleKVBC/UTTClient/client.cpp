@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 #include <string>
 
 #include "test_parameters.hpp"
@@ -48,8 +49,17 @@ ClientParams setupClientParams(int argc, char **argv) {
   bool is_debug = false;
   int o = 0;
   std::string logPropsFile = "logging.properties";
-  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:d")) != EOF) {
+  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:db:")) != EOF) {
     switch (o) {
+      case 'b': {
+        strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
+        argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
+        size_t batchSize = std::stoul(argTempBuffer);
+        if (batchSize == 0 || batchSize > 10) {
+          throw std::runtime_error("batch size is too large");
+        }
+        clientParams.batch_size = batchSize;
+      } break;
       case 'i': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
         argTempBuffer[sizeof(argTempBuffer) - 1] = 0;

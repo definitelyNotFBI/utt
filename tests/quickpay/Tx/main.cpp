@@ -9,10 +9,10 @@ int main(int argc, char* argv[])
     // Process the args
     auto setup = Setup::ParseArgs(argc, argv);
 
-    // TODO: Read the wallets
-    setup->makeTx(4);
+    // DONE: Read the wallets
+    // DONE: Generate quickpay Txs
+    setup->makeTx();
 
-    // TODO: Generate quickpay Txs
     return 0;
 }
 

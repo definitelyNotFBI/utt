@@ -13,7 +13,7 @@
 #include <vector>
 #include "Logging4cplus.hpp"
 #include "msg/QuickPay.hpp"
-#include "quickpay/TesterClient/common.hpp"
+#include "common.hpp"
 #include "replica/Params.hpp"
 #include "rocksdb/native_client.h"
 #include "threshsign/IThresholdSigner.h"

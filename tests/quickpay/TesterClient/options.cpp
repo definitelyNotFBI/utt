@@ -20,9 +20,9 @@
 
 #include "options.hpp"
 #include "protocol.hpp"
-#include "quickpay/TesterClient/common.hpp"
-#include "quickpay/TesterClient/config.hpp"
-#include "quickpay/TesterReplica/config.hpp"
+#include "common.hpp"
+#include "config.hpp"
+#include "TesterReplica/config.hpp"
 
 namespace quickpay::client {
 

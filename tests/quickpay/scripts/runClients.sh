@@ -9,7 +9,8 @@ NumClients=${NUM_CLIENTS:-16}
 for((i=1;i<=$NumClients;i++)); do
     id=$((i+NumReplicas-1))
     echo "Running client $i with id ..."
-    ../quickpay_client  --network-config-file comm_config \
+    ../TesterClient/quickpay_client \
+                        --network-config-file comm_config \
                         --num-faults 1 \
                         --num-slow 0 \
                         --numOps 400 \

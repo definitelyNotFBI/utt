@@ -10,11 +10,14 @@
 #include "assertUtils.hpp"
 #include "misc.hpp"
 #include "msg/QuickPay.hpp"
-#include "quickpay/TesterReplica/conn.hpp"
+#include "conn.hpp"
 #include "config.hpp"
 
+#include "sha_hash.hpp"
 #include "threshsign/IThresholdSigner.h"
+#include "utt/PolyCrypto.h"
 #include "utt/Tx.h"
+#include "utt/internal/PicoSha2.h"
 
 namespace quickpay::replica {
 
@@ -119,7 +122,8 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
 
     // generate and send signature
     ss.str("");
-    auto txhash = tx.getHashHex();
+    auto txhash = concord::util::SHA3_256().digest((uint8_t*)qp_tx, 
+                                                    qp_tx->get_size());
     auto qp_len = QuickPayMsg::get_size(txhash.size());
     auto sig_len = signer->requiredLengthForSignedData();
     auto resp_size = QuickPayResponse::get_size(qp_len, sig_len);
@@ -131,7 +135,10 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     qp->target_shard_id = 0;
     qp->hash_len = txhash.size();
     std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
-    signer->signData(txhash.c_str(), txhash.size(), (char*)qp_resp->getSigBuf(), sig_len);
+    signer->signData((const char*)txhash.data(), 
+                        txhash.size(), 
+                        (char*)qp_resp->getSigBuf(), 
+                        sig_len);
     send_response(qp_resp->get_size());
     metrics->fetch_add(1);
     // Move the remaining buffers again

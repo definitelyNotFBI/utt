@@ -2,8 +2,8 @@
 #include <iostream>
 
 #include "Logging4cplus.hpp"
-#include "quickpay/TesterClient/conn.hpp"
-#include "quickpay/TesterClient/protocol.hpp"
+#include "conn.hpp"
+#include "protocol.hpp"
 
 namespace quickpay::client {
 

@@ -36,7 +36,8 @@ UTT_PREFIX=wallets/utt_pvt_replica_
 
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $((i+1))..."
-    ../quickpay_replica --key-file-prefix ${REPLICA_PREFIX} \
+    ../TesterReplica/quickpay_replica \
+                        --key-file-prefix ${REPLICA_PREFIX} \
                         --replica-id "$i" \
                         --network-config-file comm_config \
                         --utt-prefix ${UTT_PREFIX} \

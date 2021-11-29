@@ -36,7 +36,7 @@ struct QuickPayTx {
 
     static QuickPayTx* alloc(size_t msg_len, size_t tx_len) {
         auto size = get_size(msg_len, tx_len);
-        char* buf = new char[size];
+        auto* buf = new uint8_t[size];
         memset(buf, 0, size);
         auto qp = (QuickPayTx*)buf;
         qp->qp_msg_len = msg_len;
@@ -72,7 +72,7 @@ struct QuickPayResponse {
 
     static QuickPayResponse* alloc(size_t msg_len, size_t sig_len) {
         auto size = get_size(msg_len, sig_len);
-        auto data_ptr = (uint8_t*) malloc(size);
+        auto data_ptr = new uint8_t[size];
         memset(data_ptr, 0, size);
         auto qp = (QuickPayResponse*)data_ptr;
         qp->qp_msg_len = msg_len;
@@ -93,7 +93,7 @@ struct QuickPayResponse {
     }
 
     static size_t get_size(size_t msg_size, size_t sig_len) {
-        return msg_size + sizeof(sig_len) + sig_len;
+        return msg_size + sig_len + sizeof(QuickPayResponse);
     }
 
     static void free(QuickPayResponse* buf) {

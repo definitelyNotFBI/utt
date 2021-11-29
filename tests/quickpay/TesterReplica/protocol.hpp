@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include "Logging4cplus.hpp"
-#include "quickpay/TesterReplica/conn.hpp"
+#include "conn.hpp"
 #include "replica/Params.hpp"
 #include "rocksdb/native_client.h"
 #include "threshsign/ThresholdSignaturesTypes.h"

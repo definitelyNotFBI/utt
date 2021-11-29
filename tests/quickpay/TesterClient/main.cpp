@@ -11,8 +11,8 @@
 #include "Logging4cplus.hpp"
 #include "bft.hpp"
 #include "client/Params.hpp"
-#include "quickpay/TesterClient/options.hpp"
-#include "quickpay/TesterClient/protocol.hpp"
+#include "options.hpp"
+#include "protocol.hpp"
 
 int main(int argc, char* argv[])
 {

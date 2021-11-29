@@ -5,14 +5,12 @@
 #include <asio/io_context.hpp>
 #include <asio/io_service.hpp>
 #include <asio/ip/tcp.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/system/system_error.hpp>
 #include <cstdint>
 #include <memory>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
-#include "quickpay/TesterClient/protocol.hpp"
+
+#include "protocol.hpp"
 #include "common.hpp"
 
 namespace quickpay::client {

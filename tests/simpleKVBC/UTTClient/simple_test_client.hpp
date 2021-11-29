@@ -55,8 +55,8 @@ using namespace bft::communication;
 using namespace std;
 
 #define PRE_EXEC_ENABLED true
-#define TEST_NORMAL_PAY
-// #define TEST_BATCH_PAY
+// #define TEST_NORMAL_PAY
+#define TEST_BATCH_PAY
 
 #define test_assert(statement, message)                                                                          \
   {                                                                                                              \
@@ -104,7 +104,8 @@ class SimpleTestClient {
              ", numOfIterations: " << cp.numOfOperations << 
              ", fVal: " << cp.numOfFaulty << 
              ", cVal: " << cp.numOfSlow <<
-             ", utt_file_name: " << cp.utt_file_name
+             ", utt_file_name: " << cp.utt_file_name <<
+             ", batch_size: " << cp.batch_size
             );
 
     ICommunication* comm = bft::communication::CommFactory::create(conf);

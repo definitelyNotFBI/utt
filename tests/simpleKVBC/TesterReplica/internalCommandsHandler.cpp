@@ -432,14 +432,29 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
   libutt::Tx tx(ss);
   // The transaction was validated during pre-execution
-  // TODO: Check again if the nullifier was updated
+  // Done: Check again if the nullifier was updated
   std::string value;
+  bool found;
   for(auto& null: tx.getNullifiers()) {
-    auto str = null;
-    bool key_may_exist = client->rawDB().KeyMayExist(rocksdb::ReadOptions{}, client->defaultColumnFamily(), &value, nullptr);
+    bool key_may_exist = client->rawDB().KeyMayExist(
+                                          rocksdb::ReadOptions{}, 
+                                          client->defaultColumnFamilyHandle(), 
+                                          null,
+                                          &value,
+                                          &found);
+    if(!key_may_exist) {
+      continue;
+    }
+    if (found) {
+      LOG_ERROR(m_logger, "The nullifier already exists in the database");
+      return false;
+    }
     if(key_may_exist) {
       // If the key max exist returns true, then there is a possibility that the key still does not exist, but we need to call Get()
-      auto status = client->rawDB().Get(rocksdb::ReadOptions{}, client->defaultColumnFamilyHandle(), str, &value);
+      auto status = client->rawDB().Get(rocksdb::ReadOptions{}, 
+                                        client->defaultColumnFamilyHandle(), 
+                                        null, 
+                                        &value);
       if (!status.IsNotFound()) {
         // The key exists, abort
         LOG_ERROR(m_logger, "The nullifier already exists in the database");
@@ -451,7 +466,7 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   // Clear and serialize the new tx
   ss.str(std::string());
 
-  // TODO: Process the tx (The coins are still unspent)
+  // DONE: Process the tx (The coins are still unspent)
   for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
     auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
     ss << sig << std::endl;
@@ -462,24 +477,28 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
     // HACK so that the client can re-use the same coin for testing
     auto num = val.fetch_add(1);
     auto str = null + std::to_string(num);
-    LOG_DEBUG(m_logger, "Atomic Pointer Str: "<<str);
+    LOG_DEBUG(m_logger, "Atomic Pointer Str: " << str);
     client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
   }
 
   // Setup the response
-  auto response = (SimpleReply_Pay*)outReply;
-  response->header.type = BasicRandomTests::PAY;
-  response->tx_len = ss.str().size();
-  std::memcpy(response->getTxBuf(), ss.str().data(), response->tx_len);
+  // auto response = (SimpleReply_Pay*)outReply;
+  // response->header.type = BasicRandomTests::PAY;
+  // response->tx_len = ss.str().size();
+  // std::memcpy(response->getTxBuf(), ss.str().data(), response->tx_len);
 
   // Copy the request into response 
-  outReplicaSpecificInfoSize = response->getRSISize();
-  outReplySize = response->getSize();
+  // TODO: RSI Bug
+  // outReplicaSpecificInfoSize = response->getRSISize();
+  // outReplySize = response->getSize();
 
+  // TODO: RSI Patch
   // // To delete after fixing
-  // outReplicaSpecificInfoSize = 0;
-  // outReplySize = requestSize;
-  // std::memcpy(outReply, request, requestSize);
+  outReplicaSpecificInfoSize = 0;
+  outReplySize = 100;
+  // std::memcpy(outReply, (uint8_t*)writeReq, outReplySize);
+  std::memset(outReply, 0, 100);
+  // std::memset(outReply, 0, response->getSize());
   
   return true;
 }

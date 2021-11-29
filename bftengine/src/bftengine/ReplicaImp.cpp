@@ -309,6 +309,9 @@ void ReplicaImp::onMessage<ClientRequestMsg>(ClientRequestMsg *m) {
 
 template <>
 void ReplicaImp::onMessage<preprocessor::PreProcessResultMsg>(preprocessor::PreProcessResultMsg *m) {
+  // LOG_INFO(GL,
+  //           "Handling PreProcessResultMsg via ClientRequestMsg handler "
+  //               << KVLOG(m->clientProxyId(), m->getCid(), m->requestSeqNum()));
   LOG_DEBUG(GL,
             "Handling PreProcessResultMsg via ClientRequestMsg handler "
                 << KVLOG(m->clientProxyId(), m->getCid(), m->requestSeqNum()));
