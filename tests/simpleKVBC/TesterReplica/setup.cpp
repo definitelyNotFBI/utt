@@ -59,7 +59,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     // used to get info from parsing the key file
     bftEngine::ReplicaConfig& replicaConfig = bftEngine::ReplicaConfig::instance();
     replicaConfig.numOfClientProxies = 0;
-    replicaConfig.numOfExternalClients = 40;
+    replicaConfig.numOfExternalClients = 100;
     replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients);
     replicaConfig.concurrencyLevel = 4;
     replicaConfig.debugStatisticsEnabled = true;
@@ -99,6 +99,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
       {"send-different-messages-to-different-replica", 
                                         no_argument,       0, 'd'},
       {"key-exchange-on-start",         required_argument, 0, 'e'},
+      {"number-of-external-clients",    required_argument, 0, 'E'},
       {"time_service",                  optional_argument, 0, 'f'},
       {"replica-byzantine-strategies",  optional_argument, 0, 'g'},
       {"replica-id",                    required_argument, 0, 'i'},
@@ -136,6 +137,9 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
       switch (o) {
         case 'i': {
           replicaConfig.replicaId = concord::util::to<std::uint16_t>(std::string(optarg));
+        } break;
+        case 'E': {
+          replicaConfig.numOfExternalClients = concord::util::to<std::uint16_t>(std::string(optarg));
         } break;
         case 'k': {
           if (optarg[0] == '-') throw std::runtime_error("invalid argument for --key-file-prefix");
