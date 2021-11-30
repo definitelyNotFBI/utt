@@ -133,7 +133,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     int optionIndex = 0;
     LOG_INFO(GL, "Command line options:");
     while ((o = getopt_long(
-                argc, argv, "3:a:b:c:de:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", longOptions, &optionIndex)) != -1) {
+                argc, argv, "3:a:b:c:de:E:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", longOptions, &optionIndex)) != -1) {
       switch (o) {
         case 'i': {
           replicaConfig.replicaId = concord::util::to<std::uint16_t>(std::string(optarg));
