@@ -13,6 +13,7 @@
 #include "Crypto.hpp"
 #include "Logging4cplus.hpp"
 #include "assertUtils.hpp"
+#include "msg/QuickPay.hpp"
 #include "replica/Params.hpp"
 #include "string.hpp"
 #include "yaml_utils.hpp"
@@ -270,17 +271,18 @@ int main(int argc, char* argv[])
     // DONE: Load tx
     std::unordered_map<size_t, std::vector<uint8_t>> mint_map;
     for(size_t i=config.start_tx; i <= config.end_tx; i++) {
-        std::vector<uint8_t> bytes;
         auto fname = config.folder_tx + "/" + config.prefix_tx + std::to_string(i);
         auto fsize = GetFileSize(fname);
         ConcordAssert(fsize > 0);
         LOG_INFO(GL, "Opening: " << fname << " of size " << fsize << " bytes");
-        bytes.reserve(fsize);
         std::ifstream mint_file(fname);
         ConcordAssert(mint_file.good()); // Check if we can open the file
-        mint_file.read((char*)bytes.data(), fsize);
-        mint_file.close();
+        std::vector<uint8_t> bytes(fsize);
+        mint_file.read((char*)bytes.data(), fsize+1);
+        const MintTx* mint_tx = (const MintTx*)bytes.data();
+        ConcordAssertEQ(mint_tx->get_size(), bytes.size());
         mint_map.emplace(i, std::move(bytes));
+        mint_file.close();
     }
     LOG_INFO(GL, "Loaded mint transactions");
 
@@ -300,13 +302,23 @@ int main(int argc, char* argv[])
     // LOG_INFO(GL, "Opening utt key file: " << utt_key_file);
     // std::ifstream utt_file(utt_key_file);
     // ConcordAssert(utt_file.good()); // Check if we can open the file
-    // // auto params = std::make_unique<utt_bft::replica::Params>(utt_file);
+    // auto params = std::make_unique<utt_bft::replica::Params>(utt_file);
     // utt_bft::replica::Params p(utt_file);
     // LOG_INFO(GL, "Successfully loaded UTT keys");
 
     // TODO: Implement Mint Tx Verification
     for(size_t i=config.start_tx; i<=config.end_tx; i++) {
-
+        const MintTx* mint_tx = (const MintTx*)mint_map[i].data();
+        // TODO: Check whether I am responsible for minting
+        auto qp_tx = mint_tx->getQPTx();
+        auto qp_msg = qp_tx->getQPMsg();
+        ConcordAssertEQ(qp_msg->target_shard_id, 0);
+        std::stringstream ss;
+        ss.write((char*)qp_tx->getTxBuf(), qp_tx->tx_len);
+        libutt::Tx tx;
+        // ss << std::endl;
+        ss >> tx;
+        // TODO: Check tx
     }
     // TODO: Add Threading
     // TODO: Add Iterations

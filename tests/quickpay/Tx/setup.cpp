@@ -183,7 +183,7 @@ void Setup::makeTx()
 
     auto pid = wal2.getUserPid();
     auto tx = wal1.spendTwoRandomCoins(pid, true);
-    ss.str("");
+    ss.str(""); // Reset the stringstream
     ss << tx;
     auto tx_len = ss.str().size();
     auto tx_hash = tx.getHashHex();
@@ -230,13 +230,18 @@ void Setup::makeTx()
         LOG_DEBUG(m_logger_, "Finished processing " << i);
     }
     // DONE: Create MintTx
-    MintTx* mint_tx = MintTx::alloc(qp_msg_len, 
-                                        priv_key_map[0]->signatureLength(), 
-                                        num_faults+1);
-    std::memcpy(mint_tx->getQPMsg(), (uint8_t*)qp_msg, qp_msg->get_size());
+    MintTx* mint_tx = MintTx::alloc(priv_key_map[0]->signatureLength(),
+                                        num_faults+1, 
+                                        qp_tx->get_size());
+    std::memcpy(
+        (uint8_t*)mint_tx->getQPTx(), 
+        (uint8_t*)qp_tx, 
+        qp_tx->get_size());
     for(size_t i=0; i<num_faults+1;i++) {
-        std::memcpy(mint_tx->getSig(i), qp_resp_map[i]->getSigBuf(), 
-                    qp_resp_map[i]->sig_len);
+        std::memcpy(
+            mint_tx->getSig(i), 
+            qp_resp_map[i]->getSigBuf(), 
+            qp_resp_map[i]->sig_len);
     }
 
     // DONE: Write MintTx
