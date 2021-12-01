@@ -10,6 +10,7 @@
 // as noted in the LICENSE file.
 
 #include "RequestsBatchingLogic.hpp"
+#include <iostream>
 
 namespace bftEngine::batchingLogic {
 
@@ -77,6 +78,8 @@ PrePrepareMsg *RequestsBatchingLogic::batchRequestsSelfAdjustedPolicy(SeqNum pri
     metric_not_enough_client_requests_event_++;
     return nullptr;
   }
+
+  std::cout << KVLOG(minBatchSize, batchingFactor_, maxNumberOfPendingRequestsInRecentHistory_) << std::endl;
 
   // Update batching factor
   if (((primaryLastUsedSeqNum + 1) % kWorkWindowSize) == 0) {
