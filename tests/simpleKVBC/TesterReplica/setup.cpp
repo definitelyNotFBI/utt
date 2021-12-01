@@ -12,6 +12,7 @@
 // file.
 
 #include <thread>
+#include <bits/getopt_core.h>
 #include <sys/param.h>
 #include <string>
 #include <cstring>
@@ -95,6 +96,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
       {"s3-config-file",                required_argument, 0, '3'},
       {"auto-primary-rotation-timeout", required_argument, 0, 'a'},
       {"consensus-batching-policy",     required_argument, 0, 'b'},
+      {"batching-factor-coefficient",   required_argument, 0, 'B'},
       {"cert-root-path",                required_argument, 0, 'c'},
       {"send-different-messages-to-different-replica", 
                                         no_argument,       0, 'd'},
@@ -133,10 +135,16 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     int optionIndex = 0;
     LOG_INFO(GL, "Command line options:");
     while ((o = getopt_long(
-                argc, argv, "3:a:b:c:de:E:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", longOptions, &optionIndex)) != -1) {
+                argc, argv, 
+                "3:a:b:B:c:de:E:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", 
+                longOptions, &optionIndex)) != -1) {
       switch (o) {
         case 'i': {
           replicaConfig.replicaId = concord::util::to<std::uint16_t>(std::string(optarg));
+        } break;
+        case 'B': {
+          replicaConfig.batchingFactorCoefficient = 
+                          concord::util::to<std::uint32_t>(std::string(optarg));
         } break;
         case 'E': {
           replicaConfig.numOfExternalClients = concord::util::to<std::uint16_t>(std::string(optarg));
