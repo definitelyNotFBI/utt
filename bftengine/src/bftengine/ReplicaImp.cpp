@@ -465,6 +465,8 @@ PrePrepareMsg *ReplicaImp::createPrePrepareMessage() {
     pp->addRequest(timeServiceMsg->body(), timeServiceMsg->size());
     return pp;
   }
+  std::cout << "Preprepare Msg size: " << KVLOG(primaryCombinedReqSize) 
+            << std::endl;
   return new PrePrepareMsg(config_.getreplicaId(),
                            getCurrentView(),
                            (primaryLastUsedSeqNum + 1),
