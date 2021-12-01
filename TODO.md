@@ -26,3 +26,8 @@ BFT Layer integration
 - BFT vs. QuickPay (We can even do anonymous payments; The Why factor?) + Animations
 - Sharding (Without 2-Phase commits) + Animations
 - Demo
+
+# Parameters to play
+- SELF_ADJUSTED
+- concurrencyLevel (from 4 -> TEST) Also update batchingFactorCoefficient
+-
