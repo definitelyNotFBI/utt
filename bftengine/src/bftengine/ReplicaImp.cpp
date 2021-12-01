@@ -475,7 +475,7 @@ PrePrepareMsg *ReplicaImp::createPrePrepareMessage() {
 
 ClientRequestMsg *ReplicaImp::addRequestToPrePrepareMessage(ClientRequestMsg *&nextRequest,
                                                             PrePrepareMsg &prePrepareMsg,
-                                                            uint16_t maxStorageForRequests) {
+                                                            size_t maxStorageForRequests) {
   if (nextRequest->size() <= prePrepareMsg.remainingSizeForRequests()) {
     SCOPED_MDC_CID(nextRequest->getCid());
     if (clientsManager->canBecomePending(nextRequest->clientProxyId(), nextRequest->requestSeqNum())) {
@@ -497,9 +497,9 @@ ClientRequestMsg *ReplicaImp::addRequestToPrePrepareMessage(ClientRequestMsg *&n
 }
 
 PrePrepareMsg *ReplicaImp::finishAddingRequestsToPrePrepareMsg(PrePrepareMsg *&prePrepareMsg,
-                                                               uint16_t maxSpaceForReqs,
-                                                               uint32_t requiredRequestsSize,
-                                                               uint32_t requiredRequestsNum) {
+                                                               size_t maxSpaceForReqs,
+                                                               size_t requiredRequestsSize,
+                                                               size_t requiredRequestsNum) {
   if (prePrepareMsg->numberOfRequests() == 0) {
     LOG_INFO(GL, "No client requests added to the PrePrepare batch, delete the message");
     delete prePrepareMsg;
@@ -526,7 +526,8 @@ PrePrepareMsg *ReplicaImp::buildPrePrepareMessage() {
   if (!prePrepareMsg) return nullptr;
   SCOPED_MDC("pp_msg_cid", prePrepareMsg->getCid());
 
-  uint16_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
+  // DEBUG FROM HERE: Why is the batch size not being used?
+  size_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
   {
     TimeRecorder scoped_timer(*histograms_.addAllRequestsToPrePrepare);
     ClientRequestMsg *nextRequest = requestsQueueOfPrimary.front();
@@ -542,7 +543,7 @@ PrePrepareMsg *ReplicaImp::buildPrePrepareMessageByRequestsNum(uint32_t required
   if (!prePrepareMsg) return nullptr;
   SCOPED_MDC("pp_msg_cid", prePrepareMsg->getCid());
 
-  uint16_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
+  size_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
   ClientRequestMsg *nextRequest = requestsQueueOfPrimary.front();
   while (nextRequest != nullptr && prePrepareMsg->numberOfRequests() < requiredRequestsNum)
     nextRequest = addRequestToPrePrepareMessage(nextRequest, *prePrepareMsg, maxSpaceForReqs);
@@ -555,7 +556,7 @@ PrePrepareMsg *ReplicaImp::buildPrePrepareMessageByBatchSize(uint32_t requiredBa
   if (!prePrepareMsg) return nullptr;
   SCOPED_MDC("pp_msg_cid", prePrepareMsg->getCid());
 
-  uint16_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
+  size_t maxSpaceForReqs = prePrepareMsg->remainingSizeForRequests();
   ClientRequestMsg *nextRequest = requestsQueueOfPrimary.front();
   while (nextRequest != nullptr &&
          (maxSpaceForReqs - prePrepareMsg->remainingSizeForRequests() < requiredBatchSizeInBytes))

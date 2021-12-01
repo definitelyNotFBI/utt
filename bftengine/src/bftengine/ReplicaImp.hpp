@@ -362,9 +362,9 @@ class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
   void onInternalMsg(GetStatus& msg) const;
 
   PrePrepareMsg* finishAddingRequestsToPrePrepareMsg(PrePrepareMsg*& prePrepareMsg,
-                                                     uint16_t maxSpaceForReqs,
-                                                     uint32_t requiredRequestsSize,
-                                                     uint32_t requiredRequestsNum);
+                                                     size_t maxSpaceForReqs,
+                                                     size_t requiredRequestsSize,
+                                                     size_t requiredRequestsNum);
 
   bool handledByRetransmissionsManager(const ReplicaId sourceReplica,
                                        const ReplicaId destReplica,
@@ -384,7 +384,7 @@ class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
 
   ClientRequestMsg* addRequestToPrePrepareMessage(ClientRequestMsg*& nextRequest,
                                                   PrePrepareMsg& prePrepareMsg,
-                                                  uint16_t maxStorageForRequests);
+                                                  size_t maxStorageForRequests);
 
   PrePrepareMsg* createPrePrepareMessage();
 
