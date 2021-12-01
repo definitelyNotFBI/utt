@@ -18,16 +18,7 @@ TODO: Put it on Overleaf (eval.tex)
 - Latency vs. n (For Budget) (N)
 - Throughput vs. # Shards (For Budget) (N)
 
-# Poster Session
-BFT Layer integration
-
-- Overview of UTT
-- Pre-Execution
-- BFT vs. QuickPay (We can even do anonymous payments; The Why factor?) + Animations
-- Sharding (Without 2-Phase commits) + Animations
-- Demo
-
 # Parameters to play
 - SELF_ADJUSTED
 - concurrencyLevel (from 4 -> TEST) Also update batchingFactorCoefficient
--
+- Disable time service
