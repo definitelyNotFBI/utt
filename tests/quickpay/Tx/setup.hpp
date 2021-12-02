@@ -2,9 +2,15 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
+#include "common.hpp"
 #include "msg/QuickPay.hpp"
+#include "replica/Params.hpp"
+#include "rocksdb/native_client.h"
 
 struct Setup {
     std::string replica_folder;
@@ -22,7 +28,19 @@ struct Setup {
     // Create transactions
     MintTx makeTx(uint16_t);
 
-    bool verifyBatch(const std::vector<MintTx>& batch);
+    // Make batches
+    std::vector<MintTx> makeBatch();
+    std::vector<MintTx> makeBatch(size_t);
+
+    // Get the UTT keys
+    std::shared_ptr<utt_bft::replica::Params> getUTTParams(uint16_t rid = 0);
+
+    // Get the keypairs
+    std::pair<PrivateKey, std::unordered_map<uint16_t, PublicKey>> getKeys(uint16_t id = 0);
+
+    // Get the database
+    typedef concord::storage::rocksdb::NativeClient db_t;
+    std::shared_ptr<db_t> getDb();
 
 private:
     // std::vector<libutt::Wallet> getWallets();

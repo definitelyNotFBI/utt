@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "kvstream.h"
+#include "rocksdb/native_client.h"
 #include "setup.hpp"
 #include "Crypto.hpp"
 #include "Logging4cplus.hpp"
@@ -19,11 +20,10 @@
 #include "utt/RegAuth.h"
 #include "utt/Wallet.h"
 
+#include "common.hpp"
+
 #include "msg/QuickPay.hpp"
 #include "yaml_utils.hpp"
-
-typedef bftEngine::impl::RSASigner PrivateKey;
-typedef bftEngine::impl::RSAVerifier PublicKey;
 
 const struct option longOptions[] = {
     {"batch-size",                  required_argument, 0, 'b'},
@@ -93,77 +93,7 @@ std::unique_ptr<Setup> Setup::ParseArgs(int argc, char *argv[])
     return std::make_unique<Setup>(std::move(setup));
 }
 
-static void validateRSAPublicKey(const std::string& key) {
-  const size_t rsaPublicKeyHexadecimalLength = 584;
-  if (!(key.length() == rsaPublicKeyHexadecimalLength) && (std::regex_match(key, std::regex("[0-9A-Fa-f]+"))))
-    throw std::runtime_error("Invalid RSA public key: " + key);
-}
 
-static void validateRSAPrivateKey(const std::string& key) {
-  // Note we do not verify the length of RSA private keys because their length
-  // actually seems to vary a little in the output; it hovers around 2430
-  // characters but often does not exactly match that number.
-
-  if (!std::regex_match(key, std::regex("[0-9A-Fa-f]+"))) 
-    throw std::runtime_error("Invalid RSA private key: " + key);
-}
-
-
-std::string getKeyFile(
-    const std::string& filename, 
-    std::uint16_t num_replicas,
-    std::uint16_t num_faults,
-    std::uint16_t node_id) 
-{
-  using namespace concord::util;
-
-  std::ifstream input(filename);
-  if (!input.is_open()) throw std::runtime_error(__PRETTY_FUNCTION__ + std::string(": can't open ") + filename);
-
-  auto numReplicas = yaml::readValue<std::uint16_t>(input, "num_replicas");
-  ConcordAssertEQ(numReplicas, num_replicas);
-  // We don't care what this value is
-  auto numRoReplicas = yaml::readValue<std::uint16_t>(input, "num_ro_replicas");
-
-  auto fVal = yaml::readValue<std::uint16_t>(input, "f_val");
-  ConcordAssertEQ(num_faults, fVal);
-
-  // We don't care what this value is
-  auto cVal = yaml::readValue<std::uint16_t>(input, "c_val");
-
-  auto id = yaml::readValue<std::uint16_t>(input, "replica_id");
-  ConcordAssertEQ(node_id, id);
-
-  // We don't care what this value is
-  yaml::readValue<bool>(input, "read-only");
-
-  // Note we validate the number of replicas using 32-bit integers in case
-  // (3 * f + 2 * c + 1) overflows a 16-bit integer.
-  uint32_t predictedNumReplicas = 3 * (uint32_t)fVal + 2 * (uint32_t)cVal + 1;
-  if (predictedNumReplicas != (uint32_t)numReplicas) {
-    throw std::runtime_error("num_replicas must be equal to (3 * f_val + 2 * c_val + 1)");
-  }
-
-  if (id >= numReplicas + numRoReplicas)
-    throw std::runtime_error("replica IDs must be in the range [0, num_replicas + num_ro_replicas]");
-
-  std::vector<std::string> rsaPublicKeys = yaml::readCollection<std::string>(input, "rsa_public_keys");
-
-  if (rsaPublicKeys.size() != numReplicas + numRoReplicas)
-    throw std::runtime_error("number of public RSA keys must match num_replicas");
-
-  std::unordered_map<uint16_t, std::string> publicKeysOfReplicas;
-  publicKeysOfReplicas.clear();
-  for (size_t i = 0; i < numReplicas + numRoReplicas; ++i) {
-    validateRSAPublicKey(rsaPublicKeys[i]);
-    publicKeysOfReplicas.insert(std::pair<uint16_t, std::string>(i, rsaPublicKeys[i]));
-  }
-
-  std::string replicaPrivateKey = 
-            yaml::readValue<std::string>(input, "rsa_private_key");
-  validateRSAPrivateKey(replicaPrivateKey);
-  return replicaPrivateKey;
-}
 
 MintTx Setup::makeTx(uint16_t client_id)
 {
@@ -217,7 +147,55 @@ MintTx Setup::makeTx(uint16_t client_id)
     return mtx;
 }
 
-bool Setup::verifyBatch(const std::vector<MintTx>& batch)
+std::vector<MintTx> Setup::makeBatch()
 {
-    return true;
+    return makeBatch(batch_size);
 }
+
+std::vector<MintTx> Setup::makeBatch(size_t bsize)
+{
+    std::vector<MintTx> batch;
+    batch.reserve(bsize);
+    for(size_t i=0; i<bsize;i++) {
+        auto mtx = makeTx(num_replicas+i);
+        batch.push_back(mtx);
+    }
+    return batch;
+}
+
+std::shared_ptr<utt_bft::replica::Params> Setup::getUTTParams(uint16_t rid)
+{
+    std::ifstream utt_key_file(wallets_folder + "/utt_pvt_replica_" + 
+                                    std::to_string(rid));
+    ConcordAssert(utt_key_file.good());
+    return std::make_shared<utt_bft::replica::Params>(utt_key_file);
+}
+
+std::pair<PrivateKey, std::unordered_map<uint16_t, PublicKey>> 
+Setup::getKeys(uint16_t id)
+{
+    std::string filename = replica_folder + "/" + 
+                            replica_prefix + std::to_string(id);
+    std::unordered_map<uint16_t, std::string> pub_key_strings;
+    auto priv_key = getKeyFile(filename, num_replicas, 
+                num_faults, id, pub_key_strings);
+    std::unordered_map<uint16_t, PublicKey> publicKeysOfReplicas(num_replicas);
+    for(auto&[origin, pkey_str]:pub_key_strings) {
+        publicKeysOfReplicas.emplace(origin, pkey_str.c_str());
+    }
+    return std::make_pair<PrivateKey, std::unordered_map<uint16_t, PublicKey>>(PrivateKey(priv_key.c_str()), std::move(publicKeysOfReplicas));
+}
+
+std::shared_ptr<Setup::db_t> Setup::getDb()
+{
+    auto db_file = "utt-db-shard-bench-test";
+    using concord::storage::rocksdb::NativeClient;
+    return NativeClient::newClient(db_file, 
+                                        false, 
+                                        NativeClient::DefaultOptions{});
+}
+
+// bool Setup::verifyBatch(const std::vector<MintTx>& batch)
+// {
+//     return true;
+// }
