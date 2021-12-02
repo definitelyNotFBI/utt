@@ -4,9 +4,7 @@
 #include <string>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
-// #include "utt/Params.h"
-// #include "utt/RegAuth.h"
-// #include "utt/Wallet.h"
+#include "msg/QuickPay.hpp"
 
 struct Setup {
     std::string replica_folder;
@@ -15,14 +13,16 @@ struct Setup {
     std::string wallet_prefix = "wallet_";
     std::string output_folder = ".";
     std::string output_prefix = "tx_";
-    uint16_t client_id = 0;
     size_t num_replicas, num_faults;
+    size_t batch_size = 100, iterations = 100;
 
     // Parse the arguments
     static std::unique_ptr<Setup> ParseArgs(int argc, char* argv[]);
     
     // Create transactions
-    void makeTx();
+    MintTx makeTx(uint16_t);
+
+    bool verifyBatch(const std::vector<MintTx>& batch);
 
 private:
     // std::vector<libutt::Wallet> getWallets();

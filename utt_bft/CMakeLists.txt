@@ -16,6 +16,7 @@ add_library(utt_bft
     
     # General
     src/ThresholdParamGen.cpp
+    src/QuickPayMsg.cpp
 )
 
 target_link_libraries(utt_bft PUBLIC 

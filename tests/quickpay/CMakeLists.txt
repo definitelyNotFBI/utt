@@ -28,6 +28,6 @@ add_custom_command(TARGET copy_tls_script_qp
      ${CMAKE_CURRENT_BINARY_DIR}/scripts/create_tls_certs.sh)
 
 add_subdirectory(Tx)
-add_subdirectory(TesterReplica)
 add_subdirectory(ShardTester)
+add_subdirectory(TesterReplica)
 add_subdirectory(TesterClient)

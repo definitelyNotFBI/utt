@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -17,6 +18,8 @@
 #include "replica/Params.hpp"
 #include "string.hpp"
 #include "yaml_utils.hpp"
+
+#include "utt/Tx.h"
 
 typedef bftEngine::impl::RSASigner PrivateKey;
 typedef bftEngine::impl::RSAVerifier PublicKey;
@@ -43,7 +46,7 @@ struct ReplicaConfig
     size_t end_tx = 0;
 };
 
-ReplicaConfig config;
+std::unique_ptr<ReplicaConfig> config = nullptr;
 
 const struct option longOptions[] = {
     {"iterations",                  required_argument, 0, 'x'},
@@ -67,59 +70,60 @@ const struct option longOptions[] = {
 
 void parseArgs(int argc, char* argv[])
 {
+    config = std::make_unique<ReplicaConfig>();
     int o, longInd;
     while((o = getopt_long(argc, argv, "x:b:p:w:r:u:t:W:R:U:T:i:s:e:n:f:", 
                             longOptions, &longInd)) != EOF) 
     {
         switch(o) {
         case 'x': {
-            config.iterations = std::stoul(std::string(optarg));
+            config->iterations = std::stoul(std::string(optarg));
         } break;
         case 'b': {
-            config.batch_size = std::stoul(std::string(optarg));
+            config->batch_size = std::stoul(std::string(optarg));
         } break;
         case 'p': {
-            config.num_threads = std::stoul(std::string(optarg));
+            config->num_threads = std::stoul(std::string(optarg));
         } break;
         case 'w': {
-            config.folder_wallet = optarg;
+            config->folder_wallet = optarg;
         } break;
         case 'W': {
-            config.prefix_wallets = optarg;
+            config->prefix_wallets = optarg;
         } break;
         case 'r': {
-            config.folder_keys = optarg;
+            config->folder_keys = optarg;
         } break;
         case 'R': {
-            config.prefix_keys = optarg;
+            config->prefix_keys = optarg;
         } break;
         case 'u': {
-            config.folder_utt_keys = optarg;
+            config->folder_utt_keys = optarg;
         } break;
         case 'U': {
-            config.prefix_utt_keys = optarg;
+            config->prefix_utt_keys = optarg;
         } break;
         case 't': {
-            config.folder_tx = optarg;
+            config->folder_tx = optarg;
         } break;
         case 'T': {
-            config.prefix_tx = optarg;
+            config->prefix_tx = optarg;
         } break;
         case 'i': {
-            config.id = concord::util::to<decltype(config.id)>
+            config->id = concord::util::to<decltype(config->id)>
                             (std::string(optarg));
         } break;
         case 's': {
-            config.start_tx = std::stoul(std::string(optarg));
+            config->start_tx = std::stoul(std::string(optarg));
         } break;
         case 'e': {
-            config.end_tx = std::stoul(std::string(optarg));
+            config->end_tx = std::stoul(std::string(optarg));
         } break;
         case 'n': {
-            config.num_replicas = std::stoul(std::string(optarg));
+            config->num_replicas = std::stoul(std::string(optarg));
         } break;
         case 'f': {
-            config.num_faults = std::stoul(std::string(optarg));
+            config->num_faults = std::stoul(std::string(optarg));
         } break;
         case '?': {
             throw std::runtime_error("Invalid arguments");
@@ -128,56 +132,56 @@ void parseArgs(int argc, char* argv[])
             break;
         }
     }
-    if(config.folder_keys.empty()) {
+    if(config->folder_keys.empty()) {
         throw std::runtime_error(
             "missing replica keys folder (--replica-keys-folder) or (-r)");
     }
-    if(config.folder_wallet.empty()) {
+    if(config->folder_wallet.empty()) {
         throw std::runtime_error(
             "missing wallets folder (--wallets-folder) or (-w)");
     }
-    if(config.folder_utt_keys.empty()) {
+    if(config->folder_utt_keys.empty()) {
         throw std::runtime_error(
             "missing utt keys folder (--utt-keys-folder) or (-u)");
     }
-    if(config.folder_tx.empty()) {
+    if(config->folder_tx.empty()) {
         throw std::runtime_error(
             "missing tx folder (--tx-folder) or (-t)");
     }
-    if(config.start_tx == 0) {
+    if(config->start_tx == 0) {
         throw std::runtime_error(
             "missing start tx (--start-tx) or (-s)"
         );
     }
-    if(config.end_tx == 0) {
+    if(config->end_tx == 0) {
         throw std::runtime_error(
             "missing end tx (--end-tx) or (-e)"
         );
     }
-    if(config.start_tx > config.end_tx) {
+    if(config->start_tx > config->end_tx) {
         throw std::runtime_error(
             "start tx > end tx"
         );
     }
-    if(config.num_replicas == 0) {
+    if(config->num_replicas == 0) {
         throw std::runtime_error(
             "missing num replicas (--num-replicas) or (-n)");
     }
     const auto& c = config;
     LOG_INFO(GL, "[Configuration] { "
-                    << "iterations: " << c.iterations << ", "
-                    << "batch size: " << c.batch_size << ", "
-                    << "num threads: " << c.num_threads << ", "
-                    << "id: " << c.id << ", "
-                    << "replica keys folder: " << c.folder_keys << ", "
-                    << "utt keys folder: " << c.folder_utt_keys << ", "
-                    << "wallets folder: " << c.folder_wallet << ", "
-                    << "tx folder: " << c.folder_tx << ", "
-                    << "replica key prefix: " << c.prefix_keys << ", "
-                    << "utt key prefix: " << c.prefix_utt_keys << ", "
-                    << "wallet prefix: " << c.prefix_wallets << ", "
-                    << "tx prefix: " << c.prefix_tx << ", "
-                    << "tx range: [" << c.start_tx << "-" << c.end_tx << "]"
+                    << "iterations: " << c->iterations << ", "
+                    << "batch size: " << c->batch_size << ", "
+                    << "num threads: " << c->num_threads << ", "
+                    << "id: " << c->id << ", "
+                    << "replica keys folder: " << c->folder_keys << ", "
+                    << "utt keys folder: " << c->folder_utt_keys << ", "
+                    << "wallets folder: " << c->folder_wallet << ", "
+                    << "tx folder: " << c->folder_tx << ", "
+                    << "replica key prefix: " << c->prefix_keys << ", "
+                    << "utt key prefix: " << c->prefix_utt_keys << ", "
+                    << "wallet prefix: " << c->prefix_wallets << ", "
+                    << "tx prefix: " << c->prefix_tx << ", "
+                    << "tx range: [" << c->start_tx << "-" << c->end_tx << "]"
                     << " }"
     );
 }
@@ -266,60 +270,64 @@ std::unordered_map<uint16_t, std::string> getPublicKeysFromFile(
 int main(int argc, char* argv[])
 {
     std::cout << "Namaskara!!" << std::endl;
-    parseArgs(argc, argv);
+    // parseArgs(argc, argv);
+    config = std::make_unique<ReplicaConfig>();
+    config->num_replicas = 4;
+    config->end_tx = 5;
+    config->folder_keys = "scripts";
+    config->folder_utt_keys = "scripts/wallets";
+    config->folder_tx = ".";
+    config->num_faults = 1;
+    config->start_tx = 5;
+    config->id = 4;
 
     // DONE: Load tx
-    std::unordered_map<size_t, std::vector<uint8_t>> mint_map;
-    for(size_t i=config.start_tx; i <= config.end_tx; i++) {
-        auto fname = config.folder_tx + "/" + config.prefix_tx + std::to_string(i);
-        auto fsize = GetFileSize(fname);
-        ConcordAssert(fsize > 0);
-        LOG_INFO(GL, "Opening: " << fname << " of size " << fsize << " bytes");
-        std::ifstream mint_file(fname);
-        ConcordAssert(mint_file.good()); // Check if we can open the file
-        std::vector<uint8_t> bytes(fsize);
-        mint_file.read((char*)bytes.data(), fsize+1);
-        const MintTx* mint_tx = (const MintTx*)bytes.data();
-        ConcordAssertEQ(mint_tx->get_size(), bytes.size());
-        mint_map.emplace(i, std::move(bytes));
-        mint_file.close();
-    }
-    LOG_INFO(GL, "Loaded mint transactions");
+    // std::unordered_map<size_t, MintTx> mint_map;
+    // for(size_t i=config->start_tx; i <= config->end_tx; i++) {
+    //     std::string fname = config->folder_tx + "/" + config->prefix_tx + std::to_string(i);
+    //     LOG_INFO(GL, "Opening: " << fname);
+    //     std::ifstream mint_file(fname);
+    //     ConcordAssert(mint_file.good()); // Check if we can open the file
+    //     MintTx mtx(mint_file);
+    // }
+    // LOG_INFO(GL, "Loaded mint transactions");
 
-    // DONE: Load public keys
-    auto pub_key_file = config.folder_keys + "/" + 
-                            config.prefix_keys + 
-                            std::to_string(config.num_replicas);
-    LOG_INFO(GL, "Opening public key file: " << pub_key_file);
-    auto publicKeys = getPublicKeysFromFile(config.num_replicas, pub_key_file, config.num_faults);
-    ConcordAssert(publicKeys.size() >= config.num_replicas);
-    LOG_INFO(GL, "Successfully loaded public keys");
+    // // DONE: Load public keys
+    // auto pub_key_file = config->folder_keys + "/" + 
+    //                         config->prefix_keys + 
+    //                         std::to_string(config->num_replicas);
+    // LOG_INFO(GL, "Opening public key file: " << pub_key_file);
+    // auto publicKeys = getPublicKeysFromFile(config->num_replicas, pub_key_file, config->num_faults);
+    // ConcordAssert(publicKeys.size() >= config->num_replicas);
+    // LOG_INFO(GL, "Successfully loaded public keys");
 
-    // TODO: UTT Keys
-    // auto utt_key_file = config.folder_utt_keys + "/" + 
-    //                         config.prefix_utt_keys + 
-    //                         std::to_string(config.id);
-    // LOG_INFO(GL, "Opening utt key file: " << utt_key_file);
-    // std::ifstream utt_file(utt_key_file);
-    // ConcordAssert(utt_file.good()); // Check if we can open the file
-    // auto params = std::make_unique<utt_bft::replica::Params>(utt_file);
-    // utt_bft::replica::Params p(utt_file);
-    // LOG_INFO(GL, "Successfully loaded UTT keys");
+    // // TODO: UTT Keys
+    auto utt_key_file = config->folder_utt_keys + "/" + 
+                            config->prefix_utt_keys + 
+                            std::to_string(0);
+    LOG_INFO(GL, "Opening utt key file: " << utt_key_file);
+    std::ifstream utt_file(utt_key_file);
+    ConcordAssert(utt_file.good()); // Check if we can open the file
+    auto params = std::make_unique<utt_bft::replica::Params>(utt_file);
+    utt_bft::replica::Params p(utt_file);
+    LOG_INFO(GL, "Successfully loaded UTT keys");
 
-    // TODO: Implement Mint Tx Verification
-    for(size_t i=config.start_tx; i<=config.end_tx; i++) {
-        const MintTx* mint_tx = (const MintTx*)mint_map[i].data();
-        // TODO: Check whether I am responsible for minting
-        auto qp_tx = mint_tx->getQPTx();
-        auto qp_msg = qp_tx->getQPMsg();
-        ConcordAssertEQ(qp_msg->target_shard_id, 0);
-        std::stringstream ss;
-        ss.write((char*)qp_tx->getTxBuf(), qp_tx->tx_len);
-        libutt::Tx tx;
-        // ss << std::endl;
-        ss >> tx;
-        // TODO: Check tx
-    }
+    // // TODO: Implement Mint Tx Verification
+    // for(size_t i=config.start_tx; i<=config.end_tx; i++) {
+    //     const MintTx* mint_tx = (const MintTx*)mint_map[i].data();
+    //     std::cout << KVLOG(mint_tx->toString());
+    //     // TODO: Check whether I am responsible for minting
+    //     auto qp_tx = mint_tx->getQPTx();
+    //     auto qp_msg = qp_tx->getQPMsg();
+    //     ConcordAssertEQ(qp_msg->target_shard_id, 0);
+    //     std::stringstream ss(std::string{});
+    //     ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), qp_tx->tx_len);
+
+    //     ConcordAssert(ss.good());
+    //     libutt::Tx tx;
+    //     ss >> tx;
+    //     // TODO: Check tx
+    // }
     // TODO: Add Threading
     // TODO: Add Iterations
     // TODO: Add Batching

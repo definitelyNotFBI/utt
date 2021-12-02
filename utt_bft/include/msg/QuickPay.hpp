@@ -2,6 +2,15 @@
 
 #include <array>
 #include <cstdint>
+#include <istream>
+#include <libff/common/serialization.hpp>
+#include <ostream>
+#include <unordered_map>
+#include <vector>
+#include "kvstream.h"
+
+#include "utt/RegAuth.h"
+#include "utt/Params.h"
 #include "utt/Tx.h"
 
 #pragma pack(push, 1)
@@ -30,9 +39,22 @@ struct QuickPayMsg {
     static size_t get_size(size_t hash_size) {
         return sizeof(QuickPayMsg) + hash_size;
     }
+
+    std::string toString() const {
+        std::stringstream ss;
+        ss << KVLOG(get_size()) << std::endl ;
+        ss << "0x";
+        for(size_t i=0; i<get_size(); i++) {
+            ss << *((uint8_t*)this)+i;
+        }
+        ss << std::endl;
+        return ss.str();
+    }
+
 };
 #pragma pack(pop)
 
+#pragma pack(push, 1)
 struct QuickPayTx {
     size_t qp_msg_len;
     size_t tx_len;
@@ -67,8 +89,19 @@ struct QuickPayTx {
     static size_t get_size(size_t msg_size, size_t tx_len) {
         return sizeof(QuickPayTx) + msg_size + tx_len;
     }
-};
 
+    std::string toString() const {
+        std::stringstream ss;
+        ss << KVLOG(get_size()) << std::endl ;
+        ss << KVLOG(qp_msg_len) << std::endl ;
+        ss << KVLOG(tx_len) << std::endl ;
+        ss << KVLOG(getQPMsg()->toString()) << std::endl;
+        return ss.str();
+    }
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
 // A quickpayresponse is a signature on hash of the quickpay tx, along with the origin id
 struct QuickPayResponse {
     size_t sig_len;
@@ -105,51 +138,39 @@ struct QuickPayResponse {
     static void free(QuickPayResponse* buf) {
         delete[] buf;
     }
+
+    std::string toString() const {
+        std::stringstream ss;
+        ss << KVLOG(get_size()) << std::endl;
+        ss << "0x";
+        for(size_t i=0; i<get_size(); i++) {
+            ss << *((uint8_t*)this)+i;
+        }
+        ss << std::endl;
+        return ss.str();
+    }
+    
 };
+#pragma pack(pop)
+
+class MintTx;
+
+std::ostream& operator<<(std::ostream& in, const MintTx& tx);
+std::istream& operator>>(std::istream& out, MintTx& tx);
 
 // Add a toString() function
-struct MintTx {
-    size_t qp_tx_len;
-    size_t sig_len;
-    size_t num_sigs;
-    // unsigned char[qp_tx_len]
-    // unsigned char[sig_len][num_sigs]
+class MintTx {
+public:
+    libutt::Tx tx;
+    // Who signed the transaction
+    size_t target_shard_id;
+    std::unordered_map<uint16_t, std::vector<uint8_t>> sigs;
 
-    static size_t get_size(size_t sig_len, size_t num_sigs, size_t qp_tx_len) {
-        return sizeof(MintTx) + 
-                    qp_tx_len +
-                    (sig_len*num_sigs);
-    }
+public:
+    MintTx() {}
 
-    size_t get_size() const {
-        return get_size(sig_len, num_sigs, qp_tx_len);
-    }
-
-    static void free(MintTx* buf) {
-        delete [] buf;
-    }
-
-    static MintTx* alloc(size_t sig_len, size_t num_sigs, size_t qp_tx_len) {
-        auto size = get_size(sig_len, num_sigs, qp_tx_len);
-        auto data_ptr = new uint8_t[size];
-        memset(data_ptr, 0, size);
-        auto mtx = (MintTx*)data_ptr;
-        mtx->sig_len = sig_len;
-        mtx->num_sigs = num_sigs;
-        mtx->qp_tx_len = qp_tx_len;
-        return mtx;
-    }
-
-    QuickPayTx* getQPTx() const {
-        return (QuickPayTx*)((uint8_t*)this + sizeof(MintTx));
-    }
-
-    // TODO: Test this
-    unsigned char* getSig(size_t idx) const {
-        if(idx >= num_sigs) {
-            return nullptr;
-        }
-        unsigned char* base_ptr = ((unsigned char*)getQPTx()) + qp_tx_len;
-        return (base_ptr + (idx*sig_len));
+    MintTx(std::istream& in)    
+    {
+        in >> *this;
     }
 };
