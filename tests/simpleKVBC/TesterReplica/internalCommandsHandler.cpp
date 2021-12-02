@@ -362,6 +362,7 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
     LOG_DEBUG(GL, "Testing");
     return true;
   }
+  return true;
   auto *writeReq = (SimplePayRequest *)request;
   LOG_INFO(m_logger,
            "PreExecuting Pay command:"
