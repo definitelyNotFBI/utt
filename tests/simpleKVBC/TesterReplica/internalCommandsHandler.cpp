@@ -358,11 +358,7 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
                     char *outReply,
                     uint32_t &outReplySize, 
                     uint32_t &outReplicaSpecificInfoSize) {
-  if (request[0] % 2 == 0 ){
-    LOG_DEBUG(GL, "Testing");
-    return true;
-  }
-  return true;
+  
   auto *writeReq = (SimplePayRequest *)request;
   LOG_INFO(m_logger,
            "PreExecuting Pay command:"
@@ -374,6 +370,11 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
                << " maxReplySize=" << maxReplySize 
                << " requestSize=" << requestSize
                );
+  // Copy the request into response 
+  outReplicaSpecificInfoSize = 0;
+  outReplySize = requestSize;
+  std::memcpy(outReply, request, requestSize);
+  return true;
   
   if(writeReq->getSize() != requestSize) {
     LOG_ERROR(m_logger, "Got invalid size for UTT Pay");
