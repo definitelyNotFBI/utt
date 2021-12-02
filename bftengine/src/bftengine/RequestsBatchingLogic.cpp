@@ -69,7 +69,7 @@ PrePrepareMsg *RequestsBatchingLogic::batchRequestsSelfAdjustedPolicy(SeqNum pri
   uint64_t concurrentDiff = primaryLastUsedSeqNum + 1 - lastExecutedSeqNum;
 
   if (concurrentDiff >= 2) {
-    minBatchSize = concurrentDiff * batchingFactor_;
+    minBatchSize = concurrentDiff * batchingFactor_ * 4;
     if (minBatchSize > maxInitialBatchSize_) minBatchSize = maxInitialBatchSize_;
   }
 
