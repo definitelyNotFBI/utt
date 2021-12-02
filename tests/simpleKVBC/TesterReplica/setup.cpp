@@ -62,6 +62,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     replicaConfig.numOfClientProxies = 0;
     replicaConfig.numOfExternalClients = 100;
     replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients);
+    replicaConfig.batchFlushPeriod = 100;
     replicaConfig.concurrencyLevel = 4;
     replicaConfig.debugStatisticsEnabled = true;
     replicaConfig.viewChangeTimerMillisec = 45 * 1000;
