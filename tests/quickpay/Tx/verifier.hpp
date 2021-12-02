@@ -5,6 +5,7 @@
 #include "common.hpp"
 #include "replica/Params.hpp"
 #include "setup.hpp"
+#include "thread_pool.hpp"
 
 class VerifierReplica {
 public:
@@ -14,6 +15,7 @@ public:
     size_t target_shard_id = 0;
     std::shared_ptr<utt_bft::replica::Params> m_params_ptr_ = nullptr;
     std::shared_ptr<Setup::db_t> m_db_ptr_ = nullptr;
+    std::unique_ptr<thread_pool> m_pool_ptr_ = nullptr;
 
     VerifierReplica(Setup setup, 
         std::unordered_map<uint16_t, PublicKey>, 

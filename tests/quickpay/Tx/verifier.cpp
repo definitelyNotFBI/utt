@@ -9,6 +9,7 @@
 #include "common.hpp"
 #include "msg/QuickPay.hpp"
 #include "replica/Params.hpp"
+#include "thread_pool.hpp"
 
 uint16_t VerifierReplica::id = 0;
 VerifierReplica::VerifierReplica(Setup setup, 
@@ -18,7 +19,8 @@ VerifierReplica::VerifierReplica(Setup setup,
     : ctx{std::move(setup)}, 
         publicKeysOfReplicas{std::move(public_keys)},
         m_params_ptr_{std::move(params)},
-        m_db_ptr_{std::move(db_ptr)}
+        m_db_ptr_{std::move(db_ptr)},
+        m_pool_ptr_{std::make_unique<thread_pool>(ctx.num_threads)}
 {
     srand(time(NULL));
 }
@@ -28,7 +30,9 @@ static const size_t num_inputs_coins = 3;
 bool VerifierReplica::verifyBatch(std::vector<MintTx>& batch)
 {
     std::string value;
+    // std::vector<std::future> jobs;
     for(auto& mtx: batch) {
+        // m_pool_ptr_->submit([](){
         // Check db if we already saw this tx before
         auto tx_hash = mtx.tx.getHashHex();
         bool found = false;
@@ -94,6 +98,7 @@ bool VerifierReplica::verifyBatch(std::vector<MintTx>& batch)
         m_db_ptr_->rawDB().Put(rocksdb::WriteOptions{}, 
                                 tx_hash + std::to_string(rand()),
                                 std::string());
+        // }
     }
 
     return true;

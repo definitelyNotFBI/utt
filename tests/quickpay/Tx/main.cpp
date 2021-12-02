@@ -34,6 +34,9 @@ int main(int argc, char* argv[])
         m_params_ptr_, db); 
     for(size_t iter = 0; iter < setup->iterations; iter++) {
         LOG_INFO(GL, "Iteration " << iter);
+        std::stringstream ss;
+        ss << batch.back();
+        LOG_INFO(GL, "Size: " << ss.str().size());
         auto start = get_monotonic_time();
         {
             verifier.verifyBatch(batch);

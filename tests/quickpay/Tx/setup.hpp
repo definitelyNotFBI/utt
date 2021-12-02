@@ -21,6 +21,7 @@ struct Setup {
     std::string output_prefix = "tx_";
     size_t num_replicas, num_faults;
     size_t batch_size = 100, iterations = 100;
+    size_t num_threads = std::thread::hardware_concurrency();
 
     // Parse the arguments
     static std::unique_ptr<Setup> ParseArgs(int argc, char* argv[]);
