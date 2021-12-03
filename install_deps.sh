@@ -285,7 +285,7 @@ tar -xvzf libsodium-1.0.18.tar.gz && \
     cd .. & \
     rm -rf libsodium-1.0.18.tar.gz libsodium-1.0.18
 
-# 2. ntl (Use whatever homebrew is using, since Alin uses Homebrew)
+# 2. ntl (Use whatever homebrew is using, since XXX uses Homebrew)
 cd ${HOME}
 tar -xvzf ntl-11.5.1.tar.gz && \
     cd ntl-11.5.1/src && \

@@ -261,7 +261,7 @@ bool EcashClient::verifyPayAckRSI(bft::client::Reply& reply) {
 //   cc.value().rerandomize(cParamsPtr_->p, r_delta);
 
 //   // TODO: Check if the newly minted coin verifies against the aggregated public key of the servers, because if it doesn't then the servers won't accept this coin
-//   // TODO (Check with Alin on how to do this correctly)
+//   // TODO (Check with XXX on how to do this correctly)
 //   if (!combined_coin.verify(cParamsPtr_->p, cc.value(), cParamsPtr_->main_pk)) {
 //     LOG_ERROR(logger_, "Combined verification failed after re-randomization");
 //     return nullopt;
