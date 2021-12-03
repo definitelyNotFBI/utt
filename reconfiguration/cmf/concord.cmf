@@ -1,0 +1,229 @@
+Msg WedgeCommand 3 {
+  uint64 sender
+  bool noop
+}
+
+Msg WedgeStatusRequest 5 {
+	uint64 sender
+	bool fullWedge
+}
+
+Msg WedgeStatusResponse 6 {
+    bool stopped
+}
+
+Msg DownloadCommand 9 {
+  string version
+}
+
+Msg DownloadStatusCommand 10 {
+    string version
+}
+
+Msg DownloadStatus 11 {
+    bool download_completed
+    bool in_progress
+}
+
+Msg LatestPrunableBlockRequest 13 {
+    uint64 sender
+}
+
+Msg LatestPrunableBlock 14 {
+   uint64 replica
+   uint64 block_id
+   uint64 bft_sequence_number
+   bytes signature
+}
+
+Msg PruneRequest 15 {
+  uint64 sender
+  list LatestPrunableBlock latest_prunable_block
+
+  # TicksGenerator period in seconds.
+  uint32 tick_period_seconds
+
+  # The number of blocks in a pruning batch.
+  uint64 batch_blocks_num
+}
+
+Msg PruneStatusRequest 17 {
+    uint64 sender
+}
+
+Msg PruneStatus 18 {
+    uint64 sender
+    bool in_progress
+    uint64 last_pruned_block
+}
+
+Msg GetVersionCommand 19 {
+  bytes place_holder
+}
+
+Msg InstallCommand 20 {
+    string version
+}
+
+Msg InstallStatusCommand 21 {
+    optional string version
+}
+
+Msg InstallStatusResponse 22 {
+    string version
+    bool in_progress
+    bool install_completed
+}
+
+Msg GetVersionResponse 23 {
+  string version
+}
+
+Msg ReconfigurationErrorMsg 24 {
+    string error_msg
+}
+
+Msg KeyExchangeCommand 25 {
+    uint64 sender_id
+    list uint64 target_replicas
+}
+
+Msg AddRemoveCommand 26 {
+    string reconfiguration
+}
+
+Msg AddRemoveStatus 27 {
+    uint64 sender_id
+}
+
+Msg AddRemoveStatusResponse 28 {
+    string reconfiguration
+}
+
+Msg AddRemoveWithWedgeCommand 29 {
+    string config_descriptor
+    string token
+    bool bft_support
+    bool restart
+}
+
+Msg AddRemoveWithWedgeStatus 30 {
+    uint64 sender_id
+}
+
+Msg AddRemoveWithWedgeStatusResponse 31 {
+    string config_descriptor
+    bool wedge_status
+    bool restart_flag
+    bool bft_flag
+}
+
+Msg UnwedgeStatusRequest 32{
+    uint64 sender
+    bool bft_support
+}
+
+Msg UnwedgeStatusResponse 33{
+    uint64 replica_id
+    bool can_unwedge
+    uint64 curr_epoch
+    bytes signature
+    string reason
+}
+
+Msg UnwedgeCommand 34{
+    uint64 sender
+    list kvpair uint64 UnwedgeStatusResponse unwedges
+    bool bft_support
+    bool restart
+}
+Msg ClientKeyExchangeCommand 35 {
+    list uint64 target_clients
+}
+
+Msg ClientKeyExchangeCommandResponse 36 {
+    uint64 block_id
+}
+
+Msg ClientReconfigurationStateRequest 37 {
+    uint64 sender_id
+    uint64 last_known_block
+}
+
+Msg ClientExchangePublicKey 38 {
+    uint64 sender_id
+    string pub_key
+    list uint64 affected_clients
+}
+
+Msg ClientReconfigurationStateReply 39 {
+    uint64 block_id
+    oneof {
+        ClientExchangePublicKey
+        ClientKeyExchangeCommand
+      } response
+}
+
+Msg ClientReconfigurationStateUpdate 40 {
+    uint64 sender_id
+    uint64 update_version
+    string data
+}
+
+Msg ClientReconfigurationLastUpdate 41 {
+    uint64 sender_id
+}
+
+Msg RestartCommand 42 {
+    bool bft_support
+    bool restart
+    string data
+}
+
+Msg ReconfigurationRequest 1 {
+  uint64 sender
+  bytes signature
+  oneof {
+    WedgeCommand
+    WedgeStatusRequest
+    GetVersionCommand
+    DownloadCommand
+    DownloadStatusCommand
+    LatestPrunableBlockRequest
+    PruneRequest
+    PruneStatusRequest
+    InstallCommand
+    InstallStatusCommand
+    KeyExchangeCommand
+    AddRemoveCommand
+    AddRemoveStatus
+    AddRemoveWithWedgeCommand
+    AddRemoveWithWedgeStatus
+    UnwedgeStatusRequest
+    UnwedgeCommand
+    ClientKeyExchangeCommand
+    ClientReconfigurationStateRequest
+    ClientExchangePublicKey
+    ClientReconfigurationLastUpdate
+    RestartCommand
+  } command
+  bytes additional_data
+}
+
+Msg ReconfigurationResponse 2 {
+  bool success
+  oneof {
+    WedgeStatusResponse
+    LatestPrunableBlock
+    PruneStatus
+    DownloadStatus
+    InstallStatusResponse
+    GetVersionResponse
+    ReconfigurationErrorMsg
+    AddRemoveStatusResponse
+    AddRemoveWithWedgeStatusResponse
+    UnwedgeStatusResponse
+    ClientKeyExchangeCommandResponse
+  } response
+  bytes additional_data
+}

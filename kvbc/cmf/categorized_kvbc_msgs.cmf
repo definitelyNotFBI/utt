@@ -1,0 +1,237 @@
+# Input for category `add`
+
+Msg BlockMerkleInput 1 {
+    map string string kv
+    list string deletes
+}
+
+Msg ValueWithFlags 2 {
+    string data
+    bool stale_on_update
+}
+
+Msg VersionedInput 3 {
+    map string ValueWithFlags kv
+    list string deletes
+    bool calculate_root_hash
+}
+
+Msg ImmutableValueUpdate 4 {
+    string data
+    list string tags
+}
+
+Msg ImmutableInput 5 {
+    # key -> value, [tag1, tag2...]
+    map string ImmutableValueUpdate kv
+    bool calculate_root_hash
+}
+
+Msg CategoryInput 6 {
+    map string oneof{
+        BlockMerkleInput
+        VersionedInput
+        ImmutableInput
+    } kv
+}
+
+# Output for category `add`
+
+Msg MerkleKeyFlag 1000 {
+    bool deleted
+}
+
+Msg BlockMerkleOutput 1001 {
+    map string MerkleKeyFlag keys
+    fixedlist uint8 32 root_hash
+    uint64 state_root_version
+}
+
+Msg VersionedKeyFlags 1002 {
+    bool deleted
+    bool stale_on_update
+}
+
+Msg VersionedOutput 1003 {
+    map string VersionedKeyFlags keys
+
+    # - If nullopt, no root calculation was requested in the input.
+    # - If it contains a value, root calculation was requested in the input.
+    #   Furthermore, if there weren't any keys in the input, the hash value
+    #   will be equal to the hash of an empty string.
+    optional fixedlist uint8 32 root_hash
+}
+
+Msg ImmutableOutput 1004 {
+    # key -> [tag1, tag2...]
+    map string list string tagged_keys
+
+    # - If nullopt, no tag root calculation was requested in the input.
+    # - If it contains a value, root calculation was requested in the input.
+    #   Furthermore, if no tags were provided for any of the keys or there were
+    #   no keys at all in the input, the map itself will be empty.
+    optional map string fixedlist uint8 32 tag_root_hashes
+}
+
+# Blocks
+
+Msg BlockKey 2000 {
+    uint64 block_id
+}
+
+Msg BlockData 2001 {
+    fixedlist uint8 32 parent_digest
+    uint64 block_id
+    map string oneof{
+        BlockMerkleOutput
+        VersionedOutput
+        ImmutableOutput
+    } categories_updates_info
+}
+
+Msg RawBlockData 2005 {
+    fixedlist uint8 32 parent_digest
+    CategoryInput updates
+    map string fixedlist uint8 32 block_merkle_root_hash
+    map string fixedlist uint8 32 versioned_root_hash 
+    map string map string fixedlist uint8 32 immutable_root_hashes
+
+}
+
+# Used to deserialize the parent_digest only from RawBlockData and BlockData.
+Msg ParentDigest 2006 {
+    fixedlist uint8 32 value
+}
+
+# Misc
+
+Msg BenchmarkMessage 3000 {
+    string str
+    fixedlist uint8 32 hash
+    map string string map
+}
+
+# DB Key-Values
+
+# An index to the latest version of a key.
+# The high-bit being set indicates whether or not the last update was a delete, i.e. a tombstone.
+Msg LatestKeyVersion 4000 {
+    uint64 block_id
+}
+
+Msg KeyHash 4001 {
+    fixedlist uint8 32 value
+}
+
+Msg VersionedKey 4002 {
+    # Exploit big-endian integer serialization to order different versions
+    # of the key by version.
+    KeyHash key_hash
+    uint64 version
+}
+
+Msg VersionedRawKey 4003 {
+    # Exploit CMF string and big-endian integer serialization to order keys
+    # by size, key and version.
+    string value
+    uint64 version
+}
+
+Msg DbValue 4004 {
+    bool deleted
+    string data
+}
+
+# Used to deserialize the deleted flag only from a DbValue.
+Msg Deleted 4005 {
+    bool value
+}
+
+Msg ImmutableDbValue 4006 {
+    uint64 block_id
+    string data
+}
+
+# Headers that are use used for efficiently *writing* a DbValue and ImmutableDbValue to RocksDB.
+# Values may be large and we want avoid having to copy the string into a vector during serialization.
+# If we just serialize the header we can pass both as slices to RocksDB to prevent an extra copy.
+# On reads we retrieve DbValue and ImmutableDbValue, respectively.
+#
+# This takes advantage of the fact that CMF serializes string size as a uint32. If that ever
+# changes we must change these as well.
+Msg DbValueHeader 4007 {
+    bool deleted
+    uint32 value_size
+}
+
+Msg ImmutableDbValueHeader 4008 {
+    uint64 block_id
+    uint32 value_size
+}
+
+# Used to deserialize the version only from an ImmutableDbValue.
+Msg ImmutableDbVersion 4009 {
+    uint64 block_id
+}
+
+# Block Merkle Tree Data
+
+Msg MerkleBlockValue 5000 {
+    fixedlist uint8 32 root_hash
+}
+
+Msg NibblePath 5001 {
+    uint8 length
+    list uint8 data
+}
+
+Msg BatchedInternalNodeKey 5002 {
+    # The version of this key is the *tree* version, not block version
+    uint64 version
+    NibblePath path
+}
+
+Msg LeafChild 5003 {
+    fixedlist uint8 32 hash
+    VersionedKey key
+}
+
+Msg InternalChild 5004 {
+    fixedlist uint8 32 hash
+    uint64 version
+}
+
+Msg BatchedInternalNodeChild 5005 {
+    oneof {
+        LeafChild
+        InternalChild
+    } child
+}
+
+Msg BatchedInternalNode 5006 {
+    # Contains a 1 where a child node is present, 0 otherwise
+    uint32 bitmask
+    list BatchedInternalNodeChild children
+}
+
+# The version of a sparse merkle tree. This is different from a block_id.
+Msg TreeVersion 5007 {
+    uint64 version
+}
+
+Msg BlockVersion 5008 {
+    uint64 version
+}
+
+# Contains serialized internal node keys and leaf keys that are safe to delete when a block
+# pointing to a given tree version is pruned.
+Msg StaleKeys 5009 {
+    list bytes internal_keys
+    list bytes leaf_keys
+}
+
+# Keys are only added to this list after initial block pruning.
+# This list gets updated when the block that has overwritten these active keys gets pruned.
+Msg PrunedBlock 5010 {
+    list KeyHash active_keys
+}
