@@ -29,6 +29,7 @@ const struct option longOptions[] = {
     {"batch-size",                  required_argument, 0, 'b'},
     {"num-faults",                  required_argument, 0, 'f'},
     {"iterations",                  required_argument, 0, 'i'},
+    {"threads",                     required_argument, 0, 't'},
     {"num-replicas",                required_argument, 0, 'n'},
     {"replica-keys-folder",         required_argument, 0, 'r'},
     {"replica-keys-prefix",         required_argument, 0, 'R'},
@@ -43,7 +44,7 @@ std::unique_ptr<Setup> Setup::ParseArgs(int argc, char *argv[])
     int o = 0;
     int optionIndex = 0;
     Setup setup;
-    while((o = getopt_long(argc, argv, "b:f:i:n:r:R:w:W:", 
+    while((o = getopt_long(argc, argv, "b:f:i:n:r:R:t:w:W:", 
                             longOptions, &optionIndex)) != EOF) 
     {
         switch(o) {
@@ -53,6 +54,9 @@ std::unique_ptr<Setup> Setup::ParseArgs(int argc, char *argv[])
         } break;
         case 'f': {
             setup.num_faults = concord::util::to<std::size_t>(std::string(optarg));
+        } break;
+        case 't': {
+            setup.num_threads = concord::util::to<std::size_t>(std::string(optarg));
         } break;
         case 'i': {
             setup.iterations = 

@@ -30,4 +30,6 @@ add_custom_command(TARGET copy_tls_script_qp
 add_subdirectory(Tx)
 add_subdirectory(ShardTester)
 add_subdirectory(TesterReplica)
+add_subdirectory(TesterReplicaFull)
 add_subdirectory(TesterClient)
+add_subdirectory(TesterClientFull)

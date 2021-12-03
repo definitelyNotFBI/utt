@@ -33,11 +33,11 @@ bool conn_handler::check_tx(const QuickPayTx* qp_tx, const libutt::Tx& tx)
                         << "tx len:" << qp_tx->tx_len << std::endl
                         );
 
-    if(!tx.validate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) {
+    if(!tx.quickPayValidate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) {
         LOG_ERROR(logger, "Quick pay validation failed");
         return false;
     }
-    LOG_INFO(logger, "Got a new valid pay transaction");
+    LOG_INFO(logger, "Got a new valid quick pay transaction");
     // Check DB
     std::string value;
     for(auto& null: tx.getNullifiers()) {
@@ -122,15 +122,24 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
 
     // generate and send signature
     ss.str("");
-    // DONE: Process the tx (The coins are still unspent)
-    for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
-        auto sig = tx.shareSignCoin(txoIdx, m_params_->my_sk);
-        ss << sig << std::endl;
-    }
-    
-    outgoing_msg_buf.reserve(ss.str().size());
-    std::memcpy(outgoing_msg_buf.data(), ss.str().data(), ss.str().size());
-    send_response(ss.str().size());
+    auto txhash = concord::util::SHA3_256().digest((uint8_t*)qp_tx, 
+                                                    qp_tx->get_size());
+    auto qp_len = QuickPayMsg::get_size(txhash.size());
+    auto sig_len = signer->requiredLengthForSignedData();
+    auto resp_size = QuickPayResponse::get_size(qp_len, sig_len);
+    outgoing_msg_buf.reserve(resp_size);
+    auto qp_resp = (QuickPayResponse*)outgoing_msg_buf.data();
+    qp_resp->qp_msg_len = qp_len;
+    qp_resp->sig_len = sig_len;
+    auto* qp = qp_resp->getQPMsg();
+    qp->target_shard_id = 0;
+    qp->hash_len = txhash.size();
+    std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
+    signer->signData((const char*)txhash.data(), 
+                        txhash.size(), 
+                        (char*)qp_resp->getSigBuf(), 
+                        sig_len);
+    send_response(qp_resp->get_size());
     metrics->fetch_add(1);
     // Move the remaining buffers again
     auto perf_end = get_monotonic_time();

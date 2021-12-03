@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Making sure no previous replicas are up..."
-killall -9 quickpay_replica quickpay_client
+killall -9 quickpay_replica quickpay_client quickpay_replica_full quickpay_client_full
 
 NUM_REPLICAS=4
 
@@ -36,7 +36,7 @@ UTT_PREFIX=wallets/utt_pvt_replica_
 
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $((i+1))..."
-    ../TesterReplica/quickpay_replica \
+    ../TesterReplicaFull/quickpay_replica_full \
                         --key-file-prefix ${REPLICA_PREFIX} \
                         --replica-id "$i" \
                         --network-config-file comm_config \
