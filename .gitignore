@@ -31,3 +31,4 @@ Testing
 cmake-3.20.2-linux-x86_64/
 aws/comm_config.txt
 aws/ips.log
+repo.key
