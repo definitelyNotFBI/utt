@@ -49,7 +49,7 @@ ClientParams setupClientParams(int argc, char **argv) {
   bool is_debug = false;
   int o = 0;
   std::string logPropsFile = "logging.properties";
-  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:db:")) != EOF) {
+  while ((o = getopt(argc, argv, "i:f:c:p:n:U:l:db:r:")) != EOF) {
     switch (o) {
       case 'b': {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
@@ -112,6 +112,18 @@ ClientParams setupClientParams(int argc, char **argv) {
         strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
         argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
         logPropsFile = argTempBuffer;
+      } break;
+
+      case 'r': {
+        strncpy(argTempBuffer, optarg, sizeof(argTempBuffer) - 1);
+        argTempBuffer[sizeof(argTempBuffer) - 1] = 0;
+        string nStr = argTempBuffer;
+        int tempnVal = std::stoi(nStr);
+        if (tempnVal >= 1 && tempnVal < UINT16_MAX) 
+          clientParams.numOfReplicas = (uint16_t)tempnVal;
+        std::cout << tempnVal << ", " 
+                  << clientParams.numOfReplicas 
+                  << std::endl;
       } break;
 
       default:

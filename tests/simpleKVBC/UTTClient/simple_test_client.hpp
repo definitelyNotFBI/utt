@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include "Logging4cplus.hpp"
 #include "bftclient/base_types.h"
 #include "client/IClient.hpp"
 // #define UTT_DEBUG
@@ -81,6 +82,7 @@ class SimpleTestClient {
     // This client's index number. Must be larger than the largest replica index
     // number.
     const uint16_t id = cp.clientId;
+    LOG_DEBUG(clientLogger, "Number of replicas: " << cp.numOfReplicas);
 
     // Concord clients must tag each request with a unique sequence number. This
     // generator handles that for us.

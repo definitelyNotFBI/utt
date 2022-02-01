@@ -1,11 +1,15 @@
 #!/bin/bash
 echo "Making sure no previous replicas are up..."
-killall -9 quickpay_replica quickpay_client quickpay_replica_full quickpay_client_full
+killall -9  quickpay_replica \
+            quickpay_client \
+            quickpay_replica_full \
+            quickpay_client_full
 
 NUM_REPLICAS=4
 
 # Delete all previous DB instances (if any)
-rm -rf simpleKVBTests_DB_{0,1,2,3} utt-db{0,1,2,3}
+rm -rf  simpleKVBTests_DB_{0,1,2,3} \
+        utt-db{0,1,2,3}
 
 # Create UTT configs if not already created
 if [ ! -e replica_keys_4 ]; then 
