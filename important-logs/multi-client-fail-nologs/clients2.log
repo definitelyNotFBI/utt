@@ -1,0 +1,742 @@
+10, 10
+|20-01-2022 16:17:05.135|DEBUG|utt.bft.client||||||bool SimpleTestClient::run()|L:85|Number of replicas: 10
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing: # Communication configuration
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:57|Ignoring a comment
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing: replicas_config:
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:81|Extracting a key
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:4000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:5000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:6000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7001
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7002
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7003
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7004
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7005
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:7006
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing: 
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:63|Ignoring an empty line
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing: clients_config:
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:81|Extracting a key
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:8000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:9000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10000
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10001
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10002
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10003
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10004
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10005
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10006
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10007
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10008
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10009
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10010
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10011
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10012
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10013
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10014
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10015
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10016
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10017
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10018
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10019
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10020
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10021
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10022
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10023
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10024
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10025
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10026
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10027
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10028
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10029
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10030
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10031
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10032
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10033
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10034
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10035
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10036
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10037
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10038
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10039
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10040
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10041
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10042
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10043
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10044
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10045
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10046
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10047
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10048
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10049
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10050
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10051
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10052
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10053
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10054
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10055
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10056
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10057
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10058
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10059
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10060
+|20-01-2022 16:17:05.135|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10061
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10062
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10063
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10064
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10065
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10066
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10067
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10068
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10069
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10070
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10071
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10072
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10073
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10074
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10075
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10076
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10077
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10078
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10079
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10080
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10081
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10082
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10083
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10084
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10085
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10086
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10087
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10088
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10089
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10090
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10091
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10092
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10093
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10094
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10095
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10096
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10097
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10098
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10099
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10100
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10101
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10102
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10103
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10104
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10105
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10106
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing:     - 127.0.0.1:10107
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:52|Processing: 
+|20-01-2022 16:17:05.136|DEBUG|simpletest.replica.test||||||bool ConfigFileParser::Parse()|L:63|Ignoring an empty line
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||bool ConfigFileParser::Parse()|L:97|File: 10_comm_config successfully parsed.
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||size_t ConfigFileParser::Count(const std::__cxx11::string &)|L:103|count() returns: 110 for key: clients_config
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||size_t ConfigFileParser::Count(const std::__cxx11::string &)|L:103|count() returns: 10 for key: replicas_config
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:110|getValues() for key: replicas_config
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:4000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:5000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:6000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7001
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7002
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7003
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7004
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7005
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:7006
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:110|getValues() for key: clients_config
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:8000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:9000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10000
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10001
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10002
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10003
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10004
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10005
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10006
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10007
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10008
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10009
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10010
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10011
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10012
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10013
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10014
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10015
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10016
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10017
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10018
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10019
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10020
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10021
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10022
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10023
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10024
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10025
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10026
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10027
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10028
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10029
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10030
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10031
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10032
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10033
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10034
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10035
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10036
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10037
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10038
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10039
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10040
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10041
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10042
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10043
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10044
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10045
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10046
+|20-01-2022 16:17:05.136|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10047
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10048
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10049
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10050
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10051
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10052
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10053
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10054
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10055
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10056
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10057
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10058
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10059
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10060
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10061
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10062
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10063
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10064
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10065
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10066
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10067
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10068
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10069
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10070
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10071
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10072
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10073
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10074
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10075
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10076
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10077
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10078
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10079
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10080
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10081
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10082
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10083
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10084
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10085
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10086
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10087
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10088
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10089
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10090
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10091
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10092
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10093
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10094
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10095
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10096
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10097
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10098
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10099
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10100
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10101
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10102
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10103
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10104
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10105
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10106
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||vector<std::__cxx11::string> ConfigFileParser::GetValues(const std::__cxx11::string &)|L:114|value: 127.0.0.1:10107
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:4000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 4000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 0, port:4000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:5000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 5000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 1, port:5000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:6000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 6000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 2, port:6000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 3, port:7000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7001, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7001
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 4, port:7001
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7002, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7002
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 5, port:7002
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7003, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7003
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 6, port:7003
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7004, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7004
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 7, port:7004
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7005, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7005
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 8, port:7005
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:7006, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 7006
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 9, port:7006
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:8000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 8000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 0, port:8000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:9000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 9000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 1, port:9000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10000, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 2, port:10000
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10001, delimiter: :
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.137|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10001
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 3, port:10001
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10002, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10002
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 4, port:10002
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10003, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10003
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 5, port:10003
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10004, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10004
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 6, port:10004
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10005, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10005
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 7, port:10005
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10006, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10006
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 8, port:10006
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10007, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10007
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 9, port:10007
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10008, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10008
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 10, port:10008
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10009, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10009
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 11, port:10009
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10010, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10010
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 12, port:10010
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10011, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10011
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 13, port:10011
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10012, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10012
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 14, port:10012
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10013, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10013
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 15, port:10013
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10014, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10014
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 16, port:10014
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10015, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10015
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 17, port:10015
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10016, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10016
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 18, port:10016
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10017, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10017
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 19, port:10017
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10018, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10018
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 20, port:10018
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10019, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10019
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 21, port:10019
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10020, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10020
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 22, port:10020
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10021, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10021
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 23, port:10021
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10022, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10022
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 24, port:10022
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10023, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10023
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 25, port:10023
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10024, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10024
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 26, port:10024
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10025, delimiter: :
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10025
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 27, port:10025
+|20-01-2022 16:17:05.138|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10026, delimiter: :
+|20-01-2022 16:17:05.150|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10026
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 28, port:10026
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10027, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10027
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 29, port:10027
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10028, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10028
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 30, port:10028
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10029, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10029
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 31, port:10029
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10030, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10030
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 32, port:10030
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10031, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10031
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 33, port:10031
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10032, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10032
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 34, port:10032
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10033, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10033
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 35, port:10033
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10034, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10034
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 36, port:10034
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10035, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10035
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 37, port:10035
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10036, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10036
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 38, port:10036
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10037, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10037
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 39, port:10037
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10038, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10038
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 40, port:10038
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10039, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10039
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 41, port:10039
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10040, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10040
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 42, port:10040
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10041, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10041
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 43, port:10041
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10042, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10042
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 44, port:10042
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10043, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10043
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 45, port:10043
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10044, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10044
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 46, port:10044
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10045, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10045
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 47, port:10045
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10046, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10046
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 48, port:10046
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10047, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10047
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 49, port:10047
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10048, delimiter: :
+|20-01-2022 16:17:05.151|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10048
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 50, port:10048
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10049, delimiter: :
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10049
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 51, port:10049
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10050, delimiter: :
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10050
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 52, port:10050
+|20-01-2022 16:17:05.158|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10051, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10051
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 53, port:10051
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10052, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10052
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 54, port:10052
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10053, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10053
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 55, port:10053
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10054, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10054
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 56, port:10054
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10055, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10055
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 57, port:10055
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10056, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10056
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 58, port:10056
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10057, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10057
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 59, port:10057
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10058, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10058
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 60, port:10058
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10059, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10059
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 61, port:10059
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10060, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10060
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 62, port:10060
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10061, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10061
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 63, port:10061
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10062, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10062
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 64, port:10062
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10063, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10063
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 65, port:10063
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10064, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10064
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 66, port:10064
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10065, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10065
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 67, port:10065
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10066, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10066
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 68, port:10066
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10067, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10067
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 69, port:10067
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10068, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10068
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 70, port:10068
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10069, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10069
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 71, port:10069
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10070, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10070
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 72, port:10070
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10071, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10071
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 73, port:10071
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10072, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10072
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 74, port:10072
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10073, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10073
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 75, port:10073
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10074, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10074
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 76, port:10074
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10075, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10075
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 77, port:10075
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10076, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10076
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 78, port:10076
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10077, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10077
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 79, port:10077
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10078, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10078
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 80, port:10078
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10079, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10079
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 81, port:10079
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10080, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10080
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 82, port:10080
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10081, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10081
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 83, port:10081
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10082, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10082
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 84, port:10082
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10083, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10083
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 85, port:10083
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10084, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10084
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 86, port:10084
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10085, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10085
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 87, port:10085
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10086, delimiter: :
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10086
+|20-01-2022 16:17:05.159|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 88, port:10086
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10087, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10087
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 89, port:10087
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10088, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10088
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 90, port:10088
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10089, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10089
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 91, port:10089
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10090, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10090
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 92, port:10090
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10091, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10091
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 93, port:10091
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10092, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10092
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 94, port:10092
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10093, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10093
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 95, port:10093
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10094, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10094
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 96, port:10094
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10095, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10095
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 97, port:10095
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10096, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10096
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 98, port:10096
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10097, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10097
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 99, port:10097
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10098, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10098
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 100, port:10098
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10099, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10099
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 101, port:10099
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10100, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10100
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 102, port:10100
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10101, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10101
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 103, port:10101
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10102, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10102
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 104, port:10102
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10103, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10103
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 105, port:10103
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10104, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10104
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 106, port:10104
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10105, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10105
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 107, port:10105
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10106, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10106
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 108, port:10106
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:121|valueToSplit: 127.0.0.1:10107, delimiter: :
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 127.0.0.1
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::vector<std::string> ConfigFileParser::SplitValue(const std::string &, const char *)|L:127|Value after split: 10107
+|20-01-2022 16:17:05.160|DEBUG|utt.bft.client||||||std::unordered_map<NodeNum, NodeInfo> TestCommConfig::SetUpConfiguredNodes(bool, const std::string &, uint16_t, std::string &, uint16_t &, uint16_t &, uint16_t &)|L:101|setUpConfiguredNodes() node_id: 11, k: 109, port:10107
+|20-01-2022 16:17:05.160|INFO |utt.bft.client||||||bool SimpleTestClient::run()|L:111|ClientParams: clientId: 11, numOfReplicas: 10, numOfClients: 110, numOfIterations: 400, fVal: 3, cVal: 0, utt_file_name: wallets/utt_pub_client.dat, batch_size: 6
+|20-01-2022 16:17:05.160|INFO |communication.factory||||||static bft::communication::ICommunication *bft::communication::CommFactory::create(const bft::communication::BaseCommConfig &)|L:49|Using TlsTCP: Host=0.0.0.0, Port=9000
+Initial retry timeout150
+Max retry timeout1000
+Reading wallet file: wallets/wallet_1
