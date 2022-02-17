@@ -1,11 +1,11 @@
 cmake_minimum_required (VERSION 3.2)
-project(quickpay VERSION 0.1.0.0 LANGUAGES CXX)
+project(fullpay VERSION 0.1.0.0 LANGUAGES CXX)
 
 include_directories(${UTT_INCLUDES})
 
 find_package(Boost ${MIN_BOOST_VERSION} COMPONENTS system filesystem REQUIRED)
 
-set(quickpay_libs 
+set(fullpay_libs 
     ${Boost_LIBRARIES}
     util
     threshsign
@@ -14,20 +14,18 @@ set(quickpay_libs
     utt_bft
 )
 
-add_custom_target(copy_blockchain_scripts_qp ALL 
-                        COMMENT "Copying scripts for quickpay")
-add_custom_command(TARGET copy_blockchain_scripts_qp
+add_custom_target(copy_blockchain_scripts_fp ALL 
+                        COMMENT "Copying scripts for fullpay")
+add_custom_command(TARGET copy_blockchain_scripts_fp
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/scripts ${CMAKE_CURRENT_BINARY_DIR}/scripts)
 
 
-add_custom_target(copy_tls_script_qp ALL COMMENT 
-                                    "Copying TLS script (for quickpay)")
-add_custom_command(TARGET copy_tls_script_qp
+add_custom_target(copy_tls_script_fp ALL COMMENT 
+                                    "Copying TLS script (for fullpay)")
+add_custom_command(TARGET copy_tls_script_fp
         COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/scripts/linux/create_tls_certs.sh
      ${CMAKE_CURRENT_BINARY_DIR}/scripts/create_tls_certs.sh)
 
-add_subdirectory(Tx)
-add_subdirectory(ShardTester)
-add_subdirectory(TesterReplica)
-add_subdirectory(TesterClient)
+add_subdirectory(TesterReplicaFull)
+add_subdirectory(TesterClientFull)

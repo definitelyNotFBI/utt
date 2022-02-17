@@ -5,6 +5,7 @@ NUM_REPLICAS=${NUM_REPLICAS:-10}
 NUM_CLIENTS=${NUM_CLIENTS:-16}
 FAULTS=$((NUM_REPLICAS/3))
 
+echo "Using #Replicas: ${NUM_REPLICAS}"
 echo "Running $NUM_CLIENTS clients..."
 
 for((i=1;i<=$NUM_CLIENTS;i++)); do
@@ -14,7 +15,7 @@ for((i=1;i<=$NUM_CLIENTS;i++)); do
                         -f "${FAULTS}" \
                         -c 0 \
                         -p 400 \
-                        -U wallets/utt_pub_client.dat \
+                        -U "${NUM_REPLICAS}_wallets/utt_pub_client.dat" \
                         -i $id \
                         -r "${NUM_REPLICAS}" \
                         -l perf-logging.properties \

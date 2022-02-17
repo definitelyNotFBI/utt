@@ -23,10 +23,10 @@ int main(int argc, char* argv[])
     auto setup = TestSetup::ParseArgs(argc, argv);
     logging::initLogger(setup->getLogProperties());
 
-    auto logger = logging::getLogger("quickpay.client");
+    auto logger = logging::getLogger("fullpay.client");
 
     LOG_INFO(logger, "Namaskara!");
-    LOG_INFO(logger, "Starting quickpay client!");
+    LOG_INFO(logger, "Starting fullpay client!");
 
     // Construct libutt params
     auto config = ClientConfig::Get();

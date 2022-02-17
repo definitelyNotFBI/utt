@@ -54,8 +54,8 @@ protocol::protocol(io_ctx_t& io_ctx,
 
     // Read genesis files
     auto wallet_filename = config->get(utt_wallet_file_key, 
-                                            std::string("wallets/wallet_")) 
-                                + std::to_string(config->getid());
+                                            std::string()) 
+                                + std::to_string(config->getid() - config->numReplicas);
     LOG_INFO(logger, "Opening wallet file: " << wallet_filename);
 
     std::ifstream utt_wallet_file(wallet_filename);
@@ -129,13 +129,18 @@ void protocol::on_tx_timeout(const asio::error_code err) {
     LOG_INFO(logger, "tx Timed out");
 }
 
+std::string end_point_to_string(const asio::ip::tcp::endpoint& ep)
+{
+    return ep.address().to_string() + std::to_string(ep.port());
+}
+
 void protocol::start() {
     // Start connecting to all the nodes
     for(auto& [node_id, end_point]: m_node_map_) {
         auto conn = conn_handler::create(m_io_ctx_, node_id, pk_map, shared_from_this());
         auto& sock = conn->socket();
         sock.async_connect(end_point, std::bind(
-            &conn_handler::on_new_conn, conn, std::placeholders::_1));
+            &conn_handler::on_new_conn, conn, end_point_to_string(end_point),  std::placeholders::_1));
     }
     // Started all the connections, lets wait for some time
     using namespace std::chrono_literals;
@@ -302,4 +307,4 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id)
     send_tx();
 }
 
-} // namespace quickpay::replica
+} // namespace quickpay::client

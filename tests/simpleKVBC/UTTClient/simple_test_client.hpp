@@ -120,7 +120,9 @@ class SimpleTestClient {
     utt_bft::client::Params cParams(ifile);
 
     auto wallet_file_id = cp.clientId - cp.numOfReplicas;
-    auto wallet_file = "wallets/wallet_" + std::to_string(wallet_file_id);
+    auto wallet_file = std::to_string(cp.numOfReplicas) + 
+                          "_wallets/wallet_" + 
+                          std::to_string(wallet_file_id);
     std::cout << "Reading wallet file: " << wallet_file << std::endl;
 
     std::ifstream wal_file(wallet_file);

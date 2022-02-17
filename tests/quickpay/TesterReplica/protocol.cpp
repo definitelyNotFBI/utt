@@ -18,7 +18,7 @@
 
 namespace quickpay::replica {
 
-logging::Logger protocol::logger = logging::getLogger("quickpay.bft.replica");
+logging::Logger protocol::logger = logging::getLogger("quickpay.replica.protocol");
 
 protocol::protocol(asio::io_context& io_ctx, 
                     uint16_t port_num, 
@@ -94,15 +94,15 @@ void protocol::start_accept()
 
 void protocol::on_new_client(conn_handler_ptr conn, const asio::error_code& err) 
 {
+  if (!err) {
     LOG_INFO(logger, "Got a new client connection");
-    if (!err) {
-        conn->on_new_conn();
-        m_conn_.emplace(conn->id, std::move(conn));
-    } else {
-        LOG_ERROR(logger, err.message());
-    }
+    conn->on_new_conn();
+    m_conn_.emplace(conn->id, std::move(conn));
+  } else {
+    LOG_ERROR(logger, err.message());
+  }
 
-    start_accept();
+  start_accept();
 }
 
 } // namespace quickpay::replica

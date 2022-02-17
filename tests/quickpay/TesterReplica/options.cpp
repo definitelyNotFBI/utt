@@ -16,6 +16,8 @@
 #include "KeyfileIOUtils.hpp"
 #include "yaml_utils.hpp"
 
+// #define USE_COMM_TLS_TCP
+
 namespace quickpay::replica {
 
 // Forward declaration
@@ -93,6 +95,9 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
         throw std::runtime_error("missing --key-file-prefix");
     if (utt_params_file.empty()) 
         throw std::runtime_error("missing --utt-prefix");
+    if(commConfigFile.empty())
+        throw std::runtime_error("missing --network-config-file");
+    LOG_INFO(logger, "Using network config file: " << commConfigFile);
     replica_config->set(utt_bft::UTT_PARAMS_REPLICA_KEY, utt_params_file);
 
     std::string key_file_name = keysFilePrefix + std::to_string(replica_config->id);

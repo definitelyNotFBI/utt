@@ -47,7 +47,7 @@ public:
     }
 
     // things to do when we have a new connection
-    void on_new_conn(const asio::error_code err);
+    void on_new_conn(const std::string& src, const asio::error_code err);
 
     // start the connection
     void start_conn();

@@ -177,8 +177,9 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
     if (keys_file_prefix.empty())
         throw std::runtime_error("missing --keys-file-prefix (-k)");
 
-    if (!wallet_file_prefix.empty())
-        client_config->set(utt_wallet_file_key, wallet_file_prefix);
+    if (wallet_file_prefix.empty())
+        throw std::runtime_error("missing --wallet-prefix (-w)");
+    client_config->set(utt_wallet_file_key, wallet_file_prefix);
 
     uint16_t numOfClients = 1;
     #ifdef USE_COMM_PLAIN_TCP

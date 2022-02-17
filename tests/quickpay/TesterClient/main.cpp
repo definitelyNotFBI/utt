@@ -30,14 +30,17 @@ int main(int argc, char* argv[])
 
     // Construct libutt params
     auto config = ClientConfig::Get();
-    auto utt_params_filename = config->get(utt_bft::UTT_PARAMS_CLIENT_KEY, std::string(""));
-    LOG_INFO(logger, "Opening " << utt_params_filename);
+    auto utt_params_filename = config->get(
+        utt_bft::UTT_PARAMS_CLIENT_KEY, 
+        std::string(""));
 
     std::ifstream utt_params_file(utt_params_filename);
     if (utt_params_file.fail()) {
         LOG_FATAL(logger, "Failed to open " << utt_params_filename);
         throw std::runtime_error("Error opening utt params file");
     }
+
+    LOG_INFO(logger, "Opening " << utt_params_filename);
     utt_bft::client::Params params(utt_params_file);
     utt_params_file.close();
 

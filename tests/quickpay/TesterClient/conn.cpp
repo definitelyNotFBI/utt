@@ -9,9 +9,9 @@ namespace quickpay::client {
 
 logging::Logger conn_handler::logger = logging::getLogger("quickpay.client.conn");
 
-void conn_handler::on_new_conn(const asio::error_code err) {
+void conn_handler::on_new_conn(const std::string& src, const asio::error_code err) {
     if (err) {
-        LOG_ERROR(logger, "Client connection error:" << err.message());
+        LOG_ERROR(logger, "Client connection error:" << src << " with " << err.message());
         return;
     }
     if (!mSock_.is_open()) {

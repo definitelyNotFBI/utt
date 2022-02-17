@@ -3,10 +3,12 @@ echo "Making sure no previous replicas are up..."
 killall -9  skvbc_replica \
             client \
             quickpay_client \
-            quickpay_server
+            quickpay_server \
+            quickpay_replica
 
 NUM_REPLICAS=${NUM_REPLICAS:-10}
-REPLICA_PREFIX="$NUM_REPLICAS"_replica_keys_
+NUM_CLIENTS=${NUM_CLIENTS:-1000}
+REPLICA_PREFIX="${NUM_REPLICAS}_replica_keys_"
 UTT_PREFIX="${NUM_REPLICAS}_wallets/utt_pvt_replica_"
 FAULTS=$((NUM_REPLICAS/3))
 
@@ -22,7 +24,8 @@ if [ ! -e "${NUM_REPLICAS}_replica_keys_0" ]; then
     ../../../tools/GenerateConcordKeys \
                         -n "${NUM_REPLICAS}" \
                         -f "${FAULTS}" \
-                        -o "${NUM_REPLICAS}_replica_keys_"
+                        -o "${NUM_REPLICAS}_replica_keys_" \
+                        -r 1
 fi
 
 # Create UTT configs if not already created
@@ -32,13 +35,13 @@ if [ ! -e "certs/${NUM_REPLICAS}" ]; then
 fi
 
 # Create wallet configs if not already created
-if [ ! -e "${NUM_REPLICAS}_wallets/wallet_${NUM_REPLICAS}" ]; then
+if [ ! -e "${NUM_REPLICAS}_wallets/wallet_${NUM_CLIENTS}" ]; then
     echo "Generating UTT wallet files"
     mkdir -p "${NUM_REPLICAS}_wallets"
     ../../../tools/GenerateUTTKeys \
                     --node-num ${NUM_REPLICAS} \
                     --fault-num "${FAULTS}" \
-                    --num-wallets "${NUM_REPLICAS}" \
+                    --num-wallets "${NUM_CLIENTS}" \
                     --wallet-prefix "wallet_" \
                     --output-dir "${NUM_REPLICAS}_wallets"
 fi
@@ -46,12 +49,12 @@ fi
 # Start the replicas
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $i..."
-    ../TesterReplica/skvbc_replica \
+    ../TesterReplica/quickpay_replica \
         --key-file-prefix "${REPLICA_PREFIX}" \
-        --replica-id $i \
-        --network-config-file "$NUM_REPLICAS_comm_config" \
-        --log-props-file perf-logging.properties \
+        --replica-id "$i" \
+        --network-config-file "${NUM_REPLICAS}_comm_config" \
         --utt-prefix ${UTT_PREFIX} \
+        --log-props-file perf-logging.properties \
         ${EXTRA_REPLICA_FLAGS} \
             &> logs"$((i+1))".txt &
 done
@@ -59,4 +62,4 @@ done
 wait
 
 # Cleaning up
-killall -9 skvbc_replica
+killall -9 skvbc_replica quickpay_replica
