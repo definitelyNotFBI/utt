@@ -1,0 +1,2 @@
+add_subdirectory(quickpay)
+add_subdirectory(fullpay)
