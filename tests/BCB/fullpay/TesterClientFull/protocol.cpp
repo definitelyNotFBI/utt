@@ -230,15 +230,16 @@ void protocol::send_tx() {
     auto& current_tx = tx_map[experiment_idx];
     std::stringstream ss;
     ss << current_tx;
+    auto ss_str = ss.str();
 
     auto txhash = current_tx.getHashHex();
     auto qp_len = QuickPayMsg::get_size(txhash.size());
-    auto qp_tx = QuickPayTx::alloc(qp_len, ss.str().size());
+    auto qp_tx = QuickPayTx::alloc(qp_len, ss_str.size());
     auto qp = qp_tx->getQPMsg();
     qp->target_shard_id = 0;
     qp->hash_len = txhash.size();
     std::memcpy(qp->getHashBuf(), txhash.data(), txhash.size());
-    std::memcpy(qp_tx->getTxBuf(), ss.str().data(), ss.str().size());
+    std::memcpy(qp_tx->getTxBuf(), ss_str.data(), ss_str.size());
 
     LOG_DEBUG(logger, "Sending QP Tx:" << std::endl
                         << "target shard id: " << qp->target_shard_id << std::endl
@@ -251,7 +252,7 @@ void protocol::send_tx() {
         conn->out_ss.write((const char*)qp_tx, qp_tx->get_size());
         auto& sock = conn->socket();
         sock.async_send(
-            asio::buffer(conn->out_ss.str(), conn->out_ss.str().size()),
+            asio::buffer(conn->out_ss.str(), qp_tx->get_size()),
             std::bind(&conn_handler::on_tx_send, 
                 conn->shared_from_this(), std::placeholders::_1,
                 std::placeholders::_2));

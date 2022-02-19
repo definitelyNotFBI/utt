@@ -127,9 +127,10 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         auto sig = tx.shareSignCoin(txoIdx, m_params_->my_sk);
         ss << sig << std::endl;
     }
-    outgoing_msg_buf.reserve(ss.str().size());
-    std::memcpy(outgoing_msg_buf.data(), ss.str().data(), ss.str().size());
-    send_response(ss.str().size());
+    auto ss_str = ss.str();
+    outgoing_msg_buf.reserve(ss_str.size());
+    std::memcpy(outgoing_msg_buf.data(), ss_str.data(), ss_str.size());
+    send_response(ss_str.size());
     // auto txhash = concord::util::SHA3_256().digest((uint8_t*)qp_tx, 
     //                                                 qp_tx->get_size());
     // auto qp_len = QuickPayMsg::get_size(txhash.size());
