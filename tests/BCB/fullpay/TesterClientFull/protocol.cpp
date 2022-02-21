@@ -55,8 +55,8 @@ protocol::protocol(io_ctx_t& io_ctx,
 
     // Read genesis files
     auto wallet_filename = config->get(BCB::common::utt_wallet_file_key, 
-                                            std::string("wallets/wallet_")) 
-                                + std::to_string(config->getid());
+                                            std::string()) 
+                                + std::to_string(config->getid() - config->numReplicas);
     LOG_INFO(logger, "Opening wallet file: " << wallet_filename);
 
     std::ifstream utt_wallet_file(wallet_filename);
