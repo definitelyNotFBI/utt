@@ -490,8 +490,9 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   // Setup the response
   // auto response = (SimpleReply_Pay*)outReply;
   // response->header.type = BasicRandomTests::PAY;
-  // response->tx_len = ss.str().size();
-  // std::memcpy(response->getTxBuf(), ss.str().data(), response->tx_len);
+  // auto ss_str = ss.str();
+  // response->tx_len = ss_str.size();
+  // std::memcpy(response->getTxBuf(), ss_str.data(), response->tx_len);
 
   // Copy the request into response 
   // TODO: RSI Bug

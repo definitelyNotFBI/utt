@@ -101,7 +101,8 @@ EcashClient::~EcashClient() {
 //   auto [ctr, empty_coin] = new_coin();
 //   std::stringstream ss;
 //   ss << empty_coin;
-//   auto cc_buf = ss.str().size();
+//   auto ss_str = ss.str();
+//   auto cc_buf = ss_str.size();
 
 //   bft::client::Msg msg;
 //   msg.resize((BasicRandomTests::SimpleMintRequest::getSize(cc_buf)));
@@ -111,7 +112,7 @@ EcashClient::~EcashClient() {
 //   req->val = value;
 //   req->coinId = ctr;
 //   req->cc_buf_len = cc_buf;
-//   std::memcpy(req->getMintBuffer(), ss.str().data(), cc_buf);
+//   std::memcpy(req->getMintBuffer(), ss_str.data(), cc_buf);
 //   // export the message
 //   return msg;
 // }
@@ -277,14 +278,15 @@ bft::client::Msg EcashClient::NewTestPaymentTx() {
 
   std::stringstream ss;
   ss << tx;
-  auto tx_buf_len = ss.str().size();
+  auto ss_str = ss.str();
+  auto tx_buf_len = ss_str.size();
 
   bft::client::Msg msg(BasicRandomTests::SimplePayRequest::getSize(tx_buf_len));
   auto pay_req = (BasicRandomTests::SimplePayRequest*)msg.data();
   pay_req->header.type = BasicRandomTests::PAY;
   pay_req->tx_buf_len = tx_buf_len;
 
-  std::memcpy(pay_req->getTxBuf(),ss.str().data(), tx_buf_len);
+  std::memcpy(pay_req->getTxBuf(),ss_str.data(), tx_buf_len);
   
   return msg;
 }

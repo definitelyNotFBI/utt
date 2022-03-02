@@ -26,4 +26,4 @@ done
 wait
 
 # Cleaning up
-killall -9 client
+killall -9 client simpleutt_client

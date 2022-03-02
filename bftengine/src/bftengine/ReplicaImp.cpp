@@ -454,8 +454,8 @@ PrePrepareMsg *ReplicaImp::createPrePrepareMessage() {
 
   controller->onSendingPrePrepare((primaryLastUsedSeqNum + 1), firstPath);
 
-  std::cout << "Preprepare Msg size: " << KVLOG(primaryCombinedReqSize) 
-            << std::endl;
+  // std::cout << "Preprepare Msg size: " << KVLOG(primaryCombinedReqSize) 
+            // << std::endl;
   if (config_.timeServiceEnabled) {
     auto timeServiceMsg = time_service_manager_->createClientRequestMsg();
     auto pp = new PrePrepareMsg(config_.getreplicaId(),

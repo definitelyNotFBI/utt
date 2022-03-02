@@ -266,6 +266,7 @@ class SimpleTestClient {
 #endif
     // After all requests have been issued, stop communication and clean up.
     client.stop();
+    // Above is not needed, since the destructor does this automatically
     
     LOG_INFO(clientLogger, "test done, iterations: " << cp.numOfOperations);
     return true;
