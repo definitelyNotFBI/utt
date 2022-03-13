@@ -149,6 +149,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
         } break;
         case 'E': {
           replicaConfig.numOfExternalClients = concord::util::to<std::uint16_t>(std::string(optarg));
+          replicaConfig.maxNumOfReservedPages = (2048 * replicaConfig.numOfExternalClients);
         } break;
         case 'k': {
           if (optarg[0] == '-') throw std::runtime_error("invalid argument for --key-file-prefix");
