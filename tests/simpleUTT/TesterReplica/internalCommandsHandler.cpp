@@ -15,6 +15,7 @@
 #include "Logging4cplus.hpp"
 #include "OpenTracing.hpp"
 #include "assertUtils.hpp"
+#include "misc.hpp"
 #include "simpleKVBTestsBuilder.hpp"
 #include "sliver.hpp"
 #include "kv_types.hpp"
@@ -28,6 +29,8 @@
 #include <string>
 #include <variant>
 #include "ReplicaConfig.hpp"
+
+// #define AB_TESTING_PRE_POST_EXEC_TIME
 
 #include "utt/Tx.h"
 
@@ -358,7 +361,9 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
                     char *outReply,
                     uint32_t &outReplySize, 
                     uint32_t &outReplicaSpecificInfoSize) {
-  
+  #ifdef AB_TESTING_PRE_POST_EXEC_TIME
+  auto start = get_monotonic_time();
+  #endif
   auto *writeReq = (SimplePayRequest *)request;
   LOG_INFO(m_logger,
            "PreExecuting Pay command:"
@@ -371,10 +376,10 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
                << " requestSize=" << requestSize
                );
   // Copy the request into response 
-  outReplicaSpecificInfoSize = 0;
-  outReplySize = requestSize;
-  std::memcpy(outReply, request, requestSize);
-  return true;
+  // outReplicaSpecificInfoSize = 0;
+  // outReplySize = requestSize;
+  // std::memcpy(outReply, request, requestSize);
+  // return true;
   
   if(writeReq->getSize() != requestSize) {
     LOG_ERROR(m_logger, "Got invalid size for UTT Pay");
@@ -411,6 +416,10 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   outReplySize = requestSize;
   std::memcpy(outReply, request, requestSize);
   
+  #ifdef AB_TESTING_PRE_POST_EXEC_TIME
+  auto end = get_monotonic_time();
+  std::cout << "Pre-exec time: " << (end-start) << " us" << std::endl;
+  #endif
   return true;
 }
 
@@ -422,6 +431,9 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
                     char *outReply,
                     uint32_t &outReplySize, 
                     uint32_t &outReplicaSpecificInfoSize) {
+  #ifdef AB_TESTING_PRE_POST_EXEC_TIME
+  auto start = get_monotonic_time();
+  #endif
   auto *writeReq = (SimplePayRequest *)request;
   LOG_INFO(m_logger,
            "PostExecuting Pay command:"
@@ -507,6 +519,10 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   std::memset(outReply, 0, 100);
   // std::memset(outReply, 0, response->getSize());
   
+  #ifdef AB_TESTING_PRE_POST_EXEC_TIME
+  auto end = get_monotonic_time();
+  std::cout << "Replica PostExec time: " << (end-start) << " ms"<< std::endl;
+  #endif
   return true;
 }
 
