@@ -24,7 +24,7 @@ struct ClientParams {
   std::string configFileName;
   bool measurePerformance = true;
   uint32_t batch_size = 6;
-  std::string utt_file_name = "wallets/utt_pub_client.dat";
+  std::string utt_file_name = "";
 
   uint16_t get_numOfReplicas() { return (uint16_t)(3 * numOfFaulty + 2 * numOfSlow + 1); }
 };

@@ -69,7 +69,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     replicaConfig.statusReportTimerMillisec = 10 * 1000;
     replicaConfig.preExecutionFeatureEnabled = true;
     replicaConfig.clientBatchingEnabled = true;
-    replicaConfig.maxExternalMessageSize = 3000 * 1024 * 2;
+    replicaConfig.maxExternalMessageSize = 1024 * 1024 * 10;
     replicaConfig.maxBatchSizeInBytes = replicaConfig.maxBatchSizeInBytes*10;
     // replicaConfig.clientBatchingMaxMsgsNbr = 10000;
     replicaConfig.pruningEnabled_ = true;
@@ -149,6 +149,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
         } break;
         case 'E': {
           replicaConfig.numOfExternalClients = concord::util::to<std::uint16_t>(std::string(optarg));
+          replicaConfig.maxNumOfReservedPages = (2048*replicaConfig.numOfExternalClients);
         } break;
         case 'k': {
           if (optarg[0] == '-') throw std::runtime_error("invalid argument for --key-file-prefix");
