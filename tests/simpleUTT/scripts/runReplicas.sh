@@ -32,7 +32,7 @@ fi
 
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $i..."
-    ../TesterReplica/skvbc_replica \
+    ../TesterReplica/simpleutt_replica \
         --key-file-prefix ${REPLICA_PREFIX} \
         --replica-id $i \
         --network-config-file comm_config \

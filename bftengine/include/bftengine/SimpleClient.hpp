@@ -25,14 +25,15 @@
 
 namespace bftEngine {
 struct SimpleClientParams {
-  uint16_t clientInitialRetryTimeoutMilli = 150;
-  uint16_t clientMinRetryTimeoutMilli = 50;
-  uint16_t clientMaxRetryTimeoutMilli = 1000;
+  // Increase and optimize
+  uint16_t clientInitialRetryTimeoutMilli = 1500;
+  uint16_t clientMinRetryTimeoutMilli = 500;
+  uint16_t clientMaxRetryTimeoutMilli = 10000;
   uint16_t numberOfStandardDeviationsToTolerate = 2;
   uint16_t samplesPerEvaluation = 32;
   uint16_t samplesUntilReset = 1000;
-  uint16_t clientSendsRequestToAllReplicasFirstThresh = 2;
-  uint16_t clientSendsRequestToAllReplicasPeriodThresh = 2;
+  uint16_t clientSendsRequestToAllReplicasFirstThresh = 200;
+  uint16_t clientSendsRequestToAllReplicasPeriodThresh = 200;
   uint16_t clientPeriodicResetThresh = 30;
 };
 

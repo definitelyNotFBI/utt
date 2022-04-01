@@ -115,6 +115,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
       {"network-config-file",           required_argument, 0, 'n'},
       {"operator-public-key-path",      optional_argument, 0, 'o'},
       {"principals-mapping",            optional_argument, 0, 'p'},
+      {"post-exec-thread-pool",         optional_argument, 0, 'P'},
       {"consensus-batching-max-req-num", 
                                         required_argument, 0, 'q'},
       {"cron-entry-number-of-executes", optional_argument, 0, 'r'},
@@ -137,7 +138,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
     LOG_INFO(GL, "Command line options:");
     while ((o = getopt_long(
                 argc, argv, 
-                "3:a:b:B:c:de:E:f:g:i:j:J:k:l:m:n:o:p:q:r:s:t:uU:v:w:xy:Y:z:", 
+                "3:a:b:B:c:de:E:f:g:i:j:J:k:l:m:n:o:p:P:q:r:s:t:uU:v:w:xy:Y:z:", 
                 longOptions, &optionIndex)) != -1) {
       switch (o) {
         case 'i': {
@@ -197,6 +198,13 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char** argv) {
           if (internalThreadPool < 1)
             throw std::runtime_error{"invalid argument for --internal-thread-pool"};
           replicaConfig.sizeOfInternalThreadPool = internalThreadPool;
+        } break;
+        case 'P': {
+          const auto postExecThreadPool = concord::util::to<std::uint16_t>(std::string(optarg));
+          if (postExecThreadPool < 1)
+            throw std::runtime_error{"invalid argument for --post-exec-thread-pool"};
+          replicaConfig.sizeOfPostExecThreadPool = postExecThreadPool;
+
         } break;
         case 'J': {
           const auto rocksdbPool = concord::util::to<std::uint16_t>(std::string(optarg));

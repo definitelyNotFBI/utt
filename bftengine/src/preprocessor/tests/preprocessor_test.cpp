@@ -109,6 +109,8 @@ class DummyReplica : public InternalReplicaApi {
 
   IncomingMsgsStorage& getIncomingMsgsStorage() override { return *incomingMsgsStorage_; }
   util::SimpleThreadPool& getInternalThreadPool() override { return pool_; }
+  // For the dummy replica, the post execution pool is the same as the internal thread pool
+  util::SimpleThreadPool& getPostExecutionThreadPool() override { return pool_; }
   bool isCollectingState() const override { return false; }
 
   const ReplicaConfig& getReplicaConfig() const override { return replicaConfig; }

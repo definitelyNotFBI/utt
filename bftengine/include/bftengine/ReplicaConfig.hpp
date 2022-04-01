@@ -59,6 +59,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
   CONFIG_PARAM(numOfClientProxies, uint16_t, 0, "number of objects that represent clients, numOfClientProxies >= 1");
   CONFIG_PARAM(numOfExternalClients, uint16_t, 0, "number of objects that represent external clients");
   CONFIG_PARAM(sizeOfInternalThreadPool, uint16_t, 8, "number of threads in the internal replica thread pool");
+  CONFIG_PARAM(sizeOfPostExecThreadPool, uint16_t, 8, "number of threads in the post execution thread pool");
   CONFIG_PARAM(statusReportTimerMillisec, uint16_t, 0, "how often the replica sends a status report to other replicas");
   CONFIG_PARAM(concurrencyLevel,
                uint16_t,
@@ -262,6 +263,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
     serialize(outStream, keyExchangeOnStart);
     serialize(outStream, blockAccumulation);
     serialize(outStream, sizeOfInternalThreadPool);
+    serialize(outStream, sizeOfPostExecThreadPool);
     serialize(outStream, keyViewFilePath);
     serialize(outStream, timeServiceEnabled);
     serialize(outStream, timeServiceHardLimitMillis);
@@ -331,6 +333,7 @@ class ReplicaConfig : public concord::serialize::SerializableFactory<ReplicaConf
     deserialize(inStream, keyExchangeOnStart);
     deserialize(inStream, blockAccumulation);
     deserialize(inStream, sizeOfInternalThreadPool);
+    deserialize(inStream, sizeOfPostExecThreadPool);
     deserialize(inStream, keyViewFilePath);
     deserialize(inStream, timeServiceEnabled);
     deserialize(inStream, timeServiceHardLimitMillis);
@@ -407,7 +410,8 @@ inline std::ostream& operator<<(std::ostream& os, const ReplicaConfig& rc) {
               rc.timeServiceEpsilonMillis.count(),
               rc.numWorkerThreadsForBlockIO);
   os << ",";
-  os << KVLOG(rc.batchedPreProcessEnabled);
+  os << KVLOG(rc.batchedPreProcessEnabled,
+              rc.sizeOfPostExecThreadPool);
 
   for (auto& [param, value] : rc.config_params_) os << param << ": " << value << "\n";
   return os;

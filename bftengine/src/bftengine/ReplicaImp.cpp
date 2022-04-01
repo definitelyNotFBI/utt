@@ -25,6 +25,7 @@
 #include "diagnostics.h"
 #include "TimeUtils.hpp"
 #include "json_output.hpp"
+#include "UTTPostExecution.hpp"
 
 #include "messages/ClientRequestMsg.hpp"
 #include "messages/PrePrepareMsg.hpp"
@@ -3608,6 +3609,7 @@ ReplicaImp::ReplicaImp(const LoadedReplicaData &ld,
   }
 
   internalThreadPool.start(config_.getsizeOfInternalThreadPool());
+  postExecutionThreadPool.start(config_.getsizeOfPostExecThreadPool());
 }
 
 ReplicaImp::ReplicaImp(const ReplicaConfig &config,
@@ -4272,6 +4274,7 @@ void ReplicaImp::executeRequestsAndSendResponses(PrePrepareMsg *ppMsg,
       singleRequest.clear();
     }
   }
+  // AB: Here, we have finished executing all the requests
   for (auto &req : accumulatedRequests) {
     ConcordAssertGT(req.outActualReplySize,
                     0);  // TODO(GG): TBD - how do we want to support empty replies? (actualReplyLength==0)
@@ -4281,11 +4284,14 @@ void ReplicaImp::executeRequestsAndSendResponses(PrePrepareMsg *ppMsg,
       LOG_WARN(CNSUS, "Request execution failed: " << KVLOG(req.clientId, requestSeqNum, ppMsg->getCid()));
     } else {
       if (req.flags & HAS_PRE_PROCESSED_FLAG) metric_total_preexec_requests_executed_++;
+
       auto replyMsg = clientsManager->allocateNewReplyMsgAndWriteToStorage(
           req.clientId, req.requestSequenceNum, currentPrimary(), req.outReply, req.outActualReplySize);
       replyMsg->setReplicaSpecificInfoLength(req.outReplicaSpecificInfoSize);
       free(req.outReply);
-      send(replyMsg.get(), req.clientId);
+      auto j = new AsyncUTTPostExecution(this, std::move(replyMsg), req.clientId);
+      this->getPostExecutionThreadPool().add(j);
+      // send(replyMsg.get(), req.clientId);
     }
     if (clientsManager->isValidClient(req.clientId))
       clientsManager->removePendingForExecutionRequest(req.clientId, req.requestSequenceNum);

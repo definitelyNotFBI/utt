@@ -47,6 +47,7 @@ class PreProcessResultMsg;
 }
 namespace bftEngine::impl {
 
+class AsyncUTTPostExecution;
 class ClientRequestMsg;
 class ClientReplyMsg;
 class PrePrepareMsg;
@@ -72,6 +73,7 @@ using concordMetrics::GaugeHandle;
 using concordMetrics::CounterHandle;
 using concordMetrics::StatusHandle;
 
+
 class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
  protected:
   const bool viewChangeProtocolEnabled;
@@ -82,6 +84,9 @@ class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
 
   // thread pool of this replica
   util::SimpleThreadPool internalThreadPool;  // TODO(GG): !!!! rename
+
+  // thread pool for post-execution (added by AB for UTT development)
+  util::SimpleThreadPool postExecutionThreadPool;  // TODO(GG): !!!! rename
 
   // retransmissions manager (can be disabled)
   RetransmissionsManager* retransmissionsManager = nullptr;
@@ -350,6 +355,7 @@ class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
 
   friend class DebugStatistics;
   friend class PreProcessor;
+  friend class AsyncUTTPostExecution;
 
   // Generate diagnostics status replies
   std::string getReplicaState() const;
@@ -442,6 +448,8 @@ class ReplicaImp : public InternalReplicaApi, public ReplicaForStateTransfer {
   IncomingMsgsStorage& getIncomingMsgsStorage() override;
 
   virtual util::SimpleThreadPool& getInternalThreadPool() override { return internalThreadPool; }
+
+  virtual util::SimpleThreadPool& getPostExecutionThreadPool() override { return postExecutionThreadPool; }
 
   const ReplicaConfig& getReplicaConfig() const override { return config_; }
 

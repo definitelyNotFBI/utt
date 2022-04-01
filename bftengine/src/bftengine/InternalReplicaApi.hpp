@@ -51,6 +51,7 @@ class InternalReplicaApi  // TODO(GG): rename + clean + split to several classes
 
   virtual IncomingMsgsStorage& getIncomingMsgsStorage() = 0;
   virtual util::SimpleThreadPool& getInternalThreadPool() = 0;
+  virtual util::SimpleThreadPool& getPostExecutionThreadPool() = 0;
 
   virtual bool isCollectingState() const = 0;
 
