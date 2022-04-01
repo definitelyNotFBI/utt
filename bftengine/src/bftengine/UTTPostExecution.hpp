@@ -20,7 +20,17 @@ virtual ~AsyncUTTPostExecution(){};
 
 // Code to execute on committing
 virtual void execute() override {
-    me->send(this->ReplyMsg.get(), this->client_id);
+    // me->send(this->ReplyMsg.get(), this->client_id);
+    auto dest = this->client_id;
+    if (me->clientsManager->isInternal(dest)) {
+        LOG_DEBUG(GL, "Not sending reply to internal client id - " << dest);
+        return;
+    }
+    auto m = this->ReplyMsg.get();
+    MsgCode::Type type = static_cast<MsgCode::Type>(m->type());
+    if (me->msgsCommunicator_->sendAsyncMessage(dest, m->body(), m->size())) {
+        LOG_ERROR(MSGS, "sendAsyncMessage failed: " << KVLOG(type, dest));
+    }
 }
 
 // What to do on finishing
