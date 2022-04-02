@@ -13,6 +13,13 @@
 
 #pragma once
 
+#include <shared_mutex>
+
+typedef std::shared_mutex Lock;
+typedef std::unique_lock< Lock >  WriteLock;
+typedef std::shared_lock< Lock >  ReadLock;
+
+
 #include <fstream>
 #include <memory>
 #include <chrono>
@@ -136,6 +143,9 @@ class InternalCommandsHandler : public concord::kvbc::ICommandsHandler {
       concord::kvbc::categorization::BlockMerkleUpdates &blockAccumulatedMerkleUpdates) const;
 
  private:
+  Lock signatureBufferLock;
+  std::unordered_map<std::string, std::string> signatureBuffer;
+
   concord::kvbc::IReader *m_storage;
   concord::kvbc::IBlockAdder *m_blockAdder;
   concord::kvbc::IBlockMetadata *m_blockMetadata;

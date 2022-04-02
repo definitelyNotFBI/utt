@@ -421,6 +421,18 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   auto end = get_monotonic_time();
   std::cout << "Pre-exec time: " << (end-start) << " us" << std::endl;
   #endif
+
+  ss.str(std::string{});
+  for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
+    auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
+    ss << sig << std::endl;
+  }
+  std::string const txhash = tx.getHashHex();
+  {
+    ReadLock r_lock(this->signatureBufferLock);
+    // Do reader stuff
+    signatureBuffer.emplace(tx.getHashHex(), ss.str());
+  }
   return true;
 }
 
