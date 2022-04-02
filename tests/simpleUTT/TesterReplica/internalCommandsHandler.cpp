@@ -429,7 +429,7 @@ bool InternalCommandsHandler::preExecutePay(uint32_t requestSize,
   }
   std::string const txhash = tx.getHashHex();
   {
-    ReadLock r_lock(this->signatureBufferLock);
+    WriteLock w_lock(this->signatureBufferLock);
     // Do reader stuff
     signatureBuffer.emplace(tx.getHashHex(), ss.str());
   }
