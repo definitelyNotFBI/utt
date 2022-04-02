@@ -447,15 +447,15 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
                << " requestSize=" << requestSize
                );
   
-  // std::stringstream ss;
-  // ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
-  // libutt::Tx tx(ss);
+  std::stringstream ss;
+  ss.write(reinterpret_cast<const char*>(writeReq->getTxBuf()), writeReq->tx_buf_len);
+  libutt::Tx tx(ss);
   // The transaction was validated during pre-execution
   // Done: Check again if the nullifier was updated
   std::string value;
   bool found;
-  // for(auto& null: tx.getNullifiers()) {
-  for(auto& null: {"test", "test", "test"}) {
+  for(auto& null: tx.getNullifiers()) {
+  // for(auto& null: {"test", "test", "test"}) {
     bool key_may_exist = client->rawDB().KeyMayExist(
                                           rocksdb::ReadOptions{}, 
                                           client->defaultColumnFamilyHandle(), 
@@ -484,24 +484,24 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   }
 
   // Clear and serialize the new tx
-  // ss.str(std::string());
+  ss.str(std::string());
 
   // DONE: Process the tx (The coins are still unspent)
   // Testing: Remove this and see if we can get better throughput
   // REMOVE ALL TX RELATED OPERATIONS FROM POST EXECUTION TO SEE IF THIS IS THE BOTTLENECK
-  // for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
-  //   auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
-  //   ss << sig << std::endl;
-  // }
+  for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
+    auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
+    ss << sig << std::endl;
+  }
 
   // Add nullifiers to the DB
-  // for(auto& null: tx.getNullifiers()) {
-  //   // HACK so that the client can re-use the same coin for testing
-  //   auto num = val.fetch_add(1);
-  //   auto str = null + std::to_string(num);
-  //   LOG_DEBUG(m_logger, "Atomic Pointer Str: " << str);
-  //   client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
-  // }
+  for(auto& null: tx.getNullifiers()) {
+    // HACK so that the client can re-use the same coin for testing
+    auto num = val.fetch_add(1);
+    auto str = null + std::to_string(num);
+    LOG_DEBUG(m_logger, "Atomic Pointer Str: " << str);
+    client->rawDB().Put(rocksdb::WriteOptions{}, str, str);
+  }
 
   // Setup the response
   // auto response = (SimpleReply_Pay*)outReply;
