@@ -454,8 +454,8 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   // Done: Check again if the nullifier was updated
   std::string value;
   bool found;
-  for(auto& null: tx.getNullifiers()) {
-  // for(auto& null: {"test", "test", "test"}) {
+  // for(auto& null: tx.getNullifiers()) {
+  for(auto& null: {"test", "test", "test"}) {
     bool key_may_exist = client->rawDB().KeyMayExist(
                                           rocksdb::ReadOptions{}, 
                                           client->defaultColumnFamilyHandle(), 
@@ -489,10 +489,10 @@ bool InternalCommandsHandler::postExecutePay(uint32_t requestSize,
   // DONE: Process the tx (The coins are still unspent)
   // Testing: Remove this and see if we can get better throughput
   // REMOVE ALL TX RELATED OPERATIONS FROM POST EXECUTION TO SEE IF THIS IS THE BOTTLENECK
-  for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
-    auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
-    ss << sig << std::endl;
-  }
+  // for(size_t txoIdx = 0; txoIdx < tx.outs.size(); txoIdx++) {
+    // auto sig = tx.shareSignCoin(txoIdx, mParams_->my_sk);
+    // ss << sig << std::endl;
+  // }
 
   // Add nullifiers to the DB
   for(auto& null: tx.getNullifiers()) {
