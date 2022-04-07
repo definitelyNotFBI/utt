@@ -139,6 +139,13 @@ bool conn_handler::check_mint_request(const MintMsg* mint_tx,
             }
         }
     }
+    //.Is the tx valid?
+    if(!tx.validate(m_params_->p, m_params_->main_pk, m_params_->reg_pk)) 
+    {
+        LOG_ERROR(logger, "tx validation failed");
+        return false;
+    }
+
 
     // Is it spent already? Check DB
     std::string value;
