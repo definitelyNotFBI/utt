@@ -23,27 +23,51 @@ void conn_handler::on_new_conn(const asio::error_code err) {
     m_proto_->add_connection(shared_from_this());
 }
 
-void conn_handler::on_tx_send(const asio::error_code& err, size_t sent) {
+void conn_handler::on_burn_send(const asio::error_code& err, size_t sent) {
     if (err) {
-        LOG_ERROR(logger, "Failed to send message to replica" << getid() 
+        LOG_ERROR(logger, "Failed to send burn message to replica" << getid() 
                                 << " in shard " << shard_id);
     } else {
         LOG_INFO(logger, "Successfully sent " << sent 
-                            << "message to replica" << getid() 
+                            << " burn message to replica" << getid() 
                             << " in shard" << shard_id);
     }
 }
 
-void conn_handler::on_tx_response(const asio::error_code& err, size_t got) {
+void conn_handler::on_mint_send(const asio::error_code& err, size_t sent) {
     if (err) {
-        LOG_ERROR(logger, "Failed to receive message from replica " << getid() << " with error: " << err.message());
+        LOG_ERROR(logger, "Failed to send mint message to replica" << getid() 
+                                << " in shard " << shard_id);
+    } else {
+        LOG_INFO(logger, "Successfully sent " << sent 
+                            << " mint message to replica" << getid() 
+                            << " in shard" << shard_id);
+    }
+}
+
+void conn_handler::on_burn_response(const asio::error_code& err, size_t got) {
+    if (err) {
+        LOG_ERROR(logger, "Failed to receive burn message from replica " << getid() << " with error: " << err.message());
         return;
     } else {
-        LOG_INFO(logger, "Successfully received " << got << " message from replica " << getid());
+        LOG_INFO(logger, "Successfully received " << got << " burn message from replica " << getid());
     }
     LOG_INFO(logger, "Got " << got << 
                         " from replica " << getid());
-    m_proto_->add_response(replica_msg_buf.data(), got, getid(), shard_id);
+    m_proto_->add_burn_response(replica_msg_buf.data(), got, getid(), shard_id);
 }
+
+void conn_handler::on_mint_response(const asio::error_code& err, size_t got) {
+    if (err) {
+        LOG_ERROR(logger, "Failed to receive mint message from replica " << getid() << " with error: " << err.message());
+        return;
+    } else {
+        LOG_INFO(logger, "Successfully received " << got << " mint message from replica " << getid());
+    }
+    LOG_INFO(logger, "Got " << got << 
+                        " from replica " << getid());
+    m_proto_->add_mint_response(replica_msg_buf.data(), got, getid(), shard_id);
+}
+
 
 } // namespace sharding::client

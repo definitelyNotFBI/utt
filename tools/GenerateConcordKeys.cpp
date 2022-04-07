@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
     }
 
     // Check that required parameters were actually given.
-    if (config.fVal == 0) throw std::runtime_error("No value given for required -f parameter");
+    // if (config.fVal == 0) throw std::runtime_error("No value given for required -f parameter");
     if (n == 0) throw std::runtime_error("No value given for required -n parameter");
     if (outputPrefix.empty()) throw std::runtime_error("No value given for required -o parameter");
 

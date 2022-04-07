@@ -77,12 +77,16 @@ public:
     // Read data from clients
     void do_read(const asio::error_code& err, size_t bytes);
 
+    // Handle requests
+    void handle_burn_request();
+    void handle_mint_request();
+
     // Send the replica of the response
     void send_response(size_t);
 
 private:
     bool check_burn_request(const BurnMsg*, const libutt::Tx& tx);
-    bool check_mint_request(const MintMsg* qp_tx, const libutt::Tx& tx);
+    bool check_mint_request(const MintMsg*, const libutt::Tx& tx, const MintProof& proof, const char* tx_data, size_t tx_len);
 
 private:
     sock_t mSock_;

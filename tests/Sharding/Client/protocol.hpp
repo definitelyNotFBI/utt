@@ -103,13 +103,16 @@ public:
     void add_connection(sharding::client::conn_handler_ptr conn_ptr);
 
     // Adds a response
-    void add_response(uint8_t* ptr, size_t data, uint16_t id,size_t shard_id);
+    void add_burn_response(uint8_t* ptr, size_t data, uint16_t id,size_t shard_id);
+    void add_mint_response(uint8_t* ptr, size_t data, uint16_t id,size_t shard_id);
 
     // Start the experiment
     void start_experiments();
 
     // Send the transaction
-    void send_tx();
+    void send_burn_tx();
+    void send_mint_tx(std::unordered_map<size_t, std::vector<sharding::common::Response>>&& responses);
+
     void on_timeout(const asio::error_code& err);
     void on_tx_timeout(const asio::error_code err);
 };

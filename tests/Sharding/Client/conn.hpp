@@ -41,14 +41,14 @@ public:
             {}
 
     // creating a pointer
-    static sharding::client::conn_handler_ptr create(io_ctx_t& io_ctx, 
+    static conn_handler_ptr create(io_ctx_t& io_ctx, 
                     uint16_t id, 
                     std::shared_ptr<sharding::common::PublicKeyMap> pk_map,
                     size_t shard_id,
                     std::shared_ptr<sharding::client::protocol> proto
                 )
     {
-        return sharding::client::conn_handler_ptr(new conn_handler(io_ctx, id, pk_map, shard_id, proto));
+        return conn_handler_ptr(new conn_handler(io_ctx, id, pk_map, shard_id, proto));
     }
 
     // things to do when we have a new connection
@@ -58,9 +58,11 @@ public:
     void start_conn();
 
     // to call after sending a transaction
-    void on_tx_send(const asio::error_code& err, size_t sen);
+    void on_burn_send(const asio::error_code& err, size_t sen);
+    void on_mint_send(const asio::error_code& err, size_t sen);
     // to call after receiving a response for a transaction
-    void on_tx_response(const asio::error_code& err, size_t sen);
+    void on_burn_response(const asio::error_code& err, size_t sen);
+    void on_mint_response(const asio::error_code& err, size_t sen);
 
     // Perform reading
     void do_read();

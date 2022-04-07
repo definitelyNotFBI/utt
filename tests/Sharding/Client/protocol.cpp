@@ -118,17 +118,20 @@ void protocol::on_timeout(const asio::error_code& err) {
         return;
     }
     LOG_INFO(logger, "Connection Timed out");
+    // TODO: Fix Partial connections handling on timeout
+    auto config = ClientConfig::Get();
     auto num_connections = 0ul;
     {
         m_conn_mutex_.lock();
-        num_connections = m_conn_.size();
+        num_connections = num_conns;
         m_conn_mutex_.unlock();
     }
-    if (num_connections == m_node_map_.size()) {
+    if (num_connections == config->numReplicas*config->num_shards) {
         return;
     }
     LOG_INFO(logger, "Got only " << num_connections 
                     << ". Attempting to proceed with partial connections");
+    // TODO: Fix number of expected connections
     auto expected_conns = m_node_map_.size()-ClientConfig::Get()->getfVal();
     if (num_connections < expected_conns) {
         LOG_FATAL(logger, "Expected " << expected_conns << ", got " << num_connections);
@@ -138,7 +141,7 @@ void protocol::on_timeout(const asio::error_code& err) {
 
 void protocol::on_tx_timeout(const asio::error_code err) {
     if (err == asio::error::operation_aborted) {
-        LOG_ERROR(logger, "Aborted tx timer");
+        LOG_DEBUG(logger, "Aborted tx timer");
         return;
     }
     LOG_INFO(logger, "tx Timed out");
@@ -206,12 +209,82 @@ void protocol::start_experiments() {
 
     experiment_idx = num_ops;
     throughput_begin = get_monotonic_time();
-    send_tx();
+    send_burn_tx();
+}
+
+void protocol::send_mint_tx(std::unordered_map<size_t, std::vector<sharding::common::Response>>&& responses) {
+    auto* config = ClientConfig::Get();
+    LOG_INFO(logger, "Transaction (Mint) #" << experiment_idx);
+
+    auto& current_tx = tx_map[experiment_idx];
+    // Get responsible shards
+    // DONE: target_shard_id
+    size_t target_shard_id = 
+        (config->id - config->numReplicas)% config->num_shards;
+    // Send only to the shards responsible
+    for(auto& [replica_id, conn]: m_conn_[target_shard_id]) {
+        auto& sock = conn->socket();
+        sock.async_receive(asio::buffer(conn->replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
+                            std::bind(&conn_handler::on_mint_response,
+                                    conn->shared_from_this(),
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+    }
+
+    std::stringstream ss, resp_ss;
+    ss << current_tx;
+    auto ss_str = ss.str();
+    MintProof proof{responses};
+    resp_ss << proof;
+    std::stringstream test_ss(resp_ss.str());
+    MintProof proof2;
+    test_ss >> proof2;
+    assert(deep_compare(proof, proof2));
+    auto resp_str = resp_ss.str();
+
+    auto mint_req_len = MintMsg::get_size(ss_str.size(), resp_str.size());
+    auto msg_len = Msg::get_size(mint_req_len);
+    out_msg_buf.resize(msg_len);
+    Msg* msg = (Msg*)out_msg_buf.data();
+    msg->tp = MsgType::MINT_REQUEST;
+    msg->msg_len = mint_req_len;
+    MintMsg* mint_msg = msg->get_msg<MintMsg>();
+    // DONE: Randomize shard id based on client id
+    mint_msg->tx_len = ss_str.size();
+    mint_msg->proof_len = resp_str.size();
+    std::memcpy(mint_msg->get_tx_buf_ptr(), ss_str.data(), ss_str.size());
+    std::memcpy(mint_msg->get_proof_buf_ptr(), resp_str.data(), resp_str.size());
+
+    LOG_DEBUG(logger, "Sending Sharding mint request:" << std::endl
+                        << "target shard id: " << target_shard_id << std::endl
+    );
+
+    responses_waiting = config->numReplicas;
+    LOG_INFO(logger, "Waiting for " << responses_waiting << " mint replies");
+
+    // DONE: Send to only the shards responsible
+    for(auto& [replica_id, conn]: m_conn_[target_shard_id]) {
+        // Reset the stream
+        conn->out_ss.str("");
+        conn->out_ss.write((const char*)msg, msg_len);
+        auto& sock = conn->socket();
+        sock.async_send(
+            asio::buffer(conn->out_ss.str(), msg->get_size()),
+            std::bind(
+                &conn_handler::on_mint_send, conn->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+    }
+
+    using namespace std::chrono_literals;
+    // Started all the connections, lets wait for some time
+    tx_timer.expires_after(60s);
+    tx_timer.async_wait(std::bind(&protocol::on_tx_timeout, 
+            shared_from_this(), std::placeholders::_1));
+
 }
 
 // Sends the tx and waits for n-f responses or a timeout
 // TODO:
-void protocol::send_tx() {
+void protocol::send_burn_tx() {
     auto* config = ClientConfig::Get();
     if (experiment_idx == 0) {
         // Log histogram
@@ -249,7 +322,7 @@ void protocol::send_tx() {
         for(auto& [replica_id, conn]: conn_map) {
           auto& sock = conn->socket();
           sock.async_receive(asio::buffer(conn->replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
-                             std::bind(&conn_handler::on_tx_response,
+                             std::bind(&conn_handler::on_burn_response,
                                        conn->shared_from_this(),
                                        std::placeholders::_1,
                                        std::placeholders::_2));
@@ -299,7 +372,7 @@ void protocol::send_tx() {
           sock.async_send(
               asio::buffer(conn->out_ss.str(), msg->get_size()),
               std::bind(
-                  &conn_handler::on_tx_send, conn->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
+                  &conn_handler::on_burn_send, conn->shared_from_this(), std::placeholders::_1, std::placeholders::_2));
         }
     }
 
@@ -311,31 +384,15 @@ void protocol::send_tx() {
 
 }
 
-void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t shard_id)
+void protocol::add_mint_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t shard_id)
 {
     auto end = get_monotonic_time();
-    LOG_INFO(logger, "Adding " << num_bytes << " of response from " << id);
-    // Verify transactions
-    auto config = ClientConfig::Get();
-    auto verif = config->pk_map->at(shard_id)[id];
-    assert(verif != nullptr);
-    Msg* original_msg = (Msg*)out_msg_buf.data();
-    BurnMsg* burn_msg = original_msg->get_msg<BurnMsg>();
-    auto txhash = concord::util::SHA3_256().digest((uint8_t*)burn_msg, 
-                                                    burn_msg->get_size());
-    
     Msg* msg = (Msg*)ptr;
-    if(msg->tp != MsgType::BURN_RESPONSE) {
-        LOG_ERROR(logger, "Got an invalid type message as response");
-    }
-    BurnResponse* burn_resp = msg->get_msg<BurnResponse>();
-    if(verif->signatureLength() != burn_resp->sig_len) {
-        LOG_WARN(logger, "Got invalid signature length: Exp " << verif->signatureLength() << ", got " << burn_resp->sig_len);
-    }
-    if(!verif->verify((const char*)txhash.data(), txhash.size(), (const char*)burn_resp->get_sig_buf_ptr(), burn_resp->sig_len)) {
-        LOG_WARN(logger, "Signature check failed");
+    if(msg->tp != MsgType::MINT_RESPONSE) {
+        LOG_ERROR(logger, "Got an invalid mint response type message as response");
     }
 
+    // DONE: Add response to the matcher
     size_t num_responses = 0;
     {
         m_resp_mtx_.lock();
@@ -343,16 +400,16 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t 
         num_responses = matched_response.size();
         m_resp_mtx_.unlock();
     }
+
     if (num_responses != responses_waiting) {
         return;
     }
+
     LOG_INFO(logger, "Got all " << responses_waiting << " responses");
     LOG_INFO(logger, "Cancelling the tx timer");
     tx_timer.cancel();
 
     std::unordered_map<size_t, std::vector<sharding::common::Response>> responses;
-    // Do something with the responses
-    // TODO:
 
     {
         m_resp_mtx_.lock();
@@ -360,7 +417,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t 
         responses = matched_response.clear();
         m_resp_mtx_.unlock();
     }
-
+    // If part 2, do this
     auto elapsed = end - begin;
 
     {
@@ -369,7 +426,64 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t 
         m_metric_mtx_.unlock();
     }
     LOG_INFO(logger, "Finished a transaction");
-    send_tx();
+    send_burn_tx();
+
 }
 
-} // namespace quickpay::replica
+void protocol::add_burn_response(uint8_t *ptr, size_t num_bytes, uint16_t id, size_t shard_id)
+{
+    LOG_INFO(logger, "Adding " << num_bytes << " of response from " << id);
+    // Verify transactions
+    auto config = ClientConfig::Get();
+    auto verif = config->pk_map->at(shard_id)[id];
+    assert(verif != nullptr);
+    Msg* original_msg = (Msg*)out_msg_buf.data();
+    BurnMsg* burn_msg = original_msg->get_msg<BurnMsg>();
+    auto txhash2 = concord::util::SHA3_256().digest(
+                                (uint8_t*)burn_msg->get_tx_buf_ptr(), 
+                                burn_msg->tx_len);
+    ResponseData data{burn_msg->target_shard_id, txhash2};
+    auto txhash = concord::util::SHA3_256().digest((uint8_t*)&data, 
+                                                    sizeof(data));
+    Msg* msg = (Msg*)ptr;
+    if(msg->tp != MsgType::BURN_RESPONSE) {
+        LOG_ERROR(logger, "Got an invalid type message as response");
+    }
+    BurnResponse* burn_resp = msg->get_msg<BurnResponse>();
+    if(verif->signatureLength() != burn_resp->sig_len) {
+        LOG_WARN(logger, "Got invalid signature length: Exp " << verif->signatureLength() << ", got " << burn_resp->sig_len);
+    }
+
+    if(!verif->verify((const char*)txhash.data(), txhash.size(), (const char*)burn_resp->get_sig_buf_ptr(), burn_resp->sig_len)) {
+        LOG_WARN(logger, "Signature check failed");
+    }
+
+    size_t num_responses = 0;
+    {
+        m_resp_mtx_.lock();
+        matched_response.add(id, (uint8_t*)burn_resp, msg->msg_len, shard_id);
+        num_responses = matched_response.size();
+        m_resp_mtx_.unlock();
+    }
+
+    if (num_responses != responses_waiting) {
+        return;
+    }
+
+    LOG_INFO(logger, "Got all " << responses_waiting << " responses");
+    LOG_INFO(logger, "Cancelling the tx timer");
+    tx_timer.cancel();
+
+    std::unordered_map<size_t, std::vector<sharding::common::Response>> responses;
+
+    {
+        m_resp_mtx_.lock();
+        // swap the responses with empty responses
+        responses = matched_response.clear();
+        m_resp_mtx_.unlock();
+    }
+
+    send_mint_tx(std::move(responses));
+}
+
+} // namespace sharding::client
