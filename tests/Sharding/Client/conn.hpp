@@ -75,6 +75,7 @@ private:
     std::stringstream out_ss;
     // A buffer to collect messages from the connected replica
     std::vector<uint8_t> replica_msg_buf;
+    size_t bytes_received_so_far = 0;
     std::shared_ptr<sharding::common::PublicKeyMap> pk_map;
 
 private:

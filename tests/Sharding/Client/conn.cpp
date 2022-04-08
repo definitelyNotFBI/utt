@@ -3,6 +3,7 @@
 
 #include "Logging4cplus.hpp"
 #include "conn.hpp"
+#include "msg/ShardTx.hpp"
 #include "protocol.hpp"
 
 namespace sharding::client {
@@ -52,8 +53,42 @@ void conn_handler::on_burn_response(const asio::error_code& err, size_t got) {
     } else {
         LOG_INFO(logger, "Successfully received " << got << " burn message from replica " << getid());
     }
+    // Ensure that the full message has arrived
+    // TODO:
+
     LOG_INFO(logger, "Got " << got << 
                         " from replica " << getid());
+    bytes_received_so_far += got;
+    if(bytes_received_so_far < sizeof(Msg)) {
+        LOG_WARN(logger, "Did not receive sufficient bytes [" 
+                            << bytes_received_so_far << "] for a Msg header[" 
+                            << sizeof(Msg) << "], will try again");
+        // arm the connection for the next time it is called
+        mSock_.async_receive(asio::buffer(replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
+                            std::bind(&conn_handler::on_burn_response,
+                                    shared_from_this(),
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+
+        return;
+    }
+
+    auto* msg = (const Msg*)replica_msg_buf.data();
+    if (bytes_received_so_far < msg->get_size()) {
+        LOG_WARN(logger, "Did not receive sufficient bytes [" 
+                            << bytes_received_so_far << "] for a full msg"
+                            << msg->get_size() <<", will try again");
+        // rearm the connection
+        mSock_.async_receive(asio::buffer(replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
+                            std::bind(&conn_handler::on_burn_response,
+                                    shared_from_this(),
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+        return;
+    }
+    // We have the full message
+    bytes_received_so_far -= msg->get_size();
+
     m_proto_->add_burn_response(replica_msg_buf.data(), got, getid(), shard_id);
 }
 
@@ -66,6 +101,38 @@ void conn_handler::on_mint_response(const asio::error_code& err, size_t got) {
     }
     LOG_INFO(logger, "Got " << got << 
                         " from replica " << getid());
+
+
+    bytes_received_so_far += got;
+    if(bytes_received_so_far < sizeof(Msg)) {
+        LOG_WARN(logger, "Did not receive sufficient bytes [" 
+                            << bytes_received_so_far << "] for a Msg header[" 
+                            << sizeof(Msg) << "], will try again");
+        // arm the connection for the next time it is called
+        mSock_.async_receive(asio::buffer(replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
+                            std::bind(&conn_handler::on_mint_response,
+                                    shared_from_this(),
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+
+        return;
+    }
+
+    auto* msg = (const Msg*)replica_msg_buf.data();
+    if (bytes_received_so_far < msg->get_size()) {
+        LOG_WARN(logger, "Did not receive sufficient bytes [" 
+                            << bytes_received_so_far << "] for a full msg"
+                            << msg->get_size() <<", will try again");
+        // rearm the connection
+        mSock_.async_receive(asio::buffer(replica_msg_buf.data(), sharding::common::REPLICA_MAX_MSG_SIZE),
+                            std::bind(&conn_handler::on_mint_response,
+                                    shared_from_this(),
+                                    std::placeholders::_1,
+                                    std::placeholders::_2));
+        return;
+    }
+    // We have the full message
+    bytes_received_so_far -= msg->get_size();
     m_proto_->add_mint_response(replica_msg_buf.data(), got, getid(), shard_id);
 }
 
