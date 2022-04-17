@@ -45,4 +45,4 @@ struct MatchedResponse {
 
 
 
-} // namespace quickpay::client
+} // namespace BCB::common

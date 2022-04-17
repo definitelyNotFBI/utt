@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 {
     libutt::initialize(nullptr);
 
-    using namespace fullpay::replica;
+    using namespace fullpay::tworound::replica;
 
     auto setup = TestSetup::ParseArgs(argc, argv);
     logging::initLogger(setup->getLogProperties());

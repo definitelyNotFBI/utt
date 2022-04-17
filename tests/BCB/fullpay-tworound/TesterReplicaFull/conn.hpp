@@ -19,7 +19,7 @@
 #include "threshsign/IThresholdSigner.h"
 #include "threshsign/ThresholdSignaturesTypes.h"
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
 /*
  * On connecting to a new client, this is used to establish

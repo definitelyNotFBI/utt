@@ -26,11 +26,12 @@
 #include "histogram.hpp"
 #include "common/defs.hpp"
 #include "conn.hpp"
+#include "protocol.hpp"
 #include "client/Params.hpp"
 #include "utt/Wallet.h"
 #include "utt/Tx.h"
 
-namespace fullpay::client {
+namespace fullpay::tworound::client {
 
 using BCB::common::MatchedResponse;
 

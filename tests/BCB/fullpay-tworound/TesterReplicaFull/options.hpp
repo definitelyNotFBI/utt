@@ -8,7 +8,7 @@
 #include "replica/Params.hpp"
 #include "threshsign/ThresholdSignaturesTypes.h"
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
 const struct option longOptions[] = {
     {"replica-id",                  required_argument, 0, 'i'},
@@ -45,4 +45,4 @@ private:
     std::shared_ptr<Cryptosystem> m_crypsys = nullptr;
 };
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica

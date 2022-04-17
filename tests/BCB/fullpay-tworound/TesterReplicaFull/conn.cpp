@@ -19,7 +19,7 @@
 #include "utt/Tx.h"
 #include "utt/internal/PicoSha2.h"
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
 logging::Logger conn_handler::logger = logging::getLogger("quickpay.replica.conn");
 
@@ -175,4 +175,4 @@ void conn_handler::on_new_conn() {
             std::placeholders::_1, std::placeholders::_2));
 }
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica

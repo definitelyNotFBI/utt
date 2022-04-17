@@ -13,15 +13,16 @@
 #include "client/Params.hpp"
 #include "options.hpp"
 #include "protocol.hpp"
+// #include "protocol.hpp"
 #include "config.hpp"
 
 int main(int argc, char* argv[])
 {
     libutt::initialize(nullptr);
 
-    using namespace fullpay::client;
+    using namespace fullpay::tworound::client;
 
-    auto logger = logging::getLogger("fullpay.client");
+    auto logger = logging::getLogger("fullpay(2R).client");
 
     auto setup = TestSetup::ParseArgs(argc, argv);
     logging::initLogger(setup->getLogProperties());

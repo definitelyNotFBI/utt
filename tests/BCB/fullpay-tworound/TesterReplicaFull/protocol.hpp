@@ -9,10 +9,10 @@
 #include "rocksdb/native_client.h"
 #include "threshsign/ThresholdSignaturesTypes.h"
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
 /*
- * The fullpay protocol for the replicas
+ * The quickpay protocol for the replicas
  */
 class protocol : public std::enable_shared_from_this<protocol>{
     typedef asio::ip::tcp::socket sock_t;
@@ -54,4 +54,4 @@ private:
     void on_performance_timeout(const asio::error_code& err);
 };
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica

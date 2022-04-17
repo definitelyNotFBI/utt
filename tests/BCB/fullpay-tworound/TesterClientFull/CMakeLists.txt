@@ -1,4 +1,4 @@
-add_executable(fullpay_client
+add_executable(fullpay_client2
     main.cpp
     options.cpp
     protocol.cpp
@@ -7,15 +7,14 @@ add_executable(fullpay_client
     ${concord_bft_tools_SOURCE_DIR}/KeyfileIOUtils.cpp
 )
 
-target_include_directories(fullpay_client PUBLIC 
+target_include_directories(fullpay_client2 PUBLIC 
     ${Boost_INCLUDE_DIRS}
-    ../
-    ../../fullpay
+    ../../fullpay-tworound
     ../../../BCB
     ../../../../tests
 )
 
-target_link_libraries(fullpay_client PUBLIC 
-    ${fullpay_libs}
+target_link_libraries(fullpay_client2 PUBLIC 
+    ${fullpay_tworound_libs}
 )
 

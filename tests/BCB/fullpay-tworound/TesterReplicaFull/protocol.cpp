@@ -16,9 +16,9 @@
 #include <string>
 #include <fstream>
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
-logging::Logger protocol::logger = logging::getLogger("fullpay.bft.replica");
+logging::Logger protocol::logger = logging::getLogger("quickpay.bft.replica");
 
 protocol::protocol(asio::io_context& io_ctx, 
                     uint16_t port_num, 
@@ -105,4 +105,4 @@ void protocol::on_new_client(conn_handler_ptr conn, const asio::error_code& err)
     start_accept();
 }
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica

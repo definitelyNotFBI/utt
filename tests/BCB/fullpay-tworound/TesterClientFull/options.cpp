@@ -23,7 +23,7 @@
 #include "common.hpp"
 #include "config.hpp"
 
-namespace fullpay::client {
+namespace fullpay::tworound::client {
 
 void todo(const std::string& msg) {
     throw std::runtime_error("Todo!()" + msg);

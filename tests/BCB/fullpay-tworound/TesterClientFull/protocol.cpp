@@ -39,7 +39,7 @@
 
 #include "config.hpp"
 
-namespace fullpay::client {
+namespace fullpay::tworound::client {
 
 logging::Logger protocol::logger = logging::getLogger("fullpay.bft.client");
 
@@ -304,4 +304,4 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t id)
     send_tx();
 }
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica

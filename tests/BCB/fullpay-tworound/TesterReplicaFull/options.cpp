@@ -16,7 +16,7 @@
 #include "KeyfileIOUtils.hpp"
 #include "yaml_utils.hpp"
 
-namespace fullpay::replica {
+namespace fullpay::tworound::replica {
 
 // Forward declaration
 Cryptosystem* getKeyFile(const std::string& filename);

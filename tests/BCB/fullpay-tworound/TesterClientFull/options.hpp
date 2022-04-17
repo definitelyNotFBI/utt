@@ -10,7 +10,7 @@
 #include "client/Params.hpp"
 #include "threshsign/ThresholdSignaturesTypes.h"
 
-namespace fullpay::client {
+namespace fullpay::tworound::client {
 
 const struct option longOptions[] = {
     {"num-slow",                    required_argument, 0, 'c'},
@@ -60,4 +60,4 @@ private:
     std::shared_ptr<Cryptosystem> m_crypsys = nullptr;
 };
 
-} // namespace fullpay::replica
+} // namespace quickpay::replica
