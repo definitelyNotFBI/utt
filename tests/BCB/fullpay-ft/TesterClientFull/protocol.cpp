@@ -39,7 +39,7 @@
 
 #include "config.hpp"
 
-namespace fullpay::client {
+namespace fullpay::ft::client {
 
 logging::Logger protocol::logger = logging::getLogger("fullpay.bft.client");
 
