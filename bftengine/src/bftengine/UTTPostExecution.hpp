@@ -20,6 +20,7 @@ virtual ~AsyncUTTPostExecution(){};
 
 // Code to execute on committing
 virtual void execute() override {
+    std::cout << "Trying to send something" << std::endl;
     // me->send(this->ReplyMsg.get(), this->client_id);
     auto dest = this->client_id;
     if (me->clientsManager->isInternal(dest)) {
@@ -31,6 +32,7 @@ virtual void execute() override {
     if (me->msgsCommunicator_->sendAsyncMessage(dest, m->body(), m->size())) {
         LOG_ERROR(MSGS, "sendAsyncMessage failed: " << KVLOG(type, dest));
     }
+    std::cout << "Successfully sent something" << std::endl;
 }
 
 // What to do on finishing
