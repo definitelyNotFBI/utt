@@ -1,9 +1,24 @@
 #!/bin/bash
-echo "Making sure no previous replicas are up..."
-killall -9  skvbc_replica \
-            client \
-            quickpay_replica \
-            fullpay_replica
+echo "Making sure no previous replicas/clients are up..."
+killall -9 \
+    fullpay_replica \
+    fullpay_client \
+    fullpay_ft_replica \
+    fullpay_ft_client \
+    fullpay_replica2 \
+    fullpay_client2 \
+    quickpay_replica \
+    quickpay_client \
+    ecash_replica \
+    ecash_client \
+    simpleEcash_server \
+    simpleEcash_client \
+    skvbc_replica \
+    client \
+    simpleTest_server \
+    simpleTest_client \
+    simpleutt_replica \
+    simpleutt_client
 
 NUM_REPLICAS=${NUM_REPLICAS:-10}
 NUM_CLIENTS=${NUM_CLIENTS:-1000}
@@ -58,7 +73,7 @@ fi
 # Start the replicas
 for((i=0;i<$NUM_REPLICAS;i++)); do
     echo "Running replica $i..."
-    ../TesterReplicaFull/fullpay_replica \
+    ../TesterReplicaFull/fullpay_ft_replica \
         --key-file-prefix "${REPLICA_PREFIX}" \
         --replica-id "$i" \
         --network-config-file "${NUM_REPLICAS}_comm_config" \
@@ -71,4 +86,13 @@ done
 wait
 
 # Cleaning up
-killall -9 skvbc_replica quickpay_replica fullpay_replica
+killall -9 \
+    fullpay_replica \
+    fullpay_ft_replica \
+    fullpay_replica2 \
+    quickpay_replica \
+    ecash_replica \
+    simpleEcash_server \
+    skvbc_replica \
+    simpleTest_server \
+    simpleutt_replica

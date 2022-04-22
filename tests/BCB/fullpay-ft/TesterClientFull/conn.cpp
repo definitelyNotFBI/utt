@@ -31,16 +31,20 @@ void conn_handler::on_tx_send(const asio::error_code& err, size_t sent) {
     }
 }
 
-void conn_handler::on_tx_response(const asio::error_code& err, size_t got) {
+void conn_handler::on_tx_response(const asio::error_code& err, size_t got, size_t experiment_idx) {
     if (err) {
-        LOG_ERROR(logger, "Failed to receive message from replica " << getid() << " with error: " << err.message());
+        LOG_ERROR(logger, 
+            "Failed to receive message from replica " << getid() << 
+            " with error: " << err.message() << 
+            " for tx#:" << experiment_idx
+        );
         return;
     } else {
-        LOG_INFO(logger, "Successfully received " << got << " message from replica " << getid());
+        LOG_INFO(logger, "Successfully received " << got 
+            << " message from replica " << getid()
+            << " for tx#:" << experiment_idx);
     }
-    LOG_INFO(logger, "Got " << got << 
-                        " from replica " << getid());
-    m_proto_->add_response(replica_msg_buf.data(), got, getid());
+    m_proto_->add_response(replica_msg_buf.data(), got, getid(), experiment_idx);
 }
 
 } // namespace quickpay::replica

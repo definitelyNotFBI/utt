@@ -17,6 +17,7 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/address_v4.hpp>
 #include <asio/ip/tcp.hpp>
+#include <unordered_set>
 #include <vector>
 
 #include "Logger.hpp"
@@ -60,8 +61,10 @@ private:
     std::vector<conn_handler_ptr> m_conn_;
     // Mutex to guard responses
     std::mutex m_resp_mtx_;
-    // WARNING: Access m_conn_ only after acquiring m_conn_mutex_
+    // WARNING: Access matched_response only after acquiring m_resp_mtx_
     MatchedResponse matched_response;
+    // WARNING: Access finished only after acquiring m_resp_mtx_
+    std::unordered_set<size_t> finished_indices;
 
 // BFT data
 private:
@@ -96,7 +99,7 @@ public:
     void add_connection(conn_handler_ptr conn_ptr);
 
     // Adds a response
-    void add_response(uint8_t* ptr, size_t data, uint16_t id);
+    void add_response(uint8_t* ptr, size_t data, uint16_t id, size_t expIdx);
 
     // Start the experiment
     void start_experiments();

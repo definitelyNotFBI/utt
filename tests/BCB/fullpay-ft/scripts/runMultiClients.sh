@@ -11,7 +11,7 @@ echo "Running $NUM_CLIENTS clients..."
 for((i=1;i<=$NUM_CLIENTS;i++)); do
     id=$((i+NUM_REPLICAS-1))
     echo "Running client $i with id ..."
-    ../TesterClientFull/fullpay_client \
+    ../TesterClientFull/fullpay_ft_client \
                         --network-config-file "${NUM_REPLICAS}_comm_config" \
                         --num-faults "${FAULTS}" \
                         --num-slow 0 \

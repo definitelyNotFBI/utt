@@ -1,5 +1,6 @@
 #include <xutils/AutoBuf.h>
 #include <asio/streambuf.hpp>
+#include <cassert>
 #include <cstring>
 #include <functional>
 #include <iostream>
@@ -217,7 +218,7 @@ void protocol::send_tx() {
         sock.async_receive(
             asio::buffer(conn->replica_msg_buf.data(), BCB::common::REPLICA_MAX_MSG_SIZE),
             std::bind(&conn_handler::on_tx_response, conn->shared_from_this(),
-                std::placeholders::_1, std::placeholders::_2)
+                std::placeholders::_1, std::placeholders::_2, experiment_idx)
         );
     }
 
@@ -266,34 +267,50 @@ void protocol::send_tx() {
 
 }
 
-void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id)
+void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, size_t experiment_idx)
 {
     auto end = get_monotonic_time();
     LOG_INFO(logger, "Adding " << num_bytes << " of response from " << sender_id);
+
+    auto config = ClientConfig::Get();
     size_t num_responses = 0;
+    auto required_responses = config->getnumReplicas() - config->getfVal();
+    bool added = false, done = false, just_finished = false;
+    std::vector<uint16_t> ids;
+    std::vector<std::vector<uint8_t>> responses;
+
     {
         m_resp_mtx_.lock();
-        matched_response.add(sender_id, ptr, num_bytes);
         num_responses = matched_response.size();
+        if (finished_indices.count(experiment_idx)) {
+            done = true;
+        }
+        else if (static_cast<int>(num_responses) < required_responses) {
+            matched_response.add(sender_id, ptr, num_bytes);
+            added = true;
+        } else {
+            finished_indices.insert(experiment_idx);
+            // swap the responses with empty responses
+            matched_response.clear(ids, responses);
+            just_finished = true;
+        }
         m_resp_mtx_.unlock();
     }
 
-    if (num_responses != ClientConfig::Get()->getnumReplicas()) {
+    // TODO: Update to n-f
+    if (added || done) {
+        // We don't have enough or we have already finished this tx
         return;
     }
 
-    LOG_INFO(logger, "Got responses from all the nodes");
-    LOG_INFO(logger, "Cancelling the tx timer");
-    tx_timer.cancel();
+    // Only one thread should enter when this condition is satisfied
+    assert(just_finished);
 
-    std::vector<uint16_t> ids;
-    std::vector<std::vector<uint8_t>> responses;
-    {
-        m_resp_mtx_.lock();
-        // swap the responses with empty responses
-        matched_response.clear(ids, responses);
-        m_resp_mtx_.unlock();
-    }
+    LOG_INFO(logger, "Got responses from enough servers");
+    LOG_INFO(logger, "Cancelling the tx timer");
+    // NOTE: Multiple threads will not call this
+    // As only one thread will have just_finished = true
+    tx_timer.cancel();
 
     auto elapsed = end - begin;
 
