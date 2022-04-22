@@ -44,7 +44,7 @@ public:
     static std::unique_ptr<TestSetup> ParseArgs(int argc, char* argv[]);
     std::string getLogProperties() { return m_logPropsFile_; }
 
-    // For quickpay, all I need for communication is my info
+    // For BCB, all I need for communication is my info
     typedef bft::communication::NodeInfo NodeInfo;
     NodeInfo getMyInfo() { return m_conf_.nodes[m_replicaId_]; }
     bft::communication::NodeMap getReplicaInfo() { return m_conf_.nodes; } 

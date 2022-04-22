@@ -11,7 +11,10 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include "Crypto.hpp"
+#include "IKeyExchanger.hpp"
 #include "Logging4cplus.hpp"
+#include "TesterReplicaFull/config.hpp"
 #include "msg/QuickPay.hpp"
 #include "common.hpp"
 #include "replica/Params.hpp"
@@ -33,7 +36,8 @@ class conn_handler : public std::enable_shared_from_this<conn_handler> {
     typedef std::shared_ptr<utt_bft::replica::Params> params_ptr_t;
     typedef std::shared_ptr<concord::storage::rocksdb::NativeClient> db_ptr_t;
     typedef std::shared_ptr<Cryptosystem> cryp_sys_ptr_t;
-    typedef std::shared_ptr<IThresholdSigner> signer_t;
+    typedef bftEngine::impl::RSASigner signer_t;
+    typedef bftEngine::impl::RSAVerifier verifier_t;
 
 public:
     // constructor to create a connection
@@ -48,9 +52,16 @@ public:
                         m_params_{std::move(params)}, 
                         m_db_{std::move(db)},
                         metrics{metrics},
-                        signer{std::shared_ptr<IThresholdSigner>(cryp_sys_ptr->createThresholdSigner())},
                         id{id}
-                        {}
+                {
+                    auto config=  ReplicaConfig::Get();
+                    auto key = config->getreplicaPrivateKey();
+                    signer = std::make_shared<signer_t>(key.c_str(), KeyFormat::HexaDecimalStrippedFormat);
+                    for(auto& [id, pubkey]: config->publicKeysOfReplicas) {
+                        auto verifier = std::make_shared<verifier_t>(pubkey.c_str(), KeyFormat::HexaDecimalStrippedFormat);
+                        verifiers.emplace(id, verifier);
+                    }
+                }
 
     // creating a pointer
     static conn_handler_ptr create(io_ctx_t& io_ctx, 
@@ -90,7 +101,10 @@ private:
     std::shared_ptr<concord::storage::rocksdb::NativeClient> m_db_ = nullptr;
     uint64_t nullif_ctr = 0;
     std::shared_ptr<std::atomic<uint64_t>> metrics = nullptr;
-    signer_t signer = nullptr;
+
+private:
+    std::shared_ptr<signer_t> signer = nullptr;
+    std::unordered_map<uint16_t, std::shared_ptr<verifier_t>> verifiers;
 
 private:
     static logging::Logger logger;

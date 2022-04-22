@@ -21,6 +21,7 @@
 #include <asio/ip/address.hpp>
 #include <asio/ip/tcp.hpp>
 
+#include "IKeyExchanger.hpp"
 #include "Logging4cplus.hpp"
 #include "client/Params.hpp"
 #include "config/test_parameters.hpp"
@@ -90,12 +91,9 @@ protocol::protocol(io_ctx_t& io_ctx,
     }
 
     // Setup BFT keys
-    auto* map = new BCB::common::PublicKeyMap();
-    pk_map = std::shared_ptr<BCB::common::PublicKeyMap>(map);
     for(auto& [id, key]: ClientConfig::Get()->publicKeysOfReplicas) {
-        auto pubkey = std::shared_ptr<BCB::common::PublicKey>(
-                            new BCB::common::PublicKey(key.c_str()));
-        pk_map->emplace(id, pubkey);
+        auto pubkey = std::make_shared<BCB::common::PublicKey>(key.c_str(), KeyFormat::HexaDecimalStrippedFormat);
+        pk_map.emplace(id, pubkey);
     }
 }
 
@@ -166,7 +164,7 @@ void protocol::add_connection(conn_handler_ptr conn_ptr) {
     start_experiments();
 }
 
-// Run the quickpay client experiments
+// Run the BCB client experiments
 void protocol::start_experiments() {
     std::vector<uint16_t> ids(0);
     std::vector<std::vector<uint8_t>> data(0);
@@ -249,8 +247,9 @@ void protocol::send_tx() {
 
     for(auto& conn: m_conn_) {
         // Reset the stream
-        conn->out_ss.str("");
-        conn->out_ss.write((const char*)qp_tx, qp_tx->get_size());
+        conn->out_ss.str(std::string{});
+        conn->out_ss.write((const char*)qp_tx, 
+                            static_cast<long>(qp_tx->get_size()));
         auto& sock = conn->socket();
         sock.async_send(
             asio::buffer(conn->out_ss.str(), qp_tx->get_size()),
@@ -267,6 +266,11 @@ void protocol::send_tx() {
 
 }
 
+void protocol::send_ack() 
+{
+    send_tx();
+}
+
 void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, size_t experiment_idx)
 {
     auto end = get_monotonic_time();
@@ -278,6 +282,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
     bool added = false, done = false, just_finished = false;
     std::vector<uint16_t> ids;
     std::vector<std::vector<uint8_t>> responses;
+    auto resp = (FullPayFTResponse*)ptr;
 
     {
         m_resp_mtx_.lock();
@@ -286,7 +291,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
             done = true;
         }
         else if (static_cast<int>(num_responses) < required_responses) {
-            matched_response.add(sender_id, ptr, num_bytes);
+            matched_response.add(sender_id, resp->getRSABuf(), resp->rsa_len);
             added = true;
         } else {
             finished_indices.insert(experiment_idx);
@@ -297,7 +302,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
         m_resp_mtx_.unlock();
     }
 
-    // TODO: Update to n-f
+    // DONE: Update to n-f
     if (added || done) {
         // We don't have enough or we have already finished this tx
         return;
@@ -320,7 +325,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
         m_metric_mtx_.unlock();
     }
     LOG_INFO(logger, "Finished a transaction");
-    send_tx();
+    send_ack();
 }
 
 } // namespace fullpay::replica

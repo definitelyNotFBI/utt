@@ -79,7 +79,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     // First reserve the space to copy the new messages
     internal_msg_buf.reserve(received_bytes + bytes);
     // Copy the received bytes
-    internal_msg_buf.insert(internal_msg_buf.begin()+received_bytes, 
+    internal_msg_buf.insert(internal_msg_buf.begin()+static_cast<long>(received_bytes), 
                                 incoming_msg_buf.begin(),
                                 incoming_msg_buf.begin()+bytes);
     // Update the # of received bytes
@@ -106,7 +106,7 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     received_bytes = 0;
     on_new_conn();
     std::stringstream ss;
-    ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), qp_tx->tx_len);
+    ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), static_cast<long>(qp_tx->tx_len));
         
     libutt::Tx tx(ss);
     if (!check_tx(qp_tx, tx)) {
@@ -128,13 +128,27 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         ss << sig << std::endl;
     }
     auto ss_str = ss.str();
-    outgoing_msg_buf.reserve(ss_str.size());
-    std::memcpy(outgoing_msg_buf.data(), ss_str.data(), ss_str.size());
-    send_response(ss_str.size());
-    // auto txhash = concord::util::SHA3_256().digest((uint8_t*)qp_tx, 
-    //                                                 qp_tx->get_size());
+    auto sig_len = signer->signatureLength();
+    auto resp_len = FullPayFTResponse::get_size(ss_str.size(), sig_len);
+    LOG_DEBUG(logger, "Response Len: " << resp_len);
+    LOG_DEBUG(logger, "Sig Len: " << ss_str.size());
+    outgoing_msg_buf.resize(resp_len, 0);
+    auto resp = (FullPayFTResponse*)outgoing_msg_buf.data();
+    resp->sig_len = ss_str.size();
+    resp->rsa_len = sig_len;
+
+    auto tx_hash = tx.getHashHex();
+    auto txhash = concord::util::SHA3_256().digest((uint8_t*)tx_hash.data(), 
+                                                    tx_hash.size());
+    auto sig_status = signer->sign(reinterpret_cast<const char*>(txhash.data()), txhash.size(), reinterpret_cast<char*>(resp->getRSABuf()), resp->rsa_len, sig_len);
+    // Not expecting any surprises here
+    assert(sig_status);
+    assert(sig_len == resp->rsa_len);
+
+    LOG_DEBUG(logger, "Resp Sig Len: " << resp->sig_len);
+    std::memcpy(resp->getSigBuf(), ss_str.data(), resp->sig_len);
+    send_response(resp->get_size());
     // auto qp_len = QuickPayMsg::get_size(txhash.size());
-    // auto sig_len = signer->requiredLengthForSignedData();
     // auto resp_size = QuickPayResponse::get_size(qp_len, sig_len);
     // outgoing_msg_buf.reserve(resp_size);
     // auto qp_resp = (QuickPayResponse*)outgoing_msg_buf.data();

@@ -17,7 +17,6 @@
 struct QuickPayMsg {
     size_t target_shard_id;
     size_t hash_len;
-    // unsigned char[hash_len]
 
     static QuickPayMsg* alloc(size_t hash_len) {
         // TODO: Fix
@@ -150,6 +149,28 @@ struct QuickPayResponse {
         return ss.str();
     }
     
+};
+
+struct FullPayFTResponse {
+    size_t sig_len;
+    size_t rsa_len;
+
+    static size_t get_size(size_t sig_len, size_t rsa_len) {
+        return sig_len + rsa_len + sizeof(FullPayFTResponse);
+    }
+
+    size_t get_size() const {
+        return sig_len + rsa_len + sizeof(FullPayFTResponse);
+    }
+
+    uint8_t* getSigBuf() const {
+        return ((uint8_t*)this)+sizeof(FullPayFTResponse);
+    }
+
+    uint8_t* getRSABuf() const {
+        return ((uint8_t*)this)+sizeof(FullPayFTResponse)+sig_len;
+    }
+
 };
 #pragma pack(pop)
 

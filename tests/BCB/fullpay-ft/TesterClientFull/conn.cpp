@@ -3,11 +3,13 @@
 
 #include "Logging4cplus.hpp"
 #include "conn.hpp"
+#include "msg/QuickPay.hpp"
 #include "protocol.hpp"
+#include "sha_hash.hpp"
 
 namespace fullpay::ft::client {
 
-logging::Logger conn_handler::logger = logging::getLogger("quickpay.client.conn");
+logging::Logger conn_handler::logger = logging::getLogger("fullpay.ft.client.conn");
 
 void conn_handler::on_new_conn(const asio::error_code err) {
     if (err) {
@@ -44,7 +46,69 @@ void conn_handler::on_tx_response(const asio::error_code& err, size_t got, size_
             << " message from replica " << getid()
             << " for tx#:" << experiment_idx);
     }
+    received_bytes += got;
+    // DONE: Check if sufficient bytes have been received
+    if(received_bytes < sizeof(FullPayFTResponse)) {
+        // DONE: Arm the handler
+        mSock_.async_receive(
+            asio::buffer(replica_msg_buf.data()+received_bytes, BCB::common::REPLICA_MAX_MSG_SIZE),
+            std::bind(&conn_handler::on_tx_response, shared_from_this(),
+                std::placeholders::_1, std::placeholders::_2, experiment_idx)
+        );
+        LOG_DEBUG(logger, "Got insufficient data");
+        return;
+    }
+    auto resp = (FullPayFTResponse*)replica_msg_buf.data();
+    if(received_bytes < resp->get_size()) {
+        // DONE: Arm the handler
+        mSock_.async_receive(
+            asio::buffer(replica_msg_buf.data()+received_bytes, BCB::common::REPLICA_MAX_MSG_SIZE),
+            std::bind(&conn_handler::on_tx_response, shared_from_this(),
+                std::placeholders::_1, std::placeholders::_2, experiment_idx)
+        );
+        LOG_DEBUG(logger, "Got insufficient data");
+        return;
+    }
+    received_bytes -= resp->get_size();
+    // DONE: Check response
+    auto sender_id = getid();
+    // This is done here to check things in parallel
+    // DONE: Check the response
+    std::stringstream ss{std::string{}};
+    ss.write(reinterpret_cast<const char*>(resp->getSigBuf()), 
+                    static_cast<long>(resp->sig_len));
+    auto tx = m_proto_->tx_map[experiment_idx];
+    auto invalid_response = false;
+    for(size_t i=0;i<3;i++) {
+        libutt::RandSigShare sig;
+        ss >> sig;
+        libff::consume_OUTPUT_NEWLINE(ss);
+        // DONE: Check the validity of the signature
+        if (!tx.verifySigShare(i, sig, m_proto_->m_params_->bank_pks.at(sender_id))) {
+            invalid_response = true;
+            LOG_WARN(logger, "Signature check failed for Tx#" << experiment_idx 
+                                << ", replica #" << sender_id
+                                << ", idx#" << i);
+            break;
+        }
+    }
+    if (invalid_response) {
+        return;
+    }
+    auto txhash = tx.getHashHex();
+    auto tx_hash = concord::util::SHA3_256().digest((uint8_t*)txhash.data(), 
+                                                    txhash.size());
+    invalid_response = !(pk_map.at(sender_id)->verify(
+        reinterpret_cast<const char*>(tx_hash.data()), 
+        tx_hash.size(), 
+        reinterpret_cast<const char*>(resp->getRSABuf()), 
+        resp->rsa_len
+    ));
+    if(invalid_response) {
+        LOG_WARN(logger, "Got invalid RSA signature");
+        return;
+    }
     m_proto_->add_response(replica_msg_buf.data(), got, getid(), experiment_idx);
 }
 
-} // namespace quickpay::replica
+} // namespace fullpay::ft::client

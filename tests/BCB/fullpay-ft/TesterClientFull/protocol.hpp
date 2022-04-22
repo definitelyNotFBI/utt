@@ -72,7 +72,7 @@ private:
     std::unique_ptr<utt_bft::client::Params> m_params_ = nullptr;
     std::unique_ptr<libutt::Wallet> m_wallet_send_ = nullptr;
     std::unique_ptr<libutt::Wallet> m_wallet_recv_ = nullptr;
-    std::shared_ptr<BCB::common::PublicKeyMap> pk_map = nullptr;
+    BCB::common::PublicKeyMap pk_map;
 
 // Other data
 private:
@@ -106,6 +106,7 @@ public:
 
     // Send the transaction
     void send_tx();
+    void send_ack();
     void on_timeout(const asio::error_code& err);
     void on_tx_timeout(const asio::error_code err);
 };

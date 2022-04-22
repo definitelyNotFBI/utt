@@ -113,7 +113,7 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
     std::string cert_root_path = "certs";
     std::string keys_file_prefix;
 
-    auto logger = logging::getLogger("quickpay.client");
+    auto logger = logging::getLogger("fullpay.ft.client");
     TestCommConfig testCommConfig(logger);
 
     while ((o = getopt_long(
@@ -208,4 +208,4 @@ std::unique_ptr<TestSetup> TestSetup::ParseArgs(int argc, char *argv[])
                                         conf, utt_params_file);
 }
 
-} // namespace quickpay::replica
+} // namespace fullpay::ft::client
