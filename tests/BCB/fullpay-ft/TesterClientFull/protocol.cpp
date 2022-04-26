@@ -99,10 +99,10 @@ protocol::protocol(io_ctx_t& io_ctx,
 
 void protocol::on_timeout(const asio::error_code& err) {
     if (err == asio::error::operation_aborted) {
-        LOG_DEBUG(logger, "Aborted timer");
+        LOG_DEBUG(logger, "Aborted timer (This is good!)");
         return;
     }
-    LOG_INFO(logger, "Connection Timed out");
+    LOG_WARN(logger, "Connection Timed out (This is bad!)");
     auto num_connections = 0ul;
     {
         m_conn_mutex_.lock();
@@ -112,7 +112,7 @@ void protocol::on_timeout(const asio::error_code& err) {
     if (num_connections == m_node_map_.size()) {
         return;
     }
-    LOG_INFO(logger, "Got only " << num_connections 
+    LOG_WARN(logger, "Got only " << num_connections 
                     << ". Attempting to proceed with partial connections");
     auto expected_conns = m_node_map_.size()-ClientConfig::Get()->getfVal();
     if (num_connections < expected_conns) {
@@ -126,7 +126,7 @@ void protocol::on_tx_timeout(const asio::error_code err) {
         LOG_DEBUG(logger, "Aborted tx timer");
         return;
     }
-    LOG_INFO(logger, "tx Timed out");
+    LOG_WARN(logger, "tx Timed out");
 }
 
 void protocol::start() {
@@ -189,7 +189,6 @@ void protocol::start_experiments() {
 }
 
 // Sends the tx and waits for n-f responses or a timeout
-// TODO:
 void protocol::send_tx() {
     if (experiment_idx == 0) {
         auto throughput_end = get_monotonic_time();
@@ -266,9 +265,28 @@ void protocol::send_tx() {
 
 }
 
-void protocol::send_ack() 
+void protocol::send_ack(std::vector<uint8_t> ack_msg) 
 {
-    send_tx();
+    // DONE: Send the ACK
+    for(auto& conn: m_conn_) {
+        // Reset the stream
+        conn->out_ss.str(std::string{});
+        conn->out_ss.write((const char*)ack_msg.data(), 
+                            static_cast<long>(ack_msg.size()));
+        auto& sock = conn->socket();
+        sock.async_send(
+            asio::buffer(conn->out_ss.str(), ack_msg.size()),
+            std::bind(&conn_handler::on_ack_send, 
+                conn->shared_from_this(), std::placeholders::_1,
+                std::placeholders::_2));
+    }
+
+    using namespace std::chrono_literals;
+    // Started all the connections, lets wait for some time
+    tx_timer.expires_after(60s);
+    tx_timer.async_wait(std::bind(&protocol::on_tx_timeout, 
+            shared_from_this(), std::placeholders::_1));
+
 }
 
 void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, size_t experiment_idx)
@@ -287,7 +305,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
     {
         m_resp_mtx_.lock();
         num_responses = matched_response.size();
-        if (finished_indices.count(experiment_idx)) {
+        if (finished_indices.count(experiment_idx) != 0) {
             done = true;
         }
         else if (static_cast<int>(num_responses) < required_responses) {
@@ -325,7 +343,22 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
         m_metric_mtx_.unlock();
     }
     LOG_INFO(logger, "Finished a transaction");
-    send_ack();
+    // DONE: Construct an ack msg
+    std::vector<uint8_t> ack_msg;
+    auto sig_size = responses.at(0).size();
+    auto ack_len = FullPayFTAck::get_size(ids.size(), sig_size, responses.size());
+    ack_msg.resize(ack_len, 0);
+    auto ack = (FullPayFTAck*)ack_msg.data();
+    ack->num_ids = ids.size();
+    ack->num_sigs = responses.size();
+    ack->sig_len = sig_size;
+    for(size_t i = 0; i < ids.size(); i++) {
+        // DONE: Copy the IDS
+        ack->getIdBuf()[i] = ids[i];
+        // DONE: Copy the sigs
+        std::memcpy(ack->getSigBuf(i), responses[i].data(), ack->sig_len);
+    }
+    send_ack(ack_msg);
 }
 
 } // namespace fullpay::replica

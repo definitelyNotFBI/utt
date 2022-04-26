@@ -151,6 +151,10 @@ struct QuickPayResponse {
     
 };
 
+struct Msg {
+
+};
+
 struct FullPayFTResponse {
     size_t sig_len;
     size_t rsa_len;
@@ -171,6 +175,31 @@ struct FullPayFTResponse {
         return ((uint8_t*)this)+sizeof(FullPayFTResponse)+sig_len;
     }
 
+};
+
+struct FullPayFTAck {
+    typedef size_t ID_TYPE;
+    size_t num_ids;
+    size_t num_sigs;
+    size_t sig_len;
+
+    static size_t get_size(size_t num_ids, size_t sig_len, size_t num_sigs) {
+        return sizeof(FullPayFTAck) + (sizeof(size_t)*num_ids) + (sig_len*num_sigs);
+    }
+
+    size_t get_size() const {
+        return get_size(num_ids, sig_len, num_sigs);
+    }
+
+    size_t* getIdBuf() const {
+        return (size_t*)(((uint8_t*)this)+sizeof(FullPayFTAck));
+    }
+
+    uint8_t* getSigBuf(size_t idx) const {
+        auto id_buf_ptr = (uint8_t*)getIdBuf();
+        auto end_of_id_buf_ptr = id_buf_ptr + (sizeof(size_t)*num_ids);
+        return end_of_id_buf_ptr+(idx*sig_len);
+    }
 };
 #pragma pack(pop)
 

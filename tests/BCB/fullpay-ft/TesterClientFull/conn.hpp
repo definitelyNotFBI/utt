@@ -57,6 +57,8 @@ public:
 
     // to call after sending a transaction
     void on_tx_send(const asio::error_code& err, size_t sen);
+    // to call after sending a transaction
+    void on_ack_send(const asio::error_code& err, size_t sen);
     // to call after receiving a response for a transaction
     void on_tx_response(const asio::error_code& err, size_t sen, size_t experiment_idx);
 

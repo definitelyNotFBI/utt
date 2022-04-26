@@ -23,7 +23,7 @@ struct MatchedResponse {
             return;
         }
         std::vector<uint8_t> data;
-        data.reserve(bytes);
+        data.resize(bytes, 0);
         memcpy(data.data(), data_ptr, bytes);
         responses.emplace(id, data);
     }

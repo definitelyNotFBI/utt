@@ -106,7 +106,7 @@ public:
 
     // Send the transaction
     void send_tx();
-    void send_ack();
+    void send_ack(std::vector<uint8_t> msg);
     void on_timeout(const asio::error_code& err);
     void on_tx_timeout(const asio::error_code err);
 };

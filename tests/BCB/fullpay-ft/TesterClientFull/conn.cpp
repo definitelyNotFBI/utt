@@ -27,10 +27,21 @@ void conn_handler::on_new_conn(const asio::error_code err) {
 
 void conn_handler::on_tx_send(const asio::error_code& err, size_t sent) {
     if (err) {
+        LOG_ERROR(logger, "Failed to send tx to replica" << getid());
+    } else {
+        LOG_INFO(logger, "Successfully sent " << sent << " bytes of tx to replica" << getid());
+    }
+}
+
+void conn_handler::on_ack_send(const asio::error_code& err, size_t sent) {
+    if (err) {
         LOG_ERROR(logger, "Failed to send message to replica" << getid());
     } else {
         LOG_INFO(logger, "Successfully sent " << sent << "message to replica" << getid());
     }
+    // Wait until all the things are sent
+    // TODO: send tx
+    // m_proto_->send_tx();
 }
 
 void conn_handler::on_tx_response(const asio::error_code& err, size_t got, size_t experiment_idx) {
@@ -108,7 +119,11 @@ void conn_handler::on_tx_response(const asio::error_code& err, size_t got, size_
         LOG_WARN(logger, "Got invalid RSA signature");
         return;
     }
-    m_proto_->add_response(replica_msg_buf.data(), got, getid(), experiment_idx);
+    m_proto_->add_response(
+        replica_msg_buf.data(), 
+        got, 
+        getid(), 
+        experiment_idx);
 }
 
 } // namespace fullpay::ft::client
