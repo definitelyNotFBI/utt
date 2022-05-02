@@ -2,6 +2,7 @@
 #include <asio/error_code.hpp>
 #include <iostream>
 #include <optional>
+#include <vector>
 
 #include "Logging4cplus.hpp"
 #include "TesterClientFull/config.hpp"
@@ -86,11 +87,10 @@ void conn_handler::do_read(const asio::error_code& err, size_t got)
     LOG_DEBUG(logger, "Msg size " << msg->get_size() << " for replica " << getid());
     LOG_DEBUG(logger, "Checking received bytes " << received_bytes << " for replica " << getid());
     auto tp = msg->tp;
-    auto seq_num = msg->seq_num;
     if(tp == MsgType::BURN_RESPONSE) {
         on_tx_response(msg_buf);
     } else if (tp == MsgType::ACK_RESPONSE) {
-        m_proto_->add_ack(getid(), seq_num);
+        on_ack_response(msg_buf);
     }
     // Recursively process messages
     if(received_bytes > 0) {
@@ -99,6 +99,37 @@ void conn_handler::do_read(const asio::error_code& err, size_t got)
         // Otherwise, the above part will add start_conn
         start_conn();
     }
+}
+
+void conn_handler::on_ack_response(std::vector<uint8_t> msg_buf) 
+{
+    auto msg = (Msg*)msg_buf.data();
+    auto seq_num = msg->seq_num;
+    std::vector<uint8_t> ack_cert;
+    {
+        m_ack_map_mtx_.lock();
+        ack_cert = ack_map[seq_num];
+        m_ack_map_mtx_.unlock();
+    }
+    auto original_msg = (Msg*)ack_cert.data();
+    auto ack_msg = original_msg->get_msg<const FullPayFTAck>();
+    auto ack = msg->get_msg<AckResponse>();
+    // DONE: Check signature
+    auto status = pk_map[getid()]->verify((const char*)ack_msg, original_msg->msg_len, (const char*)ack->getRSABuf(), ack->rsa_len);
+    if(!status) {
+        LOG_ERROR(logger, "Signature check for an ack failed");
+    }
+    m_proto_->add_ack(getid(), seq_num);
+}
+
+void conn_handler::send_ack_msg(const std::vector<uint8_t>& msg_buf, size_t experiment_idx)
+{
+    {
+        m_ack_map_mtx_.lock();
+        ack_map.emplace(experiment_idx, msg_buf);
+        m_ack_map_mtx_.unlock();
+    }
+    send_msg(msg_buf, Type::ACK);
 }
 
 void conn_handler::send_msg(const std::vector<uint8_t>& msg_buf, Type tp)
@@ -194,6 +225,7 @@ void conn_handler::on_tx_response(std::vector<uint8_t> msg_buf) {
         reinterpret_cast<const char*>(resp->getRSABuf()), 
         resp->rsa_len
     ));
+
     if(invalid_response) {
         LOG_WARN(logger, "Got invalid RSA signature");
         return;
@@ -203,6 +235,7 @@ void conn_handler::on_tx_response(std::vector<uint8_t> msg_buf) {
         msg_buf.begin()+sizeof(Msg),
         msg_buf.end()
     );
+
     m_proto_->add_response(
         response,
         getid(), 

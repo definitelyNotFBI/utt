@@ -9,6 +9,8 @@
 #include <memory>
 #include <mutex>
 #include <queue>
+#include <string>
+#include <unordered_map>
 #include "Logger.hpp"
 #include "Logging4cplus.hpp"
 
@@ -69,11 +71,13 @@ public:
     void start_conn();
 
     void send_msg(const std::vector<uint8_t>& msg_buf, Type tp);
+    void send_ack_msg(const std::vector<uint8_t>& msg_buf, size_t experiment_idx);
     // to call after sending a transaction
     void on_msg_send(const asio::error_code& err, size_t sent, Type tp);
 
     // to call after receiving a response for a transaction
     void on_tx_response(std::vector<uint8_t>);
+    void on_ack_response(std::vector<uint8_t>);
 
     // Perform reading
     void do_read(const asio::error_code& err, size_t sent);
@@ -81,6 +85,8 @@ private:
     void try_send();
 
 private:
+    std::mutex m_ack_map_mtx_;
+    std::unordered_map<size_t, std::vector<uint8_t>> ack_map;
 
 private:
     sock_t mSock_;

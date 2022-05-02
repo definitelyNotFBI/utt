@@ -115,6 +115,8 @@ public:
     void send_ack(const std::vector<uint8_t> &msg);
     void on_timeout(const asio::error_code& err, size_t);
     void on_tx_timeout(const asio::error_code err, size_t);
+
+
 };
 
 } // namespace fullpay::client

@@ -149,7 +149,7 @@ void conn_handler::on_new_ack(std::vector<uint8_t> msg_buf) {
     auto ack = out_msg->get_msg<AckResponse>();
     ack->rsa_len = rsa_len;
     auto out_len = 0ul;
-    auto status = signer->sign((const char*)msg_buf.data(), msg_buf.size(), (char*)ack->getRSABuf(), ack->rsa_len, out_len);
+    auto status = signer->sign((const char*)ack_msg, msg->msg_len, (char*)ack->getRSABuf(), ack->rsa_len, out_len);
     assert(status);
     assert(out_len <= ack->rsa_len);
     send_ack_response(out_msg_buf);

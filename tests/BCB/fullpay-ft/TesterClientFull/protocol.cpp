@@ -307,7 +307,7 @@ void protocol::send_ack(const std::vector<uint8_t>& msg)
     // DONE: Send the ACK
     for(auto& conn: m_conn_) {
         // Reset the stream
-        conn->send_msg(msg, Type::ACK);
+        conn->send_ack_msg(msg, experiment_idx);
     }
 
     using namespace std::chrono_literals;
@@ -393,6 +393,7 @@ void protocol::add_response(std::vector<uint8_t> response, uint16_t sender_id, s
         // DONE: Copy the sigs
         std::memcpy(ack->getSigBuf(i), responses[i].data(), ack->sig_len);
     }
+
     send_ack(msg_buf);
 }
 
