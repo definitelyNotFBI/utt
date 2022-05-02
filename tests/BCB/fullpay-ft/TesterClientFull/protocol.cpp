@@ -267,6 +267,8 @@ void protocol::send_tx() {
 
 void protocol::add_ack(uint16_t replica_id, size_t idx)
 {
+    auto end = get_monotonic_time();
+
     LOG_DEBUG(logger, "Got an ack for idx " << idx);
     auto config = ClientConfig::Get();
     size_t num_responses = 0, required_responses = config->getnumReplicas() - config->getfVal();
@@ -285,10 +287,19 @@ void protocol::add_ack(uint16_t replica_id, size_t idx)
 
     // One of the connections will send this, the others will fail this
     // Only send on this exact condition
-    if (num_responses == required_responses) {
-        tx_timer.cancel();
-        send_tx();
+    if (num_responses != required_responses) {
+        return;
     }
+    // This part of the code is executed once, after receiving exactly n-f valid responses
+    tx_timer.cancel();
+    auto elapsed = end - begin;
+
+    {
+        m_metric_mtx_.lock();
+        hist.Add(double(elapsed));
+        m_metric_mtx_.unlock();
+    }
+    send_tx();
 }
 
 void protocol::send_ack(const std::vector<uint8_t>& msg) 
@@ -316,7 +327,6 @@ void protocol::add_response(std::vector<uint8_t> response, uint16_t sender_id, s
                             << experiment_idx);
         return;
     }
-    auto end = get_monotonic_time();
     LOG_INFO(logger, "Adding " << response.size() << " of response from " << sender_id << " for idx " << expIdx);
 
     auto config = ClientConfig::Get();
@@ -361,13 +371,6 @@ void protocol::add_response(std::vector<uint8_t> response, uint16_t sender_id, s
     // As only one thread will have just_finished = true
     tx_timer.cancel();
 
-    auto elapsed = end - begin;
-
-    {
-        m_metric_mtx_.lock();
-        hist.Add(double(elapsed));
-        m_metric_mtx_.unlock();
-    }
     LOG_INFO(logger, "Finished a transaction" << experiment_idx);
     // DONE: Construct an ack msg
     std::vector<uint8_t> msg_buf;
