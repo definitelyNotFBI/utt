@@ -13,19 +13,36 @@
 #include "utt/Params.h"
 #include "utt/Tx.h"
 
+enum class MsgType : uint8_t {
+    BURN_REQUEST,
+    BURN_RESPONSE,
+    ACK_MSG,
+    ACK_RESPONSE,
+};
+
 #pragma pack(push, 1)
+struct Msg {
+    MsgType tp;
+    size_t seq_num;
+    size_t msg_len;
+
+    static size_t get_size(size_t msg_len) {
+        return sizeof(Msg)+msg_len;
+    }
+
+    size_t get_size() const {
+        return get_size(msg_len);
+    }
+
+    template<class T>
+    T* get_msg() const {
+        return (T*)(((uint8_t*)this)+sizeof(Msg));
+    }
+};
+
 struct QuickPayMsg {
     size_t target_shard_id;
     size_t hash_len;
-
-    static QuickPayMsg* alloc(size_t hash_len) {
-        // TODO: Fix
-        return (QuickPayMsg*)malloc(get_size(hash_len));
-    }
-
-    static void free(QuickPayMsg* p) {
-        delete[] p;
-    }
 
     size_t get_size() const {
         return get_size(hash_len);
@@ -59,18 +76,6 @@ struct QuickPayTx {
     size_t tx_len;
     // unsigned char* qp_msg_data;
     // unsigned char* tx_data;
-
-    static QuickPayTx* alloc(size_t msg_len, size_t tx_len) {
-        auto size = get_size(msg_len, tx_len);
-        auto* buf = new uint8_t[size];
-        memset(buf, 0, size);
-        auto qp = (QuickPayTx*)buf;
-        qp->qp_msg_len = msg_len;
-        qp->tx_len = tx_len;
-        return qp;
-    }
-
-    static void free(QuickPayTx* buf) { delete [] buf; }
 
     QuickPayMsg* getQPMsg() const {
         return (QuickPayMsg*)((uint8_t*)this + sizeof(QuickPayTx));
@@ -150,10 +155,23 @@ struct QuickPayResponse {
     }
     
 };
+struct AckResponse {
+    size_t rsa_len;
 
-struct Msg {
+    static size_t get_size(size_t rsa_len) {
+        return rsa_len + sizeof(AckResponse);
+    }
+
+    size_t get_size() const {
+        return rsa_len + sizeof(AckResponse);
+    }
+
+    uint8_t* getRSABuf() const {
+        return ((uint8_t*)this)+sizeof(AckResponse);
+    }
 
 };
+
 
 struct FullPayFTResponse {
     size_t sig_len;
@@ -172,19 +190,20 @@ struct FullPayFTResponse {
     }
 
     uint8_t* getRSABuf() const {
-        return ((uint8_t*)this)+sizeof(FullPayFTResponse)+sig_len;
+        return getSigBuf()+sig_len;
     }
 
 };
 
 struct FullPayFTAck {
     typedef size_t ID_TYPE;
+    size_t seq_num;
     size_t num_ids;
     size_t num_sigs;
     size_t sig_len;
 
     static size_t get_size(size_t num_ids, size_t sig_len, size_t num_sigs) {
-        return sizeof(FullPayFTAck) + (sizeof(size_t)*num_ids) + (sig_len*num_sigs);
+        return sizeof(FullPayFTAck) + (sizeof(num_ids)*num_ids) + (sig_len*num_sigs);
     }
 
     size_t get_size() const {

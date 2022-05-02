@@ -77,6 +77,10 @@ public:
     // things to do when we have a new connection
     void on_new_conn();
 
+    // things to do when we have a new message
+    void on_new_tx(std::vector<uint8_t> buf);
+    void on_new_ack(std::vector<uint8_t> buf);
+
     // start the connection
     void start_conn();
 
@@ -85,6 +89,7 @@ public:
 
     // Send the replica of the response
     void send_response(size_t);
+    void send_ack_response(std::vector<uint8_t> msg_buf);
 
 private:
     bool check_tx(const QuickPayTx* qp_tx, const libutt::Tx& tx);
@@ -92,7 +97,7 @@ private:
 private:
     sock_t mSock_;
     std::vector<uint8_t> outgoing_msg_buf;
-    std::array<uint8_t, size_t(20*1024)> incoming_msg_buf;
+    std::array<uint8_t, size_t(30*1024)> incoming_msg_buf;
     std::vector<uint8_t> internal_msg_buf;
     size_t received_bytes = 0;
 

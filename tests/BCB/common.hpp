@@ -11,7 +11,7 @@ typedef std::unordered_map<uint16_t, std::shared_ptr<PublicKey>> PublicKeyMap;
 
 const std::string utt_wallet_file_key = "utt.quickpay.wallet";
 
-const size_t REPLICA_MAX_MSG_SIZE = 20000;
+const size_t REPLICA_MAX_MSG_SIZE = 30000;
 
 struct MatchedResponse {
     std::unordered_map<uint16_t, std::vector<uint8_t>> responses;

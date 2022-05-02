@@ -75,7 +75,6 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         return;
     }
     LOG_INFO(logger, "Got " << bytes << " data from client " << id);
-    auto perf_start = get_monotonic_time();
     // First reserve the space to copy the new messages
     internal_msg_buf.reserve(received_bytes + bytes);
     // Copy the received bytes
@@ -86,25 +85,75 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     received_bytes += bytes;
     LOG_INFO(logger, "Received bytes var: " << received_bytes);
     // Check if we have sufficient bytes to process
-    if(received_bytes < sizeof(QuickPayTx)) {
+    if(received_bytes < sizeof(Msg)) {
         LOG_WARN(logger, "Did not receive sufficient bytes [" 
-                            << received_bytes << "] for a QP TX header[" 
-                            << sizeof(QuickPayTx) << "], will try again");
+                            << received_bytes << "] for a Msg header[" 
+                            << sizeof(Msg) << "], will try again");
         on_new_conn();
         return;
     }
-    // Handle tx
-    auto* qp_tx = (const QuickPayTx*)internal_msg_buf.data();
-    if (received_bytes < qp_tx->get_size()) {
+    auto msg = (Msg*)internal_msg_buf.data();
+    if(received_bytes < msg->msg_len) {
         LOG_WARN(logger, "Did not receive sufficient bytes [" 
-                            << received_bytes << "] for a full tx"
-                            << qp_tx->get_size() <<", will try again");
+                            << received_bytes << "] for a full Msg:" 
+                            << msg->msg_len << ", will try again");
         on_new_conn();
         return;
     }
-    
-    received_bytes = 0;
+    // Save these as the underlying internal_msg_buf will change soon
+    auto msg_len = msg->get_size();
+    auto tp = msg->tp;
+    received_bytes -= msg_len;
+    // Remove one msg worth of data
+    std::vector<uint8_t> msg_buf;
+    msg_buf.resize(msg_len, 0);
+    std::memcpy(
+            msg_buf.data(), 
+            internal_msg_buf.data(), 
+            msg_len
+    );
+    // Reorder the internal_msg_buf
+    std::rotate(internal_msg_buf.begin(), 
+                    internal_msg_buf.begin()+static_cast<long>(msg_len), 
+                    internal_msg_buf.end()
+    );
+    LOG_DEBUG(logger, "Got msg type: " << static_cast<uint8_t>(tp));
+    // Handle msg
+    if (tp == MsgType::BURN_REQUEST) {
+        on_new_tx(msg_buf);
+    } else if (tp == MsgType::ACK_MSG) {
+        on_new_ack(msg_buf);
+    }
     on_new_conn();
+}
+
+void conn_handler::on_new_ack(std::vector<uint8_t> msg_buf) {
+    // DONE: Handle ack msg
+    LOG_DEBUG(logger, "Got an Ack msg");
+    auto msg = (Msg*)msg_buf.data();
+    auto* ack_msg = msg->get_msg<const FullPayFTAck>();
+    auto data = std::string{internal_msg_buf.begin()+sizeof(Msg), internal_msg_buf.begin()+static_cast<long>(msg->msg_len)};
+    m_db_->rawDB().Put(rocksdb::WriteOptions{}, 
+                            std::to_string(id)+"-" + std::to_string(ack_msg->seq_num),
+                            data);
+    
+    std::vector<uint8_t> out_msg_buf;
+    auto rsa_len = signer->signatureLength();
+    auto ack_len = AckResponse::get_size(rsa_len);
+    auto msg_len = Msg::get_size(ack_len);
+    out_msg_buf.resize(msg_len, 0);
+    auto out_msg = (Msg*)out_msg_buf.data();
+    out_msg->msg_len = ack_len;
+    out_msg->tp = MsgType::ACK_RESPONSE;
+    out_msg->seq_num = msg->seq_num;
+    send_ack_response(out_msg_buf);
+}
+
+void conn_handler::on_new_tx(std::vector<uint8_t> msg_buf) {
+    LOG_DEBUG(logger, "Got a new tx " << msg_buf.size());
+
+    auto msg = (Msg*)msg_buf.data();
+    auto* qp_tx = msg->get_msg<const QuickPayTx>();
     std::stringstream ss;
     ss.write(reinterpret_cast<const char*>(qp_tx->getTxBuf()), static_cast<long>(qp_tx->tx_len));
         
@@ -128,26 +177,44 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
         ss << sig << std::endl;
     }
     auto ss_str = ss.str();
-    auto sig_len = signer->signatureLength();
-    auto resp_len = FullPayFTResponse::get_size(ss_str.size(), sig_len);
+    auto rsa_sig_len = signer->signatureLength();
+    auto resp_len = FullPayFTResponse::get_size(ss_str.size(), rsa_sig_len);
+    auto msg_len = Msg::get_size(resp_len);
     LOG_DEBUG(logger, "Response Len: " << resp_len);
     LOG_DEBUG(logger, "Sig Len: " << ss_str.size());
-    outgoing_msg_buf.resize(resp_len, 0);
-    auto resp = (FullPayFTResponse*)outgoing_msg_buf.data();
+    LOG_DEBUG(logger, "RSA Sig Len: " << rsa_sig_len);
+    outgoing_msg_buf.resize(msg_len, 0);
+    auto msg_out = (Msg*)outgoing_msg_buf.data();
+    msg_out->msg_len = resp_len;
+    msg_out->seq_num = msg->seq_num;
+    msg_out->tp = MsgType::BURN_RESPONSE;
+    auto resp = msg_out->get_msg<FullPayFTResponse>();
     resp->sig_len = ss_str.size();
-    resp->rsa_len = sig_len;
+    resp->rsa_len = rsa_sig_len;
+
+    LOG_DEBUG(logger, "(B) Resp Sig Len: " << resp->sig_len);
+    LOG_DEBUG(logger, "(B) Resp RSA Len: " << resp->rsa_len);
 
     auto tx_hash = tx.getHashHex();
-    auto txhash = concord::util::SHA3_256().digest((uint8_t*)tx_hash.data(), 
-                                                    tx_hash.size());
-    auto sig_status = signer->sign(reinterpret_cast<const char*>(txhash.data()), txhash.size(), reinterpret_cast<char*>(resp->getRSABuf()), resp->rsa_len, sig_len);
+    auto txhash = concord::util::SHA3_256().digest(
+        (uint8_t*)tx_hash.data(), 
+        tx_hash.size()
+    );
+    auto sig_status = signer->sign(
+        reinterpret_cast<const char*>(txhash.data()), 
+        txhash.size(), 
+        reinterpret_cast<char*>(resp->getRSABuf()), 
+        resp->rsa_len, 
+        rsa_sig_len
+    );
     // Not expecting any surprises here
     assert(sig_status);
-    assert(sig_len == resp->rsa_len);
+    assert(rsa_sig_len <= resp->rsa_len);
 
-    LOG_DEBUG(logger, "Resp Sig Len: " << resp->sig_len);
+    LOG_DEBUG(logger, "(A) Resp Sig Len: " << resp->sig_len);
+    LOG_DEBUG(logger, "(A) Resp RSA Len: " << resp->rsa_len);
     std::memcpy(resp->getSigBuf(), ss_str.data(), resp->sig_len);
-    send_response(resp->get_size());
+    send_response(msg_out->get_size());
     // auto qp_len = QuickPayMsg::get_size(txhash.size());
     // auto resp_size = QuickPayResponse::get_size(qp_len, sig_len);
     // outgoing_msg_buf.reserve(resp_size);
@@ -164,14 +231,25 @@ void conn_handler::do_read(const asio::error_code& err, size_t bytes)
     //                     sig_len);
     // send_response(qp_resp->get_size());
     metrics->fetch_add(1);
-    // Move the remaining buffers again
-    auto perf_end = get_monotonic_time();
-    LOG_INFO(logger, "Tx processing time: " << double(perf_end-perf_start));
 }
 
 void conn_handler::send_response(size_t bytes) {
     this->mSock_.async_send(
         asio::buffer(outgoing_msg_buf.data(), bytes),
+        [](const asio::error_code& err, size_t bytes) {
+            if (err) {
+                LOG_ERROR(logger, err.message());
+                return;
+            }
+            LOG_INFO(logger, "Sent " << bytes << " data");
+        }
+    );
+}
+
+void conn_handler::send_ack_response(std::vector<uint8_t> msg_buf)
+{
+    this->mSock_.async_send(
+        asio::buffer(msg_buf.data(), msg_buf.size()),
         [](const asio::error_code& err, size_t bytes) {
             if (err) {
                 LOG_ERROR(logger, err.message());

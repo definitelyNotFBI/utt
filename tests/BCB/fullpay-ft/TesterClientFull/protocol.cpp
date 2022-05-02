@@ -1,6 +1,7 @@
 #include <xutils/AutoBuf.h>
 #include <asio/streambuf.hpp>
 #include <cassert>
+#include <cstdint>
 #include <cstring>
 #include <functional>
 #include <iostream>
@@ -97,12 +98,12 @@ protocol::protocol(io_ctx_t& io_ctx,
     }
 }
 
-void protocol::on_timeout(const asio::error_code& err) {
+void protocol::on_timeout(const asio::error_code& err, size_t idx) {
     if (err == asio::error::operation_aborted) {
         LOG_DEBUG(logger, "Aborted timer (This is good!)");
         return;
     }
-    LOG_WARN(logger, "Connection Timed out (This is bad!)");
+    LOG_WARN(logger, "Connection Timed out (This is bad!) while waiting for " << idx);
     auto num_connections = 0ul;
     {
         m_conn_mutex_.lock();
@@ -121,15 +122,16 @@ void protocol::on_timeout(const asio::error_code& err) {
     }
 }
 
-void protocol::on_tx_timeout(const asio::error_code err) {
+void protocol::on_tx_timeout(const asio::error_code err, size_t idx) {
     if (err == asio::error::operation_aborted) {
         LOG_DEBUG(logger, "Aborted tx timer");
         return;
     }
-    LOG_WARN(logger, "tx Timed out");
+    LOG_WARN(logger, "tx Timed out idx#" << idx);
 }
 
 void protocol::start() {
+    // Check: Is the node id on the communication map the same as id in the bank pk ids?
     // Start connecting to all the nodes
     for(auto& [node_id, end_point]: m_node_map_) {
         auto conn = conn_handler::create(m_io_ctx_, node_id, pk_map, shared_from_this());
@@ -140,13 +142,14 @@ void protocol::start() {
     // Started all the connections, lets wait for some time
     using namespace std::chrono_literals;
     // Register handlers
-    timer.expires_after(60s);
+    timer.expires_after(180s);
     timer.async_wait(std::bind(&protocol::on_timeout, 
-            shared_from_this(), std::placeholders::_1));
+            shared_from_this(), std::placeholders::_1, experiment_idx));
 }
 
 // Add a connection to the protocol
 void protocol::add_connection(conn_handler_ptr conn_ptr) {
+
     size_t num_conns;
     {
         m_conn_mutex_.lock();
@@ -154,6 +157,7 @@ void protocol::add_connection(conn_handler_ptr conn_ptr) {
         num_conns = m_conn_.size();
         m_conn_mutex_.unlock();
     }
+
     if (num_conns != m_node_map_.size()) {
         return;
     }
@@ -205,19 +209,11 @@ void protocol::send_tx() {
                             << ClientConfig::Get()->id
                             << throughput
                             << std::endl;
-        return;
+        std::exit(0);
     }
+
     experiment_idx--;
     LOG_INFO(logger, "Transaction #" << experiment_idx);
-
-    for(auto& conn: m_conn_) {
-        auto& sock = conn->socket();
-        sock.async_receive(
-            asio::buffer(conn->replica_msg_buf.data(), BCB::common::REPLICA_MAX_MSG_SIZE),
-            std::bind(&conn_handler::on_tx_response, conn->shared_from_this(),
-                std::placeholders::_1, std::placeholders::_2, experiment_idx)
-        );
-    }
 
     {
         m_metric_mtx_.lock();
@@ -230,9 +226,20 @@ void protocol::send_tx() {
     ss << current_tx;
     auto ss_str = ss.str();
 
+    std::vector<uint8_t> out_msg;
+
     auto txhash = current_tx.getHashHex();
     auto qp_len = QuickPayMsg::get_size(txhash.size());
-    auto qp_tx = QuickPayTx::alloc(qp_len, ss_str.size());
+    auto qp_tx_len = QuickPayTx::get_size(qp_len, ss_str.size());
+    auto out_msg_len = Msg::get_size(qp_tx_len);
+    out_msg.resize(out_msg_len, 0);
+    Msg* msg = (Msg*)out_msg.data();
+    msg->tp = MsgType::BURN_REQUEST;
+    msg->seq_num = experiment_idx;
+    msg->msg_len = qp_tx_len;
+    auto qp_tx = msg->get_msg<QuickPayTx>();
+    qp_tx->qp_msg_len = qp_len;
+    qp_tx->tx_len = ss_str.size();
     auto qp = qp_tx->getQPMsg();
     qp->target_shard_id = 0;
     qp->hash_len = txhash.size();
@@ -244,55 +251,73 @@ void protocol::send_tx() {
                         << "hash len: " << qp->hash_len << std::endl 
     );
 
+    std::vector<uint8_t> msg_buf(out_msg.begin(), out_msg.end());
+
     for(auto& conn: m_conn_) {
-        // Reset the stream
-        conn->out_ss.str(std::string{});
-        conn->out_ss.write((const char*)qp_tx, 
-                            static_cast<long>(qp_tx->get_size()));
-        auto& sock = conn->socket();
-        sock.async_send(
-            asio::buffer(conn->out_ss.str(), qp_tx->get_size()),
-            std::bind(&conn_handler::on_tx_send, 
-                conn->shared_from_this(), std::placeholders::_1,
-                std::placeholders::_2));
+        conn->send_msg(msg_buf, Type::TX);
     }
 
     using namespace std::chrono_literals;
     // Started all the connections, lets wait for some time
-    tx_timer.expires_after(60s);
+    tx_timer.expires_after(180s);
     tx_timer.async_wait(std::bind(&protocol::on_tx_timeout, 
-            shared_from_this(), std::placeholders::_1));
+            shared_from_this(), std::placeholders::_1, experiment_idx));
 
 }
 
-void protocol::send_ack(std::vector<uint8_t> ack_msg) 
+void protocol::add_ack(uint16_t replica_id, size_t idx)
+{
+    LOG_DEBUG(logger, "Got an ack for idx " << idx);
+    auto config = ClientConfig::Get();
+    size_t num_responses = 0, required_responses = config->getnumReplicas() - config->getfVal();
+
+    {
+        m_ack_mtx_.lock();
+        if(exp_idx_num_acks_map.count(idx) == 0) {
+            exp_idx_num_acks_map.emplace(idx, 1);
+        } else {
+            exp_idx_num_acks_map[idx] += 1;
+        }
+        num_responses = exp_idx_num_acks_map[experiment_idx];
+        m_ack_mtx_.unlock();
+    }
+    LOG_DEBUG(logger, "Have " << num_responses << " for " << experiment_idx);
+
+    // One of the connections will send this, the others will fail this
+    // Only send on this exact condition
+    if (num_responses == required_responses) {
+        tx_timer.cancel();
+        send_tx();
+    }
+}
+
+void protocol::send_ack(const std::vector<uint8_t>& msg) 
 {
     // DONE: Send the ACK
     for(auto& conn: m_conn_) {
         // Reset the stream
-        conn->out_ss.str(std::string{});
-        conn->out_ss.write((const char*)ack_msg.data(), 
-                            static_cast<long>(ack_msg.size()));
-        auto& sock = conn->socket();
-        sock.async_send(
-            asio::buffer(conn->out_ss.str(), ack_msg.size()),
-            std::bind(&conn_handler::on_ack_send, 
-                conn->shared_from_this(), std::placeholders::_1,
-                std::placeholders::_2));
+        conn->send_msg(msg, Type::ACK);
     }
 
     using namespace std::chrono_literals;
     // Started all the connections, lets wait for some time
-    tx_timer.expires_after(60s);
+    tx_timer.expires_after(120s);
     tx_timer.async_wait(std::bind(&protocol::on_tx_timeout, 
-            shared_from_this(), std::placeholders::_1));
+            shared_from_this(), std::placeholders::_1, experiment_idx));
 
 }
 
-void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, size_t experiment_idx)
+void protocol::add_response(std::vector<uint8_t> response, uint16_t sender_id, size_t expIdx)
 {
+    if(experiment_idx < expIdx) {
+        LOG_DEBUG(logger, "Ignoring stale response from " << sender_id 
+                            << " for idx " << expIdx 
+                            << " since we are already in in Tx#" 
+                            << experiment_idx);
+        return;
+    }
     auto end = get_monotonic_time();
-    LOG_INFO(logger, "Adding " << num_bytes << " of response from " << sender_id);
+    LOG_INFO(logger, "Adding " << response.size() << " of response from " << sender_id << " for idx " << expIdx);
 
     auto config = ClientConfig::Get();
     size_t num_responses = 0;
@@ -300,19 +325,19 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
     bool added = false, done = false, just_finished = false;
     std::vector<uint16_t> ids;
     std::vector<std::vector<uint8_t>> responses;
-    auto resp = (FullPayFTResponse*)ptr;
+    auto resp = (FullPayFTResponse*)response.data();
 
     {
         m_resp_mtx_.lock();
         num_responses = matched_response.size();
-        if (finished_indices.count(experiment_idx) != 0) {
+        if (finished_indices.count(expIdx) != 0) {
             done = true;
         }
         else if (static_cast<int>(num_responses) < required_responses) {
             matched_response.add(sender_id, resp->getRSABuf(), resp->rsa_len);
             added = true;
         } else {
-            finished_indices.insert(experiment_idx);
+            finished_indices.insert(expIdx);
             // swap the responses with empty responses
             matched_response.clear(ids, responses);
             just_finished = true;
@@ -323,6 +348,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
     // DONE: Update to n-f
     if (added || done) {
         // We don't have enough or we have already finished this tx
+        LOG_DEBUG(logger, "Added: "<< added << " Done: " << done);
         return;
     }
 
@@ -342,13 +368,19 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
         hist.Add(double(elapsed));
         m_metric_mtx_.unlock();
     }
-    LOG_INFO(logger, "Finished a transaction");
+    LOG_INFO(logger, "Finished a transaction" << experiment_idx);
     // DONE: Construct an ack msg
-    std::vector<uint8_t> ack_msg;
+    std::vector<uint8_t> msg_buf;
     auto sig_size = responses.at(0).size();
     auto ack_len = FullPayFTAck::get_size(ids.size(), sig_size, responses.size());
-    ack_msg.resize(ack_len, 0);
-    auto ack = (FullPayFTAck*)ack_msg.data();
+    auto msg_len = Msg::get_size(ack_len);
+    msg_buf.resize(msg_len, 0);
+    auto msg = (Msg*)msg_buf.data();
+    msg->tp = MsgType::ACK_MSG;
+    msg->msg_len = ack_len;
+    msg->seq_num = experiment_idx;
+    auto ack = msg->get_msg<FullPayFTAck>();
+    ack->seq_num = experiment_idx;
     ack->num_ids = ids.size();
     ack->num_sigs = responses.size();
     ack->sig_len = sig_size;
@@ -358,7 +390,7 @@ void protocol::add_response(uint8_t *ptr, size_t num_bytes, uint16_t sender_id, 
         // DONE: Copy the sigs
         std::memcpy(ack->getSigBuf(i), responses[i].data(), ack->sig_len);
     }
-    send_ack(ack_msg);
+    send_ack(msg_buf);
 }
 
 } // namespace fullpay::replica

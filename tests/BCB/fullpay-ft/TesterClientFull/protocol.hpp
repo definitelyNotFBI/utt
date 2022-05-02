@@ -87,6 +87,11 @@ private:
     uint64_t begin, throughput_begin;
 
 
+// Acknowledgement handing
+private:
+    std::mutex m_ack_mtx_;
+    std::unordered_map<size_t, size_t> exp_idx_num_acks_map;
+
 // Functions
 public:
     protocol(asio::io_context& io_ctx, bft::communication::NodeMap& node_map,
@@ -99,16 +104,17 @@ public:
     void add_connection(conn_handler_ptr conn_ptr);
 
     // Adds a response
-    void add_response(uint8_t* ptr, size_t data, uint16_t id, size_t expIdx);
+    void add_response(std::vector<uint8_t>, uint16_t id, size_t expIdx);
+    void add_ack(uint16_t id, size_t expIdx);
 
     // Start the experiment
     void start_experiments();
 
     // Send the transaction
     void send_tx();
-    void send_ack(std::vector<uint8_t> msg);
-    void on_timeout(const asio::error_code& err);
-    void on_tx_timeout(const asio::error_code err);
+    void send_ack(const std::vector<uint8_t> &msg);
+    void on_timeout(const asio::error_code& err, size_t);
+    void on_tx_timeout(const asio::error_code err, size_t);
 };
 
 } // namespace fullpay::client
