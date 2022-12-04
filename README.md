@@ -1,4 +1,4 @@
-# Concord-BFT: a Distributed Trust Infrastructure
+# UTT-BFT: a Distributed Payment Infrastructure Implementation over Concord-BFT
 
 
 <!-- ![Concored-bft Logo](TBD) -->
@@ -6,7 +6,11 @@
 <!-- <img src="TODO.jpg" width="200" height="200" /> -->
 
 
-## Overview
+## Overview of UTT-BFT
+
+**UTT-BFT** is an implementation of decentralized ecash with accountable privacy. 
+
+## Overview of Concord-BFT
 
 **Concord-bft** is a generic state machine replication library that can handle malicious (byzantine) replicas.
 
@@ -16,7 +20,6 @@ Blockchains](https://arxiv.org/pdf/1804.01626.pdf).
 It is designed to be used as a core building block for replicated distributed data stores, and is especially suited to serve as the basis of permissioned Blockchain systems.
 
 For a real-life integration example, please take a look at [Project Concord](https://github.com/vmware/concord), a highly scalable and energy-efficient distributed trust infrastructure for consensus and smart contract execution.
-
 
 ## Install and Build (Ubuntu Linux 18.04)
 
